@@ -1,15 +1,18 @@
-import { createResource, createSignal, Suspense } from 'solid-js'
+import { createResource, createSignal } from 'solid-js'
 import solidLogo from './assets/solid.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
+import { BE } from './api'
 
 function App() {
   const [count, setCount] = createSignal(0);
 
   const [data] = createResource(async () => {
-    const res = await fetch("/api/health");
-    const data = await res.json();
+    // const res = await fetch("/api/health");
+    // const data = await res.json();
+
+    const {data} = await BE.api.health.get();
     return data;
   })
 

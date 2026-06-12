@@ -1,7 +1,7 @@
 import { Elysia } from "elysia";
 
 const app = new Elysia()
-    .get("/api/health", () => ({status: "ok"}))
+    .get("/api/health", () => (JSON.stringify({ status: "ok" })))
     .listen(process.env.PORT ?? 3000);
 
 // For Eden E2E Type Safety.
