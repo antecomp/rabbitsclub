@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@elysiajs/eden": "^1.4.9",
     "solid-js": "^1.9.12"
   },
   "devDependencies": {
