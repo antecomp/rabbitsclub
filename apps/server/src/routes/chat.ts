@@ -3,53 +3,35 @@ import { actions } from "../db";
 import { MessageSchema, SentMessageSchema } from "../schemas/messages.schema";
 import jwt from "@elysiajs/jwt";
 import { AuthCookieSchema, ErrorSchema, JWTSchema } from "../schemas/users.schema";
+import { authMiddleware } from "../middleware/auth.middleware";
 
 export const chatRoutes = new Elysia()
-    .use(jwt({
-        name: "jwt",
-        schema: JWTSchema,
-        secret: process.env.JWT_SECRET!
-    }))
-    .get("/messages", async ({ jwt, cookie, set }) => {
-        const payload = await jwt.verify(cookie.auth.value);
-        if (!payload) {
-            set.status = 401
-            return { message: "Unauthorized" }
-        }
-        return actions.getRecent()
-    }, {
-        cookie: AuthCookieSchema,
+    .use(authMiddleware)
+    .get("/messages", () => actions.getRecent(), {
+        // Invokes auth middlware.
+        auth: true,
         response: {
             200: t.Array(MessageSchema),
-            401: ErrorSchema
+            //401: ErrorSchema
         }
     })
     .ws("/ws", {
-        // used to validate message shape
+        auth: true,
         body: SentMessageSchema,
         response: MessageSchema,
-        cookie: AuthCookieSchema,
-        async open(ws) {
-            const payload = await ws.data.jwt.verify(ws.data.cookie.auth.value);
-            if (!payload) {
-                ws.close()
-                return
-            }
-
+        open(ws) {
             ws.subscribe("chat");
         },
         message(ws, message) {
-            // TODO: auth messages or do we just rely on auth to connect to the socket?
-            const saved = actions.insertMessage(message.username, message.content);
-            if (!saved) {
-                console.error("Unable to post message to DB");
+            const saved = actions.insertMessage(ws.data.user.username, message.content);
+            if(!saved) {
+                console.error("Unable to post message to DB", message);
                 return;
             }
-            ws.publish("chat", saved); // echos to other subscribers.
+            ws.publish("chat", saved); // broadcasts to everyone but the sender
             ws.send(saved); // echos back to sender.
         },
         close(ws) {
-            console.log("client disconnected:", ws.id);
-            ws.unsubscribe("chat")
+            ws.unsubscribe("chat");
         }
-    });
+    })
