@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia"
 import { jwt } from "@elysiajs/jwt"
 import { actions } from "../db"
-import { AuthBodySchema, AuthCookieSchema, AuthResponseSchema, ErrorSchema, JWTSchema } from "../schemas/users.schema"
+import { LoginBodySchema, AuthCookieSchema, LoginResponseSchema, ErrorSchema, JWTSchema, RegisterBodySchema } from "../schemas/users.schema"
 import { JWT_TOKEN_LIFESPAN } from "../config"
 
 export const authRoutes = new Elysia({ prefix: "/auth" })
@@ -11,6 +11,12 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         schema: JWTSchema
     }))
     .post("/register", async ({ jwt, body, set, cookie: { auth } }) => {
+        const invite = actions.getInviteCode(body.code);
+        if (!invite || invite.used_by !== null) {
+            set.status = 403;
+            return { message: "Invalid or already used invite code." }
+        }
+
         const existing = actions.getUserByUsername(body.username);
         if (existing) {
             set.status = 409;
@@ -25,21 +31,23 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
             return { message: "Failed to create user" }
         }
 
-        const token = await jwt.sign({ id: user.id, username: user.username, exp: Math.floor(Date.now() / 1000) + JWT_TOKEN_LIFESPAN });
+        actions.claimInviteCode(body.code, user.id);
 
+        const token = await jwt.sign({ id: user.id, username: user.username, exp: Math.floor(Date.now() / 1000) + JWT_TOKEN_LIFESPAN });
         auth.set({
             value: token,
             httpOnly: true,
             secure: false, // set to true in prod (requires https)
             sameSite: "lax", // change to strict for stronger CSRF protection
-            maxAge: 60 * 60 * 24 * 7 // 1 week.
+            maxAge: JWT_TOKEN_LIFESPAN
         });
 
         return { success: true }
     }, {
-        body: AuthBodySchema,
+        body: RegisterBodySchema,
         response: {
-            200: AuthResponseSchema,
+            200: LoginResponseSchema,
+            403: ErrorSchema,
             409: ErrorSchema,
             500: ErrorSchema
         },
@@ -58,21 +66,21 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
             return { message: "invalid credentials" }
         }
 
-        const token = await jwt.sign({ id: user.id, username: user.username, exp: Math.floor(Date.now() / 1000) + JWT_TOKEN_LIFESPAN});
+        const token = await jwt.sign({ id: user.id, username: user.username, exp: Math.floor(Date.now() / 1000) + JWT_TOKEN_LIFESPAN });
 
         auth.set({
             value: token,
             httpOnly: true,
             secure: false,
             sameSite: "lax",
-            maxAge: 60 * 60 * 24 * 7
+            maxAge: JWT_TOKEN_LIFESPAN
         });
 
         return { success: true }
     }, {
-        body: AuthBodySchema,
+        body: LoginBodySchema,
         response: {
-            200: AuthResponseSchema,
+            200: LoginResponseSchema,
             401: ErrorSchema,
             422: ErrorSchema
         },
@@ -84,20 +92,20 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         return { success: true }
     }, {
         response: {
-            200: AuthResponseSchema
+            200: LoginResponseSchema
         },
         cookie: AuthCookieSchema
     })
     .get("/me", async ({ jwt, set, cookie: { auth } }) => {
         const payload = await jwt.verify(auth.value);
-        if(!payload) {
+        if (!payload) {
             set.status = 401
-            return {message: "unauthorized"}
+            return { message: "unauthorized" }
         }
-        return {id: payload.id, username: payload.username}
+        return { id: payload.id, username: payload.username }
     }, {
         response: {
-            200: t.Object({id: t.Number(), username: t.String()}),
+            200: t.Object({ id: t.Number(), username: t.String() }),
             401: ErrorSchema
         },
         cookie: AuthCookieSchema

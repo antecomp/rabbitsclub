@@ -14,13 +14,26 @@ export const UserSchema = t.Object({
     created_at: t.String()
 })
 
-export const AuthBodySchema = t.Object({
+export interface InviteCode {
+    id: number,
+    code: string,
+    used_by: number | null,
+    created_at: string
+}
+
+export const LoginBodySchema = t.Object({
     username: t.String({ minLength: 3 }),
     password: t.String({ minLength: 8 })
 })
 
-export const AuthResponseSchema = t.Object({
+export const LoginResponseSchema = t.Object({
     success: t.Boolean()
+})
+
+export const RegisterBodySchema = t.Object({
+    username: t.String({ minLength: 3 }),
+    password: t.String({ minLength: 8 }),
+    code: t.String({ minLength: 1 })
 })
 
 export const ErrorSchema = t.Object({

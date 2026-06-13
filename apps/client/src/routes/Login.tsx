@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js"
+import { createSignal, Show } from "solid-js"
 import { useNavigate } from "@solidjs/router"
 import { BE } from "../api"
 import { refetchUser } from "../store"
@@ -7,6 +7,7 @@ export default function Login() {
     const navigate = useNavigate()
     const [username, setUsername] = createSignal("")
     const [password, setPassword] = createSignal("")
+    const [registerCode, setRegisterCode] = createSignal("");
     const [error, setError] = createSignal("")
     const [isRegister, setIsRegister] = createSignal(false)
 
@@ -17,7 +18,8 @@ export default function Login() {
         const endpoint = isRegister() ? BE.auth.register : BE.auth.login
         const { error: err } = await endpoint.post({
             username: username(),
-            password: password()
+            password: password(),
+            code: registerCode()
         })
 
         if (err) {
@@ -45,6 +47,13 @@ export default function Login() {
                     onInput={e => setPassword(e.target.value)}
                     placeholder="Password"
                 />
+                <Show when={isRegister()}>
+                    <input
+                        value={registerCode()}
+                        onInput={e => setRegisterCode(e.target.value)}
+                        placeholder="Registration Code"
+                    />
+                </Show>
                 <button type="submit">
                     {isRegister() ? "Register" : "Login"}
                 </button>
