@@ -2,6 +2,7 @@ import { Elysia, t } from "elysia"
 import { jwt } from "@elysiajs/jwt"
 import { actions } from "../db"
 import { AuthBodySchema, AuthCookieSchema, AuthResponseSchema, ErrorSchema, JWTSchema } from "../schemas/users.schema"
+import { JWT_TOKEN_LIFESPAN } from "../config"
 
 export const authRoutes = new Elysia({ prefix: "/auth" })
     .use(jwt({
@@ -24,7 +25,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
             return { message: "Failed to create user" }
         }
 
-        const token = await jwt.sign({ id: user.id, username: user.username });
+        const token = await jwt.sign({ id: user.id, username: user.username, exp: Math.floor(Date.now() / 1000) + JWT_TOKEN_LIFESPAN });
 
         auth.set({
             value: token,
@@ -57,7 +58,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
             return { message: "invalid credentials" }
         }
 
-        const token = await jwt.sign({ id: user.id, username: user.username });
+        const token = await jwt.sign({ id: user.id, username: user.username, exp: Math.floor(Date.now() / 1000) + JWT_TOKEN_LIFESPAN});
 
         auth.set({
             value: token,
