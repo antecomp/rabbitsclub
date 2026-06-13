@@ -20,9 +20,18 @@ export const AuthBodySchema = t.Object({
 })
 
 export const AuthResponseSchema = t.Object({
-    token: t.String()
+    success: t.Boolean()
 })
 
 export const ErrorSchema = t.Object({
     message: t.String()
 })
+
+export const AuthCookieSchema = t.Object({
+    auth: t.String()
+})
+
+export interface JWTPayload {
+    id: number
+    username: string
+}

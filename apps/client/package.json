@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@elysiajs/eden": "latest",
+    "@solidjs/router": "^0.16.1",
     "solid-js": "^1.9.12",
     "solid-styled-components": "^0.28.5"
   },
