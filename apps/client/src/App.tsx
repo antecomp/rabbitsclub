@@ -3,7 +3,7 @@ import { BE } from "./api"
 
 function App() {
   const [health] = createResource(async () => {
-    const { data } = await BE.api.health.get()
+    const { data } = await BE.health.get()
     return data
   })
 

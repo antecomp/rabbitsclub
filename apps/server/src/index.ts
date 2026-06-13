@@ -1,8 +1,8 @@
 import { Elysia, t } from "elysia"
 import { cors } from "@elysiajs/cors"
 
-const app = new Elysia({ prefix: "/api" })
-    .use(cors({ origin: "http://localhost:5173" }))
+const app = new Elysia()
+    .use(cors({ origin: process.env.CLIENT_ORIGIN }))
     .get("/health", () => ({ status: "ok" }), {
         response: t.Object({
             status: t.String()
