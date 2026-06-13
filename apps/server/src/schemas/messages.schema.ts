@@ -7,6 +7,11 @@ export interface Message {
     created_at: string
 }
 
+export const SentMessageSchema = t.Object({
+    username: t.String(),
+    content: t.String()
+});
+
 export const MessageSchema = t.Object({
     id: t.Number(),
     username: t.String(),
