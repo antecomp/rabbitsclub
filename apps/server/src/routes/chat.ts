@@ -1,21 +1,46 @@
 import { Elysia, t } from "elysia";
 import { actions } from "../db";
 import { MessageSchema, SentMessageSchema } from "../schemas/messages.schema";
+import jwt from "@elysiajs/jwt";
+import { AuthCookieSchema, ErrorSchema, type JWTPayload } from "../schemas/users.schema";
 
 export const chatRoutes = new Elysia()
-    .get("/messages", () => actions.getRecent(), {
-        response: t.Array(MessageSchema)
+    .use(jwt({
+        name: "jwt",
+        secret: process.env.JWT_SECRET!
+    }))
+    .get("/messages", async ({ jwt, cookie, set }) => {
+        const payload = await jwt.verify(cookie.auth.value) as JWTPayload | false
+        if (!payload) {
+            set.status = 401
+            return { message: "Unauthorized" }
+        }
+        return actions.getRecent()
+    }, {
+        cookie: AuthCookieSchema,
+        response: {
+            200: t.Array(MessageSchema),
+            401: ErrorSchema
+        }
     })
     .ws("/ws", {
         // used to validate message shape
         body: SentMessageSchema,
         response: MessageSchema,
-        open(ws) {
-            ws.subscribe("chat")
+        cookie: AuthCookieSchema,
+        async open(ws) {
+            const payload = await ws.data.jwt.verify(ws.data.cookie.auth.value) as JWTPayload | false
+            if (!payload) {
+                ws.close()
+                return
+            }
+
+            ws.subscribe("chat");
         },
         message(ws, message) {
+            // TODO: auth messages or do we just rely on auth to connect to the socket?
             const saved = actions.insertMessage(message.username, message.content);
-            if(!saved) {
+            if (!saved) {
                 console.error("Unable to post message to DB");
                 return;
             }
