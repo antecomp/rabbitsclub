@@ -1,12 +1,13 @@
 import { Elysia, t } from "elysia"
 import { jwt } from "@elysiajs/jwt"
 import { actions } from "../db"
-import { AuthBodySchema, AuthCookieSchema, AuthResponseSchema, ErrorSchema, type JWTPayload } from "../schemas/users.schema"
+import { AuthBodySchema, AuthCookieSchema, AuthResponseSchema, ErrorSchema, JWTSchema } from "../schemas/users.schema"
 
 export const authRoutes = new Elysia({ prefix: "/auth" })
     .use(jwt({
         name: "jwt",
-        secret: process.env.JWT_SECRET!
+        secret: process.env.JWT_SECRET!,
+        schema: JWTSchema
     }))
     .post("/register", async ({ jwt, body, set, cookie: { auth } }) => {
         const existing = actions.getUserByUsername(body.username);
@@ -23,7 +24,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
             return { message: "Failed to create user" }
         }
 
-        const token = await jwt.sign({ id: user.id, username: user.username } satisfies JWTPayload);
+        const token = await jwt.sign({ id: user.id, username: user.username });
 
         auth.set({
             value: token,
@@ -56,7 +57,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
             return { message: "invalid credentials" }
         }
 
-        const token = await jwt.sign({ id: user.id, username: user.username } satisfies JWTPayload);
+        const token = await jwt.sign({ id: user.id, username: user.username });
 
         auth.set({
             value: token,
@@ -87,7 +88,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         cookie: AuthCookieSchema
     })
     .get("/me", async ({ jwt, set, cookie: { auth } }) => {
-        const payload = await jwt.verify(auth.value) as JWTPayload | false;
+        const payload = await jwt.verify(auth.value);
         if(!payload) {
             set.status = 401
             return {message: "unauthorized"}

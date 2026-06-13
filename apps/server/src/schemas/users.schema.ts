@@ -31,7 +31,7 @@ export const AuthCookieSchema = t.Object({
     auth: t.Optional(t.String())
 })
 
-export interface JWTPayload {
-    id: number
-    username: string
-}
+export const JWTSchema = t.Object({
+    id: t.Number(),
+    username: t.String()
+});

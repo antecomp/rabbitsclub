@@ -2,37 +2,27 @@ import { Elysia, t } from "elysia";
 import { actions } from "../db";
 import { MessageSchema, SentMessageSchema } from "../schemas/messages.schema";
 import jwt from "@elysiajs/jwt";
-import { AuthCookieSchema, ErrorSchema, type JWTPayload } from "../schemas/users.schema";
-import { verifyAuth } from "../middleware/auth.middleware";
+import { AuthCookieSchema, ErrorSchema, JWTSchema } from "../schemas/users.schema";
 
 export const chatRoutes = new Elysia()
     .use(jwt({
         name: "jwt",
+        schema: JWTSchema,
         secret: process.env.JWT_SECRET!
     }))
-    // .get("/messages", async ({ jwt, cookie, set }) => {
-    //     const payload = await jwt.verify(cookie.auth.value) as JWTPayload | false
-    //     if (!payload) {
-    //         set.status = 401
-    //         return { message: "Unauthorized" }
-    //     }
-    //     return actions.getRecent()
-    // }, {
-    //     cookie: AuthCookieSchema,
-    //     response: {
-    //         200: t.Array(MessageSchema),
-    //         401: ErrorSchema
-    //     }
-    // })
     .get("/messages", async ({ jwt, cookie, set }) => {
-        const user = await verifyAuth(jwt, cookie.auth)
-        if (!user) {
+        const payload = await jwt.verify(cookie.auth.value);
+        if (!payload) {
             set.status = 401
             return { message: "Unauthorized" }
         }
         return actions.getRecent()
     }, {
-        cookie: AuthCookieSchema
+        cookie: AuthCookieSchema,
+        response: {
+            200: t.Array(MessageSchema),
+            401: ErrorSchema
+        }
     })
     .ws("/ws", {
         // used to validate message shape
@@ -40,7 +30,7 @@ export const chatRoutes = new Elysia()
         response: MessageSchema,
         cookie: AuthCookieSchema,
         async open(ws) {
-            const payload = await ws.data.jwt.verify(ws.data.cookie.auth.value) as JWTPayload | false
+            const payload = await ws.data.jwt.verify(ws.data.cookie.auth.value);
             if (!payload) {
                 ws.close()
                 return
