@@ -2,13 +2,18 @@ import { render } from "solid-js/web"
 import { Navigate, Route, Router } from "@solidjs/router"
 import Login from "./routes/Login"
 import Chat from "./routes/Chat"
+import { GuestRoute, ProtectedRoute } from "./components/ProtectedRoute"
 
 render(
     () => <Router>
         {/* TODO: Make "DEFAULT PAGE" const, or other handler to redirect accordingly... */}
-        <Route path="/" component={() => <Navigate href="/login"/>} />
-        <Route path="/login" component={Login} />
-        <Route path="/chat" component={Chat} />
+        <Route path="/" component={() => <Navigate href="/login" />} />
+        <Route path="/login" component={() => (
+            <GuestRoute><Login /></GuestRoute>
+        )} />
+        <Route path="/chat" component={() => (
+            <ProtectedRoute><Chat /></ProtectedRoute>
+        )} />
     </Router>,
     document.getElementById("root")!
 )
