@@ -9,14 +9,15 @@ export const chatRoutes = new Elysia()
     .use(authMiddleware)
     .get("/messages", () => actions.getRecent(), {
         // Invokes auth middlware.
-        auth: true,
+        useAuth: true,
         response: {
             200: t.Array(MessageSchema),
             //401: ErrorSchema
         }
     })
     .ws("/ws", {
-        auth: true,
+        // invokes auth middleware, provides us with "user" JWT payload too!
+        useAuth: true,
         body: SentMessageSchema,
         response: MessageSchema,
         open(ws) {

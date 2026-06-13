@@ -9,7 +9,7 @@ export const authMiddleware = new Elysia({ name: "auth-middleware" })
         secret: process.env.JWT_SECRET!,
         schema: JWTSchema
     }))
-    .macro("auth", {
+    .macro("useAuth", {
         cookie: AuthCookieSchema,
         async resolve({ jwt, cookie: { auth }, status }) {
             if (!auth?.value) return status(401)
