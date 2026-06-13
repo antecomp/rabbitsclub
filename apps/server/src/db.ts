@@ -1,12 +1,12 @@
 import { Database } from "bun:sqlite"
 
 import { join } from "path"
+import type { Message } from "./schemas/messages.schema";
 
 const db = new Database(join(import.meta.dir, "../chat.db"), { create: true })
 
 // Enable WAL for concurrent reads (needed for multiuser chat, ofc).
 db.run("PRAGMA journal_mode = WAL");
-
 
 db.run(`
     CREATE TABLE IF NOT EXISTS messages (
@@ -18,12 +18,12 @@ db.run(`
 `);
 
 const queries = {
-    insertMessage: db.prepare(`
+    insertMessage: db.prepare<Message, {$username: string, $content: string}>(`
         INSERT INTO messages (username, content)
         VALUES ($username, $content)
         RETURNING *
     `),
-    getRecent: db.prepare(`
+    getRecent: db.prepare<Message, []>(`
         SELECT * FROM messages
         ORDER BY created_at DESC
         LIMIT 50
