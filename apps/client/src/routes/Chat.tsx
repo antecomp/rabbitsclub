@@ -18,7 +18,8 @@ export default function Chat() {
         sub = BE.ws.subscribe()
 
         sub.on("message", ({ data }) => {
-            mutate(prev => [...(prev ?? []), data])
+            if(data.type == 'user') mutate(prev => [...(prev ?? []), data]);
+            console.log(data); // system messages.
         })
 
         onCleanup(() => sub.close())

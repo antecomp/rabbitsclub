@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { actions } from "../db";
-import { MessageSchema, SentMessageSchema } from "../schemas/messages.schema";
+import { MessageSchema, SentMessageSchema, WSMessageSchema } from "../schemas/messages.schema";
 import jwt from "@elysiajs/jwt";
 import { AuthCookieSchema, ErrorSchema, JWTSchema } from "../schemas/users.schema";
 import { authMiddleware } from "../middleware/auth.middleware";
@@ -19,7 +19,7 @@ export const chatRoutes = new Elysia()
         // invokes auth middleware, provides us with "user" JWT payload too!
         useAuth: true,
         body: SentMessageSchema,
-        response: MessageSchema,
+        response: WSMessageSchema,
         open(ws) {
             ws.subscribe("chat");
         },
@@ -29,8 +29,8 @@ export const chatRoutes = new Elysia()
                 console.error("Unable to post message to DB", message);
                 return;
             }
-            ws.publish("chat", saved); // broadcasts to everyone but the sender
-            ws.send(saved); // echos back to sender.
+            ws.publish("chat", {...saved, type: 'user'}); // broadcasts to everyone but the sender
+            ws.send({...saved, type: 'user'}); // echos back to sender.
         },
         close(ws) {
             ws.unsubscribe("chat");

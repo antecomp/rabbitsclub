@@ -12,3 +12,17 @@ export const MessageSchema = t.Object({
     created_at: t.String()
 })
 export type Message = typeof MessageSchema['static'];
+
+export const WSBroadcastMessageSchema = t.Object({
+    type: t.Literal("system"),
+    content: t.String()
+});
+
+export const WSMessageSchema = t.Union([
+    WSBroadcastMessageSchema,
+    t.Intersect([
+        MessageSchema, 
+        t.Object({ type: t.Literal("user") })
+    ])
+]);
+export type WSMessageType = typeof WSMessageSchema['static'];
