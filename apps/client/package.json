@@ -9,13 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@elysiajs/eden": "^1.4.9",
+    "@elysiajs/eden": "latest",
     "solid-js": "^1.9.12"
   },
   "devDependencies": {
-    "@types/node": "^24.12.3",
-    "typescript": "~6.0.2",
-    "vite": "^8.0.12",
-    "vite-plugin-solid": "^2.11.12"
+    "typescript": "~5.8.0",
+    "vite": "latest",
+    "vite-plugin-solid": "latest"
   }
 }

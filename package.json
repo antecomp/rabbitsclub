@@ -1,7 +1,7 @@
 {
-  "name": "rabbitclub",
+  "name": "chat-app",
   "private": true,
-  "workspaces": ["packages/*"],
+  "workspaces": ["apps/*"],
   "scripts": {
     "dev": "bun run --filter '*' dev",
     "dev:server": "bun run --filter server dev",
