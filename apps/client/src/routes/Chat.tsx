@@ -19,7 +19,7 @@ export default function Chat() {
 
         sub.on("message", ({ data }) => {
             if(data.type == 'user') mutate(prev => [...(prev ?? []), data]);
-            console.log(data); // system messages.
+            else console.log(data); // system messages.
         })
 
         onCleanup(() => sub.close())
