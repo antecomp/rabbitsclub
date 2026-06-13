@@ -1,12 +1,5 @@
 import { t } from 'elysia'
 
-export interface Message {
-    id: number
-    username: string
-    content: string
-    created_at: string
-}
-
 export const SentMessageSchema = t.Object({
     username: t.String(),
     content: t.String()
@@ -18,3 +11,4 @@ export const MessageSchema = t.Object({
     content: t.String(),
     created_at: t.String()
 })
+export type Message = typeof MessageSchema['static'];

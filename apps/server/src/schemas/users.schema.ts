@@ -1,18 +1,12 @@
 import { t } from "elysia"
 
-export interface User {
-    id: number
-    username: string
-    password: string
-    created_at: string
-}
-
 export const UserSchema = t.Object({
     id: t.Number(),
     username: t.String(),
     password: t.String(),
     created_at: t.String()
-})
+});
+export type User = typeof UserSchema['static'];
 
 export interface InviteCode {
     id: number,
