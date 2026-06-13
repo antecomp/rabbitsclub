@@ -15,7 +15,7 @@ export default function Login() {
         setError("")
 
         const endpoint = isRegister() ? BE.auth.register : BE.auth.login
-        const { data, error: err } = await endpoint.post({
+        const { error: err } = await endpoint.post({
             username: username(),
             password: password()
         })
