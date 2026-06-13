@@ -28,7 +28,7 @@ export const ErrorSchema = t.Object({
 })
 
 export const AuthCookieSchema = t.Object({
-    auth: t.String()
+    auth: t.Optional(t.String())
 })
 
 export interface JWTPayload {
