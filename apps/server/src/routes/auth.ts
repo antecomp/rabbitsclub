@@ -10,26 +10,20 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         secret: process.env.JWT_SECRET!,
         schema: JWTSchema
     }))
-    .post("/register", async ({ jwt, body, set, cookie: { auth } }) => {
+    .post("/register", async ({ jwt, body, cookie: { auth }, status }) => {
         const invite = actions.getInviteCode(body.code);
-        if (!invite || invite.used_by !== null) {
-            set.status = 403;
-            return { message: "Invalid or already used invite code." }
-        }
+        if (!invite || invite.used_by !== null) 
+            return status(403, { message: "Invalid or already used invite code" });
 
         const existing = actions.getUserByUsername(body.username);
-        if (existing) {
-            set.status = 409;
-            return { message: "Username already taken" }
-        }
+        if (existing) 
+            return status(409, { message: "Username already taken" });
 
         const hashed = await Bun.password.hash(body.password);
         const user = actions.insertUser(body.username, hashed);
 
-        if (!user) {
-            set.status = 500;
-            return { message: "Failed to create user" }
-        }
+        if (!user) 
+            return status(500, { message: "Failed to create user" });
 
         actions.claimInviteCode(body.code, user.id);
 
@@ -53,18 +47,12 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         },
         cookie: AuthCookieSchema
     })
-    .post("/login", async ({ jwt, body, set, cookie: { auth } }) => {
+    .post("/login", async ({ jwt, body, cookie: { auth }, status }) => {
         const user = actions.getUserByUsername(body.username);
-        if (!user) {
-            set.status = 401;
-            return { message: "invalid credentials" }
-        }
+        if (!user) return status(401, {message: "invalid credentials"});
 
         const valid = await Bun.password.verify(body.password, user.password);
-        if (!valid) {
-            set.status = 401;
-            return { message: "invalid credentials" }
-        }
+        if (!valid) return status(401, {message: "invalid credentials"});
 
         const token = await jwt.sign({ id: user.id, username: user.username, exp: Math.floor(Date.now() / 1000) + JWT_TOKEN_LIFESPAN });
 
@@ -96,12 +84,9 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         },
         cookie: AuthCookieSchema
     })
-    .get("/me", async ({ jwt, set, cookie: { auth } }) => {
+    .get("/me", async ({ jwt, cookie: { auth }, status }) => {
         const payload = await jwt.verify(auth.value);
-        if (!payload) {
-            set.status = 401
-            return { message: "unauthorized" }
-        }
+        if (!payload) return status(401, {message: "unauthenticated"});
         return { id: payload.id, username: payload.username }
     }, {
         response: {
