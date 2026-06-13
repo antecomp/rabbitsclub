@@ -1,7 +1,7 @@
 import { createResource, createSignal, For, onCleanup, onMount } from "solid-js"
 import { useNavigate } from "@solidjs/router"
 import { BE } from "../api"
-import { user } from "../store"
+import { refetchUser, user } from "../store"
 
 export default function Chat() {
     const navigate = useNavigate()
@@ -33,6 +33,7 @@ export default function Chat() {
 
     const logout = async () => {
         await BE.auth.logout.post()
+        await refetchUser();
         navigate("/login")
     }
 
