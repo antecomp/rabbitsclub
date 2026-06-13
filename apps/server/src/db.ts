@@ -34,7 +34,7 @@ export const actions = {
     insertMessage: (username: string, content: string) =>
         queries.insertMessage.get({ $username: username, $content: content }),
     getRecent: () =>
-        queries.getRecent.all()
+        queries.getRecent.all().reverse()
 }
 
 console.log("db init");
