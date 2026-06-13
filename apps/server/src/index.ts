@@ -2,9 +2,11 @@ import { Elysia, t } from "elysia"
 import { cors } from "@elysiajs/cors"
 import "./db"
 import { chatRoutes } from "./routes/chat"
+import { authRoutes } from "./routes/auth"
 
 const app = new Elysia()
     .use(cors({ origin: process.env.CLIENT_ORIGIN }))
+    .use(authRoutes)
     .use(chatRoutes)
     .get("/health", () => ({ status: "ok" }), {
         response: t.Object({
