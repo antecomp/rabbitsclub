@@ -23,3 +23,14 @@ export function GuestRoute(props: ParentProps) {
 
     return <>{props.children}</>
 }
+
+export function AdminRoute(props: ParentProps) {
+    const navigate = useNavigate();
+
+    createEffect(() => {
+        if (user.loading) return;
+        if (!user()?.is_admin) navigate("/login", { replace: true })
+    });
+
+    return <>{props.children}</>
+}

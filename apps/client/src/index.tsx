@@ -2,7 +2,8 @@ import { render } from "solid-js/web"
 import { Navigate, Route, Router } from "@solidjs/router"
 import Login from "./routes/Login"
 import Chat from "./routes/Chat"
-import { GuestRoute, ProtectedRoute } from "./components/ProtectedRoute"
+import { AdminRoute, GuestRoute, ProtectedRoute } from "./components/ProtectedRoute"
+import Admin from "./routes/Admin"
 
 render(
     () => <Router>
@@ -13,6 +14,9 @@ render(
         )} />
         <Route path="/chat" component={() => (
             <ProtectedRoute><Chat /></ProtectedRoute>
+        )} />
+        <Route path="/admin" component={() => (
+            <AdminRoute><Admin /></AdminRoute>
         )} />
     </Router>,
     document.getElementById("root")!
