@@ -9,13 +9,19 @@ const getOnlineUsers = () => Array.from(onlineUsers.values()).map(u => u.usernam
 
 export const chatRoutes = new Elysia()
     .use(authMiddleware)
-    .get("/messages", () => actions.getRecent(), {
+    .get("/messages", ({query}) => actions.getRecent(
+        query.before ? Number(query.before) : undefined,
+        query.limit ? Number(query.limit) : undefined
+    ), {
         // Invokes auth middlware.
         useAuth: true,
         response: {
             200: t.Array(MessageSchema),
-            //401: ErrorSchema
-        }
+        },
+        query: t.Object({
+            before: t.Optional(t.String()),
+            limit: t.Optional(t.String())
+        })
     })
     .ws("/ws", {
         // invokes auth middleware, provides us with "user" JWT payload too!

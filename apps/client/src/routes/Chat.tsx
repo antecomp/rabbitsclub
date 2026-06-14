@@ -1,17 +1,36 @@
-import { createResource, createSignal, For, onCleanup, onMount } from "solid-js"
+import { createResource, createSignal, For, onCleanup, onMount, Show } from "solid-js"
 import { useNavigate } from "@solidjs/router"
 import { BE } from "../api"
 import { refetchUser, user } from "../store"
+import { MessageHistoryData } from "../types/message.type";
 
 export default function Chat() {
     const navigate = useNavigate();
     const [content, setContent] = createSignal("");
     const [whoisOnline, setWhoIsOnline] = createSignal<string[]>([]);
 
-    const [messages, { mutate }] = createResource(async () => {
-        const { data } = await BE.messages.get()
-        return data ?? []
-    })
+    const [messages, setMessages] = createSignal<MessageHistoryData>([]);
+    const [hasMoreMessages, setHasMoreMessages] = createSignal(true);
+    onMount(async () => {
+        const { data } = await BE.messages.get({ query: {} });
+        if (data) {
+            setMessages(data);
+            // todo: remove magic number (do the same on the BE too)
+            setHasMoreMessages(data.length == 50);
+        }
+    });
+
+    const loadMore = async () => {
+        const oldest = messages()![0];
+        if (!oldest) return;
+
+        const { data } = await BE.messages.get({
+            query: { before: String(oldest.id) }
+        });
+        if (!data) return;
+        setMessages(prev => [...data, ...prev])
+        setHasMoreMessages(data.length === 50)
+    }
 
     let sub: ReturnType<typeof BE.ws.subscribe>
 
@@ -21,7 +40,7 @@ export default function Chat() {
         sub.on("message", ({ data }) => {
             switch (data.type) {
                 case 'user':
-                    mutate(prev => [...(prev ?? []), data]);
+                    setMessages(prev => [...prev, data])
                     break;
                 case 'system':
                     // will add toasts later
@@ -57,6 +76,9 @@ export default function Chat() {
                 <br />
                 online: {whoisOnline().join(", ")}
             </header>
+            <Show when={hasMoreMessages()}>
+                <button onClick={loadMore}>Load More</button>
+            </Show>
             <For each={messages()}>
                 {msg => (
                     <div>

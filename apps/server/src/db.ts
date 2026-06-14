@@ -44,10 +44,11 @@ const queries = {
         VALUES ($username, $content)
         RETURNING *
     `),
-    getRecent: db.prepare<Message, []>(`
+    getRecent: db.prepare<Message, {$before: number, $limit: number} >(`
         SELECT * FROM messages
-        ORDER BY created_at DESC
-        LIMIT 50
+        WHERE id < $before
+        ORDER BY id DESC
+        LIMIT $limit
     `),
     insertUser: db.prepare<User, { $username: string, $password: string }>(`
         INSERT INTO users (username, password)
@@ -71,8 +72,8 @@ const queries = {
 export const actions = {
     insertMessage: (username: string, content: string) =>
         queries.insertMessage.get({ $username: username, $content: content }),
-    getRecent: () =>
-        queries.getRecent.all().reverse(),
+    getRecent: (before: number = 2147483647, limit: number = 50) =>
+        queries.getRecent.all({$before: before, $limit: limit}).reverse(),
     insertUser: (username: string, password: string) =>
         queries.insertUser.get({ $username: username, $password: password }),
     getUserByUsername: (username: string) =>
