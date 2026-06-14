@@ -32,7 +32,11 @@ export const chatRoutes = new Elysia()
             } else {
                 onlineUsers.set(id, { username, count: 1 });
                 ws.publish("chat", { type: 'system', content: `${username} is now online` })
+                ws.publish("chat", { type: 'online', users: getOnlineUsers() })
             }
+
+            // Send current online list to the newly connected client
+            ws.send({ type: 'online', users: getOnlineUsers() })
         },
         message(ws, message) {
             const saved = actions.insertMessage(ws.data.user.username, message.content);
@@ -51,7 +55,8 @@ export const chatRoutes = new Elysia()
             current.count--;
             if (current.count === 0) {
                 onlineUsers.delete(id);
-                ws.publish("chat", { type: "system", content: `${username} has left` })
+                ws.publish("chat", { type: "system", content: `${username} has left` });
+                ws.publish("chat", { type: 'online', users: getOnlineUsers() })
             }
 
             ws.unsubscribe("chat");

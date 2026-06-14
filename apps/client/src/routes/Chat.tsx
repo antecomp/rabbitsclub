@@ -4,8 +4,9 @@ import { BE } from "../api"
 import { refetchUser, user } from "../store"
 
 export default function Chat() {
-    const navigate = useNavigate()
-    const [content, setContent] = createSignal("")
+    const navigate = useNavigate();
+    const [content, setContent] = createSignal("");
+    const [whoisOnline, setWhoIsOnline] = createSignal<string[]>([]);
 
     const [messages, { mutate }] = createResource(async () => {
         const { data } = await BE.messages.get()
@@ -18,8 +19,18 @@ export default function Chat() {
         sub = BE.ws.subscribe()
 
         sub.on("message", ({ data }) => {
-            if(data.type == 'user') mutate(prev => [...(prev ?? []), data]);
-            else console.log(data); // system messages.
+            switch (data.type) {
+                case 'user':
+                    mutate(prev => [...(prev ?? []), data]);
+                    break;
+                case 'system':
+                    // will add toasts later
+                    console.log(data.content);
+                    break;
+                case 'online':
+                    setWhoIsOnline(data.users)
+                    break;
+            }
         })
 
         onCleanup(() => sub.close())
@@ -43,6 +54,8 @@ export default function Chat() {
             <header>
                 <span>Logged in as {user()?.username}</span>
                 <button onClick={logout}>Logout</button>
+                <br />
+                online: {whoisOnline().join(", ")}
             </header>
             <For each={messages()}>
                 {msg => (
