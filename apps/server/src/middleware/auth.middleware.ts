@@ -19,3 +19,9 @@ export const authMiddleware = new Elysia({ name: "auth-middleware" })
             return { user: payload }
         }
     })
+    .macro("useAdmin", {
+        useAuth: true,
+        resolve({user, status}) {
+            if(!user.is_admin) return status(403, {message: "unauthenticated"})
+        }
+    })

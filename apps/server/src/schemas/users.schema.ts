@@ -4,7 +4,8 @@ export const UserSchema = t.Object({
     id: t.Number(),
     username: t.String(),
     password: t.String(),
-    created_at: t.String()
+    created_at: t.String(),
+    is_admin: t.Number()
 });
 export type User = typeof UserSchema['static'];
 
@@ -40,5 +41,6 @@ export const AuthCookieSchema = t.Object({
 
 export const JWTSchema = t.Object({
     id: t.Number(),
-    username: t.String()
+    username: t.String(),
+    is_admin: t.Number()
 });

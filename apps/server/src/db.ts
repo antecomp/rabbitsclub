@@ -23,7 +23,8 @@ db.run(`
         id          INTEGER PRIMARY KEY AUTOINCREMENT,
         username    TEXT NOT NULL UNIQUE,
         password    TEXT NOT NULL,
-        created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+        created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+        is_admin    INTEGER NOT NULL DEFAULT 0
     )
 `);
 
@@ -32,7 +33,8 @@ db.run(`
         id          INTEGER PRIMARY KEY AUTOINCREMENT,
         code        TEXT NOT NULL UNIQUE,
         used_by     INTEGER REFERENCES users(id),
-        created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+        created_at  TEXT NOT NULL DEFAULT (datetime('now')),
+        created_by  TEXT
     )
 `);
 
@@ -87,5 +89,8 @@ export const actions = {
 ["RABBIT-001", "RABBIT-002", "RABBIT-003"].forEach(preseedCode => {
     actions.insertInviteCode(preseedCode);
 });
+
+// Manully elevate an admin fir now
+db.run(`UPDATE users SET is_admin = 1 WHERE username = 'R46617'`)
 
 console.log("db init");

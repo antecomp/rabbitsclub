@@ -3,11 +3,13 @@ import { cors } from "@elysiajs/cors"
 import "./db"
 import { chatRoutes } from "./routes/chat"
 import { authRoutes } from "./routes/auth"
+import { adminRoutes } from "./routes/admin"
 
 const app = new Elysia()
     .use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }))
     .use(authRoutes)
     .use(chatRoutes)
+    .use(adminRoutes)
     .get("/health", () => ({ status: "ok" }), {
         response: t.Object({
             status: t.String()

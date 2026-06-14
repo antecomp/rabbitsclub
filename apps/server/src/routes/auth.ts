@@ -27,7 +27,12 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
 
         actions.claimInviteCode(body.code, user.id);
 
-        const token = await jwt.sign({ id: user.id, username: user.username, exp: Math.floor(Date.now() / 1000) + JWT_TOKEN_LIFESPAN });
+        const token = await jwt.sign({ 
+            id: user.id, 
+            username: user.username, 
+            exp: Math.floor(Date.now() / 1000) + JWT_TOKEN_LIFESPAN,
+            is_admin: user.is_admin
+        });
         auth.set({
             value: token,
             httpOnly: true,
@@ -54,7 +59,12 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         const valid = await Bun.password.verify(body.password, user.password);
         if (!valid) return status(401, {message: "invalid credentials"});
 
-        const token = await jwt.sign({ id: user.id, username: user.username, exp: Math.floor(Date.now() / 1000) + JWT_TOKEN_LIFESPAN });
+        const token = await jwt.sign({ 
+            id: user.id, 
+            username: user.username, 
+            exp: Math.floor(Date.now() / 1000) + JWT_TOKEN_LIFESPAN,
+            is_admin: user.is_admin
+        });
 
         auth.set({
             value: token,
@@ -87,10 +97,10 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
     .get("/me", async ({ jwt, cookie: { auth }, status }) => {
         const payload = await jwt.verify(auth.value);
         if (!payload) return status(401, {message: "unauthenticated"});
-        return { id: payload.id, username: payload.username }
+        return { id: payload.id, username: payload.username, is_admin: payload.is_admin }
     }, {
         response: {
-            200: t.Object({ id: t.Number(), username: t.String() }),
+            200: t.Object({ id: t.Number(), username: t.String(), is_admin: t.Integer() }),
             401: ErrorSchema
         },
         cookie: AuthCookieSchema
