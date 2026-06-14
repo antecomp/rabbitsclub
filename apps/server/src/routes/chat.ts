@@ -2,6 +2,7 @@ import { Elysia, t } from "elysia";
 import { actions } from "../db";
 import { MessageSchema, SentMessageSchema, WSMessageSchema } from "../schemas/messages.schema";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { CHAT_WS_NAME } from "../config";
 
 const onlineUsers = new Map<number, { username: string, count: number }>();
 const getOnlineUsers = () => Array.from(onlineUsers.values()).map(u => u.username);
@@ -25,14 +26,14 @@ export const chatRoutes = new Elysia()
             const { id, username } = ws.data.user;
             const current = onlineUsers.get(id);
 
-            ws.subscribe("chat");
+            ws.subscribe(CHAT_WS_NAME);
 
             if (current) {
                 current.count++
             } else {
                 onlineUsers.set(id, { username, count: 1 });
-                ws.publish("chat", { type: 'system', content: `${username} is now online` })
-                ws.publish("chat", { type: 'online', users: getOnlineUsers() })
+                ws.publish(CHAT_WS_NAME, { type: 'system', content: `${username} is now online` })
+                ws.publish(CHAT_WS_NAME, { type: 'online', users: getOnlineUsers() })
             }
 
             // Send current online list to the newly connected client
@@ -44,7 +45,7 @@ export const chatRoutes = new Elysia()
                 console.error("Unable to post message to DB", message);
                 return;
             }
-            ws.publish("chat", { ...saved, type: 'user' }); // broadcasts to everyone but the sender
+            ws.publish(CHAT_WS_NAME, { ...saved, type: 'user' }); // broadcasts to everyone but the sender
             ws.send({ ...saved, type: 'user' }); // echos back to sender.
         },
         close(ws) {
@@ -55,10 +56,10 @@ export const chatRoutes = new Elysia()
             current.count--;
             if (current.count === 0) {
                 onlineUsers.delete(id);
-                ws.publish("chat", { type: "system", content: `${username} has left` });
-                ws.publish("chat", { type: 'online', users: getOnlineUsers() })
+                ws.publish(CHAT_WS_NAME, { type: "system", content: `${username} has left` });
+                ws.publish(CHAT_WS_NAME, { type: 'online', users: getOnlineUsers() })
             }
 
-            ws.unsubscribe("chat");
+            ws.unsubscribe(CHAT_WS_NAME);
         }
     })
