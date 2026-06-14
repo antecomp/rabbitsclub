@@ -8,7 +8,8 @@
   "dependencies": {
     "@elysiajs/cors": "^1.4.2",
     "@elysiajs/jwt": "^1.4.2",
-    "elysia": "latest"
+    "elysia": "latest",
+    "http-status-ts": "^2.0.1"
   },
   "devDependencies": {
     "@types/bun": "latest"

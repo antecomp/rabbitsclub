@@ -34,7 +34,7 @@ db.run(`
         code        TEXT NOT NULL UNIQUE,
         used_by     INTEGER REFERENCES users(id),
         created_at  TEXT NOT NULL DEFAULT (datetime('now')),
-        created_by  TEXT
+        created_by  INTEGER NOT NULL REFERENCES users(id)
     )
 `);
 
@@ -57,8 +57,8 @@ const queries = {
     getUserByUsername: db.prepare<User, { $username: string }>(`
         SELECT * FROM users WHERE username = $username
     `),
-    addInviteCode: db.prepare<InviteCode, { $code: string }>(`
-        INSERT OR IGNORE INTO invite_codes (code) VALUES ($code)
+    addInviteCode: db.prepare<InviteCode, { $code: string, $created_by: number }>(`
+        INSERT OR IGNORE INTO invite_codes (code, created_by) VALUES ($code, $created_by) RETURNING *
     `),
     getInviteCode: db.prepare<InviteCode, { $code: string }>(`
         SELECT * FROM invite_codes WHERE code = $code
@@ -77,18 +77,16 @@ export const actions = {
         queries.insertUser.get({ $username: username, $password: password }),
     getUserByUsername: (username: string) =>
         queries.getUserByUsername.get({ $username: username }),
-    insertInviteCode: (code: string) =>
-        queries.addInviteCode.get({ $code: code }),
+    insertInviteCode: (code: string, created_by: number) =>
+        queries.addInviteCode.get({ $code: code, $created_by: created_by }),
     getInviteCode: (code: string) =>
         queries.getInviteCode.get({ $code: code }),
     claimInviteCode: (code: string, userId: number) =>
         queries.claimInviteCode.get({ $code: code, $userId: userId })
 };
 
-// Manually seed some in for now.
-["RABBIT-001", "RABBIT-002", "RABBIT-003"].forEach(preseedCode => {
-    actions.insertInviteCode(preseedCode);
-});
+// Seed in root user invite
+actions.insertInviteCode("ADMIN", 1);
 
 // Manully elevate an admin fir now
 db.run(`UPDATE users SET is_admin = 1 WHERE username = 'R46617'`)

@@ -1,4 +1,3 @@
-// src/middleware/auth.middleware.ts
 import Elysia from "elysia"
 import { jwt } from "@elysiajs/jwt"
 import { AuthCookieSchema, JWTSchema } from "../schemas/users.schema"

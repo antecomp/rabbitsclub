@@ -26,6 +26,7 @@
         "@elysiajs/cors": "^1.4.2",
         "@elysiajs/jwt": "^1.4.2",
         "elysia": "latest",
+        "http-status-ts": "^2.0.1",
       },
       "devDependencies": {
         "@types/bun": "latest",
@@ -201,6 +202,8 @@
     "goober": ["goober@2.1.19", "", { "peerDependencies": { "csstype": "^3.0.10" } }, "sha512-U7veizMqxyKlM58+Z5j2ngJBH/r9siDmxpvNxSw0PylF6WQvrASJEZrxh1hidRBJc2jqoBVSyOban5u8m+6Rxg=="],
 
     "html-entities": ["html-entities@2.3.3", "", {}, "sha512-DV5Ln36z34NNTDgnz0EWGBLZENelNAtkiFA4kyNOG2tDI6Mz1uSWiq1wAKdyjnJwyDiDO7Fa2SO1CTxPXL8VxA=="],
+
+    "http-status-ts": ["http-status-ts@2.0.1", "", {}, "sha512-oUiRl48Ov900YfDgXkaHjmC6V5KJX9Wp2DUL23MwONsLf6SKGxDVgg0Q3v0PBbNhtyzLzCPN/Dz9vFpsY6dSvw=="],
 
     "ieee754": ["ieee754@1.2.1", "", {}, "sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA=="],
 
