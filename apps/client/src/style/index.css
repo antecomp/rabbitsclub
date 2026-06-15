@@ -1,0 +1,26 @@
+@font-face {
+     font-family: 'wo3';
+     src: url('../assets/WO3.ttf');
+}
+
+* {
+     margin: 0;
+     padding: 0;
+}
+
+body {
+     height: 100vh;
+     width: 100vw;
+
+     background-image: 
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Ccircle cx='4.5' cy='4.5' r='.5' fill='%23ABABAB'/%3E%3C/svg%3E"),
+          url('../assets/brand.svg');
+          background-position: top left, bottom right;
+          background-repeat: repeat, no-repeat;
+          background-size: auto, 35vh;
+}
+
+h1, h2, h3, h4, h5 {
+     font-weight: normal;
+     font-family: 'wo3';
+}

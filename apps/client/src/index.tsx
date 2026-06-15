@@ -4,6 +4,7 @@ import Login from "./routes/Login"
 import Chat from "./routes/Chat"
 import { AdminRoute, GuestRoute, ProtectedRoute } from "./components/ProtectedRoute"
 import Admin from "./routes/Admin"
+import './style/index.css'
 
 render(
     () => <Router>
