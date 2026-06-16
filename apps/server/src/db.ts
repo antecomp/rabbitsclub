@@ -66,6 +66,9 @@ const queries = {
     `),
     claimInviteCode: db.prepare<InviteCode, { $code: string, $userId: number }>(`
         UPDATE invite_codes SET used_by = $userId WHERE code = $code AND used_by IS NULL RETURNING id
+    `),
+    getUserCount: db.prepare<{ count: number }, []>(`
+        SELECT COUNT(*) AS count FROM users
     `)
 }
 
@@ -83,7 +86,9 @@ export const actions = {
     getInviteCode: (code: string) =>
         queries.getInviteCode.get({ $code: code }),
     claimInviteCode: (code: string, userId: number) =>
-        queries.claimInviteCode.get({ $code: code, $userId: userId })
+        queries.claimInviteCode.get({ $code: code, $userId: userId }),
+    getUserCount: () =>
+        queries.getUserCount.get()?.count ?? 0
 };
 
 // Seed in root user invite

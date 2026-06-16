@@ -4,6 +4,7 @@ import "./db"
 import { chatRoutes } from "./routes/chat"
 import { authRoutes } from "./routes/auth"
 import { adminRoutes } from "./routes/admin"
+import { actions } from "./db"
 
 const app = new Elysia()
     .use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }))
@@ -15,6 +16,7 @@ const app = new Elysia()
             status: t.String()
         })
     })
+    .get("/usercount", () => actions.getUserCount())
     .listen(process.env.PORT ?? 3000)
 
 export type App = typeof app
