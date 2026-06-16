@@ -7,6 +7,7 @@ import { AdminRoute, GuestRoute, ProtectedRoute } from "./components/ProtectedRo
 import Admin from "./routes/Admin"
 import Landing from "./routes/Landing"
 import './style/index.css'
+import About from "./routes/About"
 
 render(
     () => <Router>
@@ -25,6 +26,7 @@ render(
         <Route path="/admin" component={() => (
             <AdminRoute><Admin /></AdminRoute>
         )} />
+        <Route path="/about" component={About}/>
     </Router>,
     document.getElementById("root")!
 )
