@@ -1,20 +1,14 @@
 import { useNavigate } from "@solidjs/router";
-import { Container, Selector, Title } from "../styled/MainMenu";
+import { Container, Selector } from "../styled/MainMenu";
 import Footer from "../components/Footer";
 
 export default function Landing() {
     const navigate = useNavigate();
     return <>
         <Container>
-            <Selector>
-                <Title onClick={() => navigate("/login")}>login</Title>
-            </Selector>
-            <Selector>
-                <Title onClick={() => navigate("/register")}>register</Title>
-            </Selector>
-            <Selector>
-                <Title onClick={() => navigate("/about")}>about</Title>
-            </Selector>
+            <Selector onClick={() => navigate("/login")}>login</Selector>
+            <Selector onClick={() => navigate("/register")}>register</Selector>
+            <Selector onClick={() => navigate("/about")}>about</Selector>
             <Footer>
                 Use input device to select menu options.
             </Footer>

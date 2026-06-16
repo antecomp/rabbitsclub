@@ -14,11 +14,21 @@ export const Container = styled("div")`
     user-select: none;
     animation: flicker-in 0.3s steps(12, end) forwards;
 `
-export const Selector = styled("div")`
+
+export const Selector = styled("button")`
     display: flex;
-    > h1:hover {
+    width: fit-content;
+    padding: 0;
+    border: none;
+    background: none;
+    font-family: 'wo3';
+    font-size: 4rem;
+    font-weight: normal;
+
+    &:hover, &:focus {
         cursor: pointer;
         color: gray;
+        outline: none;
     }
 `
 export const Title = styled("h1")`
