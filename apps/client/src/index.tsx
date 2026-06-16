@@ -12,7 +12,7 @@ import About from "./routes/About"
 render(
     () => <Router>
         <Route path="/" component={() => (
-            <GuestRoute><Landing /></GuestRoute>
+            <Landing />
         )} />
         <Route path="/login" component={() => (
             <GuestRoute><Login /></GuestRoute>
