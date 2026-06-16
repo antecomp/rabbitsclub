@@ -3,7 +3,7 @@ import { useNavigate } from "@solidjs/router"
 import { BE } from "../api"
 import { refetchUser } from "../store"
 import Footer from "../components/Footer"
-import { Container, Title, Subtitle, Divider } from "../styled/MainMenu"
+import { Container, Title, Subtitle, Divider, AuthForm } from "../styled/MainMenu"
 
 export default function Register() {
     const navigate = useNavigate()
@@ -36,7 +36,7 @@ export default function Register() {
             <Title>register</Title>
             <Subtitle>create account</Subtitle>
             <Divider />
-            <form onsubmit={submit}>
+            <AuthForm onsubmit={submit}>
                 <input
                     value={username()}
                     onInput={e => setUsername(e.target.value)}
@@ -53,9 +53,12 @@ export default function Register() {
                     onInput={e => setRegisterCode(e.target.value)}
                     placeholder="Registration Code"
                 />
-                <button type="submit">Register</button>
-            </form>
-            <Footer/>
+                <button type="submit">[ REGISTER ]</button>
+                <button onClick={() => navigate("/")}>[ BACK ]</button>
+            </AuthForm>
+            <Footer>
+                Enter account information into input fields. <br /> {error()}
+            </Footer>
         </Container>
     )
 }

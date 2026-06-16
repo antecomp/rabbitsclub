@@ -12,7 +12,9 @@ export default function Landing() {
             <Selector>
                 <Title onClick={() => navigate("/register")}>register</Title>
             </Selector>
-            <Footer/>
+            <Footer>
+                Use input device to select menu options.
+            </Footer>
         </Container>
     </>
 }

@@ -30,3 +30,20 @@ h1, h2, h3, h4, h5 {
      font-weight: normal;
      font-family: 'wo3';
 }
+
+/* animation: flicker-in 0.2s steps(12, end) forwards; */
+@keyframes flicker-in {
+  0.00% { opacity: 0.000; }
+  8.33% { opacity: 0.045; }
+  16.67% { opacity: 0.068; }
+  25.00% { opacity: 0.087; }
+  33.33% { opacity: 0.403; }
+  41.67% { opacity: 0.118; }
+  50.00% { opacity: 0.132; }
+  58.33% { opacity: 0.145; }
+  66.67% { opacity: 0.157; }
+  75.00% { opacity: 0.468; }
+  83.33% { opacity: 0.179; }
+  91.67% { opacity: 1.000; }
+  100.00% { opacity: 1.000; }
+}

@@ -3,7 +3,7 @@ import { useNavigate } from "@solidjs/router"
 import { BE } from "../api"
 import { refetchUser } from "../store"
 import Footer from "../components/Footer"
-import { Container, Title, Subtitle, Divider } from "../styled/MainMenu"
+import { Container, Title, Subtitle, Divider, AuthForm } from "../styled/MainMenu"
 
 export default function Login() {
     const navigate = useNavigate()
@@ -32,9 +32,9 @@ export default function Login() {
     return (
         <Container>
             <Title>login</Title>
-            <Subtitle>enter credentials</Subtitle>
+            <Subtitle>authentication menu</Subtitle>
             <Divider />
-            <form onsubmit={submit}>
+            <AuthForm onsubmit={submit}>
                 <input
                     value={username()}
                     onInput={e => setUsername(e.target.value)}
@@ -46,9 +46,12 @@ export default function Login() {
                     onInput={e => setPassword(e.target.value)}
                     placeholder="Password"
                 />
-                <button type="submit">Login</button>
-            </form>
-            <Footer/>
+                <button type="submit">[ LOGIN ]</button>
+                <button onClick={() => navigate("/")}>[ BACK ]</button>
+            </AuthForm>
+            <Footer>
+                Enter credentials into input fields. <br /> {error()}
+            </Footer>
         </Container>
     )
 }
