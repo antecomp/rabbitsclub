@@ -17,6 +17,9 @@ export default function Landing() {
             >
                 <Selector onClick={() => navigate("/chat")}>resume</Selector>
             </Show>
+            <Show when={user()?.is_admin}>
+                <Selector onClick={() => navigate("/admin")}>admin</Selector>
+            </Show>
             <Selector onClick={() => navigate("/about")}>about</Selector>
             <Footer>
                 Use input device to select menu options.
