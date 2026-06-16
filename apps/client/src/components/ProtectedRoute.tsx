@@ -7,7 +7,7 @@ export function ProtectedRoute(props: ParentProps) {
 
     createEffect(() => {
         if (user.loading) return;
-        if (!user()) navigate("/login", { replace: true })
+        if (!user()) navigate("/", { replace: true })
     });
 
     return <>{props.children}</>
@@ -29,7 +29,7 @@ export function AdminRoute(props: ParentProps) {
 
     createEffect(() => {
         if (user.loading) return;
-        if (!user()?.is_admin) navigate("/login", { replace: true })
+        if (!user()?.is_admin) navigate("/", { replace: true })
     });
 
     return <>{props.children}</>

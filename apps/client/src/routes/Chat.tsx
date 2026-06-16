@@ -65,7 +65,7 @@ export default function Chat() {
     const logout = async () => {
         await BE.auth.logout.post()
         await refetchUser();
-        navigate("/login")
+        navigate("/", {replace: true})
     }
 
     return (

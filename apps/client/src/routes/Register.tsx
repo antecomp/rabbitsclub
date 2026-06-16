@@ -5,19 +5,21 @@ import { refetchUser } from "../store"
 import Footer from "../components/Footer"
 import { Container, Title, Subtitle, Divider } from "../styled/MainMenu"
 
-export default function Login() {
+export default function Register() {
     const navigate = useNavigate()
     const [username, setUsername] = createSignal("")
     const [password, setPassword] = createSignal("")
+    const [registerCode, setRegisterCode] = createSignal("")
     const [error, setError] = createSignal("")
 
     const submit = async (e: SubmitEvent) => {
         e.preventDefault()
         setError("")
 
-        const { error: err } = await BE.auth.login.post({
+        const { error: err } = await BE.auth.register.post({
             username: username(),
             password: password(),
+            code: registerCode()
         })
 
         if (err) {
@@ -31,8 +33,8 @@ export default function Login() {
 
     return (
         <Container>
-            <Title>login</Title>
-            <Subtitle>enter credentials</Subtitle>
+            <Title>register</Title>
+            <Subtitle>create account</Subtitle>
             <Divider />
             <form onsubmit={submit}>
                 <input
@@ -46,7 +48,12 @@ export default function Login() {
                     onInput={e => setPassword(e.target.value)}
                     placeholder="Password"
                 />
-                <button type="submit">Login</button>
+                <input
+                    value={registerCode()}
+                    onInput={e => setRegisterCode(e.target.value)}
+                    placeholder="Registration Code"
+                />
+                <button type="submit">Register</button>
             </form>
             <Footer/>
         </Container>
