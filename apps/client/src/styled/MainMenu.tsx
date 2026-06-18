@@ -6,8 +6,8 @@ export const Container = styled("div")`
     top: 40%;
     left: 10vw;
     transform: translate(0%, -50%);
-    max-width: 500px;
-    width: 50vw;
+    max-width: 580px;
+    width: 70vw;
     height: 350px;
     display: flex;
     flex-direction: column;
@@ -88,7 +88,6 @@ export const AuthForm = styled('form')`
     button {
         border: none;
         background: none;
-        font-size: 18px;
     }
 
     button:hover, button:focus {

@@ -1,13 +1,47 @@
-import { createResource, createSignal, For, onCleanup, onMount, Show } from "solid-js"
+import { createEffect, createResource, createSignal, For, onCleanup, onMount, Show } from "solid-js"
 import { useNavigate } from "@solidjs/router"
 import { BE } from "../api"
 import { refetchUser, user } from "../store"
 import { MessageHistoryData } from "../types/message.type";
+import Message from "../components/chat/Message";
+import Footer from "../components/Footer";
+import { styled } from "solid-styled-components";
+import { Divider, Title } from "../styled/MainMenu";
+
+const ChatContainer = styled("div")`
+    position: absolute;
+    top: 5vh;
+    left: 5vw;
+    max-width: 580px;
+    width: 70vw;
+    height: 750px;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    animation: flicker-in 0.3s steps(12, end) forwards;
+    
+    button {
+        border: none;
+        background: none;
+    }
+
+    button:hover, button:focus {
+        color: gray;
+        outline: none;
+        cursor: pointer;
+    }
+`
+
+// temp, will do better layout later.
+const Messages = styled('div')`
+    overflow: auto;
+`
 
 export default function Chat() {
     const navigate = useNavigate();
     const [content, setContent] = createSignal("");
     const [whoisOnline, setWhoIsOnline] = createSignal<string[]>([]);
+    let messagesEl: HTMLDivElement | undefined;
 
     const [messages, setMessages] = createSignal<MessageHistoryData>([]);
     const [hasMoreMessages, setHasMoreMessages] = createSignal(true);
@@ -65,35 +99,43 @@ export default function Chat() {
     const logout = async () => {
         await BE.auth.logout.post()
         await refetchUser();
-        navigate("/", {replace: true})
+        navigate("/", { replace: true })
     }
 
+    // TODO: Disable when scrolled up enough & when LOAD MORE is clicked...
+    createEffect(() => {
+        messages();
+        if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
+    })
+
     return (
-        <div>
+        <ChatContainer>
             <header>
-                <span>Logged in as {user()?.username}</span>
-                <button onClick={logout}>Logout</button>
-                <br />
-                online: {whoisOnline().join(", ")}
+                <Title>chat</Title>
+                <Divider/>
             </header>
-            <Show when={hasMoreMessages()}>
-                <button onClick={loadMore}>Load More</button>
-            </Show>
-            <For each={messages()}>
-                {msg => (
-                    <div>
-                        <strong>{msg.username}</strong>: {msg.content}
-                    </div>
-                )}
-            </For>
+            <Messages ref={messagesEl}>
+                <Show when={hasMoreMessages()}>
+                    <button style={'width: 100%;'} onClick={loadMore}>[ LOAD MORE ]</button>
+                </Show>
+                <For each={messages()}>
+                    {msg => Message(msg)}
+                </For>
+            </Messages>
             <form onsubmit={send}>
                 <input
                     value={content()}
                     onInput={e => setContent(e.target.value)}
                     placeholder="Message"
                 />
-                <button type="submit">Send</button>
+                <button type="submit">[ SEND ]</button>
             </form>
-        </div>
+            <Footer>
+                <span>Logged in as {user()?.username}</span>
+                <button onClick={logout}>[ LOG OUT ]</button>
+                <br />
+                online: {whoisOnline().join(", ")}
+            </Footer>
+        </ChatContainer>
     )
 }
