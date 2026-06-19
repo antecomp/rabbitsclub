@@ -4,6 +4,7 @@ import { format, formatDistanceToNow } from "date-fns";
 import chatbox from '../../assets/chatbox.png';
 import taghead from '../../assets/taghead.png';
 import tagtail from '../../assets/tagtail.png';
+import { createSignal, onCleanup } from "solid-js";
 
 const PFP_SIZE = '40px';
 const USERNAME_SIZE = '0.7rem';
@@ -35,7 +36,7 @@ const MessageBody = styled("div")`
     /* width: min(350px, 80%); */
     width: fit-content;
     min-width: 150px;
-    max-width: 80%;
+    max-width: 75%;
 
     overflow-wrap: anywhere;
     
@@ -108,8 +109,18 @@ export default function Message(props: {
     content: string,
     created_at: string
 }) {
-    const niceDate = formatDistanceToNow(new Date(props.created_at), {addSuffix: true});
-    const fullDate = format(new Date(props.created_at), 'dd.MM.yy HH:mm');
+    const createdAt = new Date(props.created_at);
+    const [now, setNow] = createSignal(Date.now());
+
+    const interval = setInterval(() => setNow(Date.now()), 30000);
+    onCleanup(() => clearInterval(interval));
+
+    const niceDate = () => {
+        now();
+        return formatDistanceToNow(createdAt, { addSuffix: true });
+    };
+
+    const fullDate = format(createdAt, 'dd.MM.yy HH:mm');
 
     return (
         <MessageContainer>
@@ -118,7 +129,7 @@ export default function Message(props: {
             </PfpContainer>
             <Username>{props.username}</Username>
             <MessageBody>
-                <TimestampContainer><span class="dateinfo">{niceDate}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
+                <TimestampContainer><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
                 <MessageContent>{props.content}</MessageContent>
             </MessageBody>
         </MessageContainer>

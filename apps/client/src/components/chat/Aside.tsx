@@ -10,7 +10,8 @@ const Body = styled('aside')`
     margin-left: auto;
     top: 0;
     text-align: right;
-    width: 20%;
+    width: 18%;
+    padding: 5px;
     z-index: 2;
 
     button {
