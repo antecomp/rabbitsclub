@@ -27,6 +27,6 @@ export default function Admin() {
             <button type="submit">[ SEND INVITE ]</button>
             <button onClick={() => navigate("/")}>[ BACK ]</button>
         </AuthForm>
-        <Footer>enter invite code append</Footer>
+        <Footer>I trust you know what you're doing...</Footer>
         </Container>
 }

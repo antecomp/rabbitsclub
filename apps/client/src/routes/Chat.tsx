@@ -9,6 +9,7 @@ import { styled } from "solid-styled-components";
 import { Divider, Title } from "../styled/MainMenu";
 import { playSoundOnce } from "../util/playSound";
 import ping from '../assets/ping.mp3';
+import Aside from "../components/chat/Aside";
 
 const ChatContainer = styled("div")`
     position: absolute;
@@ -25,6 +26,7 @@ const ChatContainer = styled("div")`
 
 // temp, will do better layout later.
 const Messages = styled('div')`
+    position: relative;
     overflow: auto;
     &::-webkit-scrollbar {
         visibility: hidden;
@@ -148,6 +150,7 @@ export default function Chat() {
                 <Divider />
             </header>
             <Messages ref={messagesEl}>
+                <Aside whoIsOnline={whoisOnline()}/>
                 <Show when={hasMoreMessages()}>
                     <button style={'width: 100%;'} onClick={loadMore}>[ LOAD MORE ]</button>
                 </Show>

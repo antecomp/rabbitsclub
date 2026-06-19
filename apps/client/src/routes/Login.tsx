@@ -26,7 +26,7 @@ export default function Login() {
         }
 
         await refetchUser()
-        navigate("/chat")
+        navigate("/")
     }
 
     return (

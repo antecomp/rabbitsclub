@@ -8,6 +8,7 @@ import Admin from "./routes/Admin"
 import Landing from "./routes/Landing"
 import './style/index.css'
 import About from "./routes/About"
+import Settings from "./routes/Settings"
 
 render(
     () => <Router>
@@ -23,10 +24,13 @@ render(
         <Route path="/chat" component={() => (
             <ProtectedRoute><Chat /></ProtectedRoute>
         )} />
+        <Route path="/settings" component={() => (
+            <ProtectedRoute><Settings /></ProtectedRoute>
+        )} />
         <Route path="/admin" component={() => (
             <AdminRoute><Admin /></AdminRoute>
         )} />
-        <Route path="/about" component={About}/>
+        <Route path="/about" component={About} />
     </Router>,
     document.getElementById("root")!
 )
