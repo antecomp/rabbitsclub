@@ -36,6 +36,8 @@ const MessageBody = styled("div")`
     width: fit-content;
     min-width: 150px;
     max-width: 80%;
+
+    overflow-wrap: anywhere;
     
     background: white;
     background-clip: padding-box;

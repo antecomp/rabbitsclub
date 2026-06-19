@@ -7,6 +7,8 @@ import Message from "../components/chat/Message";
 import Footer from "../components/Footer";
 import { styled } from "solid-styled-components";
 import { Divider, Title } from "../styled/MainMenu";
+import { playSoundOnce } from "../util/playSound";
+import ping from '../assets/ping.mp3';
 
 const ChatContainer = styled("div")`
     position: absolute;
@@ -110,6 +112,7 @@ export default function Chat() {
             switch (data.type) {
                 case 'user':
                     setMessages(prev => [...prev, data])
+                    if (!document.hasFocus()) void playSoundOnce(ping);
                     break;
                 case 'system':
                     // will add toasts later
