@@ -11,7 +11,7 @@ import tagtail from '../../assets/tagtail.png';
 import tagtail_f from '../../assets/tagtail_f.png';
 import { createSignal, onCleanup } from "solid-js";
 
-const INCOMING_ON_RIGHT = false;
+const INCOMING_ON_RIGHT = true;
 
 const PFP_SIZE = '40px';
 const USERNAME_SIZE = '0.7rem';
@@ -254,9 +254,9 @@ const OutgoingRightBody = styled("div")`
     }
 `
 
-const TimestampContainer = styled("div")`
+const TimestampContainer = styled("div")<{align: 'right' | 'left'}>`
     font-size: ${DATE_SIZE};
-    text-align: right;
+    text-align: ${props => props.align};
     color: gray;
     transform: translate(2px, -4px);
 `
@@ -343,7 +343,7 @@ export default function Message(props: {
             return (
                 <OutgoingRightContainer>
                     <OutgoingRightBody>
-                        <TimestampContainer><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
+                        <TimestampContainer align="left"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
                         <MessageContent>{props.content}</MessageContent>
                     </OutgoingRightBody>
                     <OutgoingRightPfpContainer>
@@ -356,7 +356,7 @@ export default function Message(props: {
         return (
             <OutgoingLeftContainer>
                 <OutgoingLeftBody>
-                    <TimestampContainer><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
+                    <TimestampContainer align="right"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
                     <MessageContent>{props.content}</MessageContent>
                 </OutgoingLeftBody>
                 <OutgoingLeftPfpContainer>
@@ -374,7 +374,7 @@ export default function Message(props: {
                 </IncomingLeftPfpContainer>
                 <UsernameLeft>{props.username}</UsernameLeft>
                 <IncomingLeftBody>
-                    <TimestampContainer><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
+                    <TimestampContainer align="right"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
                     <MessageContent>{props.content}</MessageContent>
                 </IncomingLeftBody>
             </IncomingLeftContainer>
@@ -388,7 +388,7 @@ export default function Message(props: {
             </IncomingRightPfpContainer>
             <UsernameRight>{props.username}</UsernameRight>
             <IncomingRightBody>
-                <TimestampContainer><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
+                <TimestampContainer align="left"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
                 <MessageContent>{props.content}</MessageContent>
             </IncomingRightBody>
         </IncomingRightContainer>
