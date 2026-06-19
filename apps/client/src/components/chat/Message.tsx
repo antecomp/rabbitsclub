@@ -15,7 +15,7 @@ const PFP_GAP = '5px';
 
 const MessageContainer = styled("div")`
     display: grid;
-    grid-template-columns: ${PFP_SIZE} minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) ${PFP_SIZE};
     margin: ${MESSAGE_MARGINS};
     margin-top: calc(${USERNAME_SIZE} + ${MESSAGE_MARGINS});
     position: relative;
@@ -26,6 +26,9 @@ const MessageContainer = styled("div")`
 `
 
 const PfpContainer = styled("div")`
+    grid-column: 2;
+    grid-row: 1;
+
     img {
         display: block;
         width: 100%;
@@ -34,25 +37,29 @@ const PfpContainer = styled("div")`
 `
 
 const MessageBody = styled("div")`
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: end;
     width: fit-content;
     min-width: 150px;
     max-width: 100%;
     box-sizing: border-box;
 
     overflow-wrap: anywhere;
+    text-align: right;
     
-    background: #f7f7f7;
+    background: #e5e5e5;
     background-clip: padding-box;
-    border-image-slice: 10 5 6 10;
-    border-image-width: 10px 5px 6px 10px;
-    border-width: 10px 5px 6px 10px;
+    border-image-slice: 10 10 6 5;
+    border-image-width: 10px 10px 6px 5px;
+    border-width: 10px 10px 6px 5px;
     border-image-outset: 0px 0px 0px 0px;
     border-image-repeat: stretch stretch;
     border-image-source: url(${chatbox});
     border-style: solid;
 
     padding-bottom: 8px;
-    padding-right: 5px;
+    padding-left: 5px;
 
     &:hover span.dateinfo:first-child {
         display: none;
@@ -70,7 +77,7 @@ const MessageBody = styled("div")`
 
 const SentMessageContainer = styled("div")`
     display: grid;
-    grid-template-columns: minmax(0, 1fr) ${PFP_SIZE};
+    grid-template-columns: ${PFP_SIZE} minmax(0, 1fr);
     margin: ${MESSAGE_MARGINS};
     position: relative;
 
@@ -80,7 +87,7 @@ const SentMessageContainer = styled("div")`
 `
 
 const SentPfpContainer = styled("div")`
-    grid-column: 2;
+    grid-column: 1;
     grid-row: 1;
 
     img {
@@ -90,29 +97,29 @@ const SentPfpContainer = styled("div")`
 `
 
 const SentMessageBody = styled("div")`
-    grid-column: 1;
+    grid-column: 2;
     grid-row: 1;
-    justify-self: end;
+    justify-self: start;
     width: fit-content;
     min-width: 150px;
     max-width: 100%;
     box-sizing: border-box;
 
     overflow-wrap: anywhere;
-    text-align: right;
+    text-align: left;
 
-    background: #e5e5e5;
+    background: #f7f7f7;
     background-clip: padding-box;
-    border-image-slice: 10 10 6 5;
-    border-image-width: 10px 10px 6px 5px;
-    border-width: 10px 10px 6px 5px;
+    border-image-slice: 10 5 6 10;
+    border-image-width: 10px 5px 6px 10px;
+    border-width: 10px 5px 6px 10px;
     border-image-outset: 0px 0px 0px 0px;
     border-image-repeat: stretch stretch;
     border-image-source: url(${sentbox});
     border-style: solid;
 
     padding-bottom: 8px;
-    padding-left: 5px;
+    padding-right: 5px;
 
     &:hover span.dateinfo:first-child {
         display: none;
@@ -136,27 +143,29 @@ const TimestampContainer = styled("div")`
 
 const Username = styled(`div`)`
     position: absolute;
-    left: calc(${PFP_SIZE} + ${PFP_GAP});
+    right: calc(${PFP_SIZE} + ${PFP_GAP});
     top: -1px;
     font-size: ${USERNAME_SIZE};
     transform: translateY(-100%);
-    background-color: #e9e9e9;
+    background-color: #dcdcdc;
     border: solid #5b5b5b 1px;
-    border-right: none;
-    padding-left: 2px;
+    border-left: none;
+    padding-right: 2px;
 
     &::before {
-        content: url(${taghead});
-        position: absolute;
-        top: -1px;
-        left: -1px;
-        z-index: 0;
-    }
-
-    &::after {
         content: url(${tagtail});
         position: absolute;
         top: -1px;
+        left: 0px;
+        z-index: 0;
+        transform: translateX(-100%);
+    }
+
+    &::after {
+        content: url(${taghead});
+        position: absolute;
+        top: -1px;
+        right: -1px;
     }
 `
 
