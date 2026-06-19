@@ -13,6 +13,7 @@ import Aside from "../components/chat/Aside";
 const MESSAGE_COLUMN_SIZE = '1fr';
 const ASIDE_COLUMN_SIZE = '120px';
 const CHAT_COLUMN_GAP = '10px';
+const AUTO_SCROLL_THRESHOLD = 300;
 
 const ChatContainer = styled("div")`
     position: absolute;
@@ -95,6 +96,7 @@ export default function Chat() {
 
     const [messages, setMessages] = createSignal<MessageHistoryData>([]);
     const [hasMoreMessages, setHasMoreMessages] = createSignal(true);
+    const [autoScrollMessages, setAutoScrollMessages] = createSignal(true);
     onMount(async () => {
         const { data } = await BE.messages.get({ query: {} });
         if (data) {
@@ -108,12 +110,21 @@ export default function Chat() {
         const oldest = messages()![0];
         if (!oldest) return;
 
+        setAutoScrollMessages(false);
+        const previousScrollHeight = messagesEl?.scrollHeight ?? 0;
+        const previousScrollTop = messagesEl?.scrollTop ?? 0;
+
         const { data } = await BE.messages.get({
             query: { before: String(oldest.id) }
         });
         if (!data) return;
         setMessages(prev => [...data, ...prev])
         setHasMoreMessages(data.length === 50)
+
+        queueMicrotask(() => {
+            if (!messagesEl) return;
+            messagesEl.scrollTop = messagesEl.scrollHeight - previousScrollHeight + previousScrollTop;
+        });
     }
 
     let sub: ReturnType<typeof BE.ws.subscribe>
@@ -127,7 +138,7 @@ export default function Chat() {
             switch (data.type) {
                 case 'user':
                     setMessages(prev => [...prev, data])
-                    if (!document.hasFocus()) void playSoundOnce(ping);
+                    if (!document.hasFocus() || !autoScrollMessages()) void playSoundOnce(ping);
                     break;
                 case 'system':
                     // will add toasts later
@@ -149,10 +160,20 @@ export default function Chat() {
         setContent("")
     }
 
-    // TODO: Disable when scrolled up enough & when LOAD MORE is clicked...
+    const updateAutoScroll = () => {
+        if (!messagesEl) return;
+        const distanceFromBottom = messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight;
+        setAutoScrollMessages(distanceFromBottom <= AUTO_SCROLL_THRESHOLD);
+    }
+
+    const returnToPresent = () => {
+        setAutoScrollMessages(true);
+        if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
     createEffect(() => {
         messages();
-        if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
+        if (messagesEl && autoScrollMessages()) messagesEl.scrollTop = messagesEl.scrollHeight;
     })
 
     return (
@@ -162,9 +183,9 @@ export default function Chat() {
                 <Divider />
             </header>
             <ChatBody>
-                <Messages ref={messagesEl}>
+                <Messages ref={messagesEl} onScroll={updateAutoScroll}>
                     <Show when={hasMoreMessages()}>
-                        <button style={'width: 100%;'} onClick={loadMore}>[ LOAD MORE ]</button>
+                        <button style={'width: 100%; padding-top: 10px'} onClick={loadMore}>[ LOAD MORE ]</button>
                     </Show>
                     <For each={messages()}>
                         {msg => (
@@ -175,7 +196,11 @@ export default function Chat() {
                         )}
                     </For>
                 </Messages>
-                <Aside whoIsOnline={whoisOnline()}/>
+                <Aside
+                    whoIsOnline={whoisOnline()}
+                    showReturnToPresent={!autoScrollMessages()}
+                    onReturnToPresent={returnToPresent}
+                />
             </ChatBody>
             <Divider color={'gray'}/>
             <SendForm onsubmit={send}>

@@ -28,7 +28,7 @@ export default function Register() {
         }
 
         await refetchUser()
-        navigate("/chat")
+        navigate("/")
     }
 
     return (
@@ -57,7 +57,7 @@ export default function Register() {
                 <button onClick={() => navigate("/")}>[ BACK ]</button>
             </AuthForm>
             <Footer>
-                Enter account information into input fields. <br /> {error()}
+                You must have a valid registration code to join. <br /> {error()}
             </Footer>
         </Container>
     )

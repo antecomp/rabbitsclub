@@ -24,6 +24,9 @@ export default function Landing() {
             </Show>
             <Selector onClick={() => navigate("/about")}>about</Selector>
             <Footer>
+                <Show when={user()}>
+                    Hello, {user()?.username}. <br />
+                </Show>
                 Use input device to select menu options.
             </Footer>
         </Container>

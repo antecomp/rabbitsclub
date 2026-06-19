@@ -10,9 +10,11 @@ const Body = styled('aside')`
     min-width: 0;
 
     button {
+        display: block;
         font-size: 1em;
         border: none;
         background: none;
+        margin-left: auto;
     }
 
     button:hover, button:focus {
@@ -31,6 +33,8 @@ const SmallDivider = styled('hr')`
 
 export default function Aside(props: {
     whoIsOnline: string[]
+    showReturnToPresent?: boolean
+    onReturnToPresent?: () => void
 }) {
     const onlineToDisplay = () => props.whoIsOnline.slice(undefined, MAX_ONLINE_VISIBLE);
     const andMoreCount = () => props.whoIsOnline.length - onlineToDisplay().length;
@@ -51,6 +55,9 @@ export default function Aside(props: {
                 ...and {andMoreCount()} more
             </Show>
             <SmallDivider />
+            <Show when={props.showReturnToPresent}>
+                <button onClick={props.onReturnToPresent}>[ PRESENT ]</button>
+            </Show>
             <button onClick={() => navigate("/")}>[ RETURN ]</button>
         </Body>
     )
