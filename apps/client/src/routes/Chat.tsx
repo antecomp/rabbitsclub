@@ -1,4 +1,4 @@
-import { createEffect, createSignal, For, onCleanup, onMount, Show } from "solid-js"
+import { createEffect, createSignal, For, on, onCleanup, onMount, Show } from "solid-js"
 import { BE } from "../api"
 import { user } from "../store"
 import { MessageHistoryData } from "../types/message.type";
@@ -166,15 +166,31 @@ export default function Chat() {
         setAutoScrollMessages(distanceFromBottom <= AUTO_SCROLL_THRESHOLD);
     }
 
-    const returnToPresent = () => {
-        setAutoScrollMessages(true);
-        if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
+    const scrollToPresent = () => {
+        requestAnimationFrame(() => {
+            if (messagesEl) messagesEl.scrollTop = messagesEl.scrollHeight;
+        });
     }
 
-    createEffect(() => {
-        messages();
-        if (messagesEl && autoScrollMessages()) messagesEl.scrollTop = messagesEl.scrollHeight;
+    onMount(() => {
+        if (!messagesEl) return;
+
+        const resizeObserver = new ResizeObserver(() => {
+            if (autoScrollMessages()) scrollToPresent();
+        });
+
+        resizeObserver.observe(messagesEl);
+        onCleanup(() => resizeObserver.disconnect());
     })
+
+    const returnToPresent = () => {
+        setAutoScrollMessages(true);
+        scrollToPresent();
+    }
+
+    createEffect(on(messages, () => {
+        if (autoScrollMessages()) scrollToPresent();
+    }))
 
     return (
         <ChatContainer>
