@@ -39,7 +39,7 @@ const MessageBody = styled("div")`
 
     overflow-wrap: anywhere;
     
-    background: white;
+    background: #f7f7f7;
     background-clip: padding-box;
     border-image-slice: 10 5 6 10;
     border-image-width: 10px 5px 6px 10px;
@@ -79,7 +79,7 @@ const Username = styled(`div`)`
     top: -1px;
     font-size: ${USERNAME_SIZE};
     transform: translateY(-100%);
-    background-color: #ffffff;
+    background-color: #e9e9e9;
     border: solid #5b5b5b 1px;
     border-right: none;
     padding-left: 2px;

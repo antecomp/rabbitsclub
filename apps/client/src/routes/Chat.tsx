@@ -29,6 +29,7 @@ const Messages = styled('div')`
     &::-webkit-scrollbar {
         visibility: hidden;
     }
+    /* margin-bottom: 5px; */
 `
 
 const SendInput = styled(`input`)`
@@ -53,6 +54,7 @@ const SendInput = styled(`input`)`
 const SendForm = styled(`form`)`
     display: flex;
     margin-bottom: 10px;
+    margin-top: 10px;
 `
 
 
@@ -73,7 +75,6 @@ const SendButton = styled(`button`)`
 `
 
 export default function Chat() {
-    const navigate = useNavigate();
     const [content, setContent] = createSignal("");
     const [whoisOnline, setWhoIsOnline] = createSignal<string[]>([]);
     let messagesEl: HTMLDivElement | undefined;
@@ -154,6 +155,7 @@ export default function Chat() {
                     {msg => Message(msg)}
                 </For>
             </Messages>
+            <Divider color={'gray'}/>
             <SendForm onsubmit={send}>
                 <SendInput
                     value={content()}
@@ -163,9 +165,8 @@ export default function Chat() {
                 <SendButton type="submit">SEND</SendButton>
             </SendForm>
             <Footer>
-                <span>Logged in as {user()?.username}</span>
-                <br />
-                online: {whoisOnline().join(", ")}
+                Type messages and press [SEND] or RETURN to transmit. <br />
+                <span>You are {user()?.username}. Be kind.</span>
             </Footer>
         </ChatContainer>
     )

@@ -37,8 +37,8 @@ export const Title = styled("h1")`
 export const Subtitle = styled("h2")`
     font-size: 2rem;
 `
-export const Divider = styled("hr")`
-    border-color: black;
+export const Divider = styled("hr")<{color?: string}>`
+    border-color: ${props => props.color ?? "black"};
     border-style: solid;
     border-width: 1px;
 `
