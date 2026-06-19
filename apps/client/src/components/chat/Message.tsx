@@ -9,9 +9,8 @@ import taghead from '../../assets/taghead.png';
 import taghead_f from '../../assets/taghead_f.png';
 import tagtail from '../../assets/tagtail.png';
 import tagtail_f from '../../assets/tagtail_f.png';
-import { createSignal, onCleanup } from "solid-js";
-
-const INCOMING_ON_RIGHT = true;
+import { createSignal, onCleanup, Show } from "solid-js";
+import { usePreferences } from "../../context/Preferences";
 
 const PFP_SIZE = '40px';
 const USERNAME_SIZE = '0.7rem';
@@ -325,6 +324,7 @@ export default function Message(props: {
     created_at: string,
     isOwn?: boolean
 }) {
+    const { preferences } = usePreferences();
     const createdAt = new Date(props.created_at);
     const [now, setNow] = createSignal(Date.now());
 
@@ -338,59 +338,62 @@ export default function Message(props: {
 
     const fullDate = format(createdAt, 'dd.MM.yy HH:mm');
 
-    if (props.isOwn) {
-        if (!INCOMING_ON_RIGHT) {
-            return (
-                <OutgoingRightContainer>
-                    <OutgoingRightBody>
-                        <TimestampContainer align="left"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
-                        <MessageContent>{props.content}</MessageContent>
-                    </OutgoingRightBody>
-                    <OutgoingRightPfpContainer>
-                        <img src={pfp_placeholder} />
-                    </OutgoingRightPfpContainer>
-                </OutgoingRightContainer>
-            )
-        }
-
-        return (
-            <OutgoingLeftContainer>
-                <OutgoingLeftBody>
-                    <TimestampContainer align="right"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
-                    <MessageContent>{props.content}</MessageContent>
-                </OutgoingLeftBody>
-                <OutgoingLeftPfpContainer>
-                    <img src={pfp_placeholder} />
-                </OutgoingLeftPfpContainer>
-            </OutgoingLeftContainer>
-        )
-    }
-
-    if (!INCOMING_ON_RIGHT) {
-        return (
-            <IncomingLeftContainer>
-                <IncomingLeftPfpContainer>
-                    <img src={pfp_placeholder} />
-                </IncomingLeftPfpContainer>
-                <UsernameLeft>{props.username}</UsernameLeft>
-                <IncomingLeftBody>
-                    <TimestampContainer align="right"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
-                    <MessageContent>{props.content}</MessageContent>
-                </IncomingLeftBody>
-            </IncomingLeftContainer>
-        )
-    }
-
     return (
-        <IncomingRightContainer>
-            <IncomingRightPfpContainer>
-                <img src={pfp_placeholder} />
-            </IncomingRightPfpContainer>
-            <UsernameRight>{props.username}</UsernameRight>
-            <IncomingRightBody>
-                <TimestampContainer align="left"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
-                <MessageContent>{props.content}</MessageContent>
-            </IncomingRightBody>
-        </IncomingRightContainer>
+        <Show
+            when={props.isOwn}
+            fallback={(
+                <Show
+                    when={preferences.incomingOnRight}
+                    fallback={(
+                        <IncomingLeftContainer>
+                            <IncomingLeftPfpContainer>
+                                <img src={pfp_placeholder} />
+                            </IncomingLeftPfpContainer>
+                            <UsernameLeft>{props.username}</UsernameLeft>
+                            <IncomingLeftBody>
+                                <TimestampContainer align="right"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
+                                <MessageContent>{props.content}</MessageContent>
+                            </IncomingLeftBody>
+                        </IncomingLeftContainer>
+                    )}
+                >
+                    <IncomingRightContainer>
+                        <IncomingRightPfpContainer>
+                            <img src={pfp_placeholder} />
+                        </IncomingRightPfpContainer>
+                        <UsernameRight>{props.username}</UsernameRight>
+                        <IncomingRightBody>
+                            <TimestampContainer align="left"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
+                            <MessageContent>{props.content}</MessageContent>
+                        </IncomingRightBody>
+                    </IncomingRightContainer>
+                </Show>
+            )}
+        >
+            <Show
+                when={preferences.incomingOnRight}
+                fallback={(
+                    <OutgoingRightContainer>
+                        <OutgoingRightBody>
+                            <TimestampContainer align="left"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
+                            <MessageContent>{props.content}</MessageContent>
+                        </OutgoingRightBody>
+                        <OutgoingRightPfpContainer>
+                            <img src={pfp_placeholder} />
+                        </OutgoingRightPfpContainer>
+                    </OutgoingRightContainer>
+                )}
+            >
+                <OutgoingLeftContainer>
+                    <OutgoingLeftBody>
+                        <TimestampContainer align="right"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
+                        <MessageContent>{props.content}</MessageContent>
+                    </OutgoingLeftBody>
+                    <OutgoingLeftPfpContainer>
+                        <img src={pfp_placeholder} />
+                    </OutgoingLeftPfpContainer>
+                </OutgoingLeftContainer>
+            </Show>
+        </Show>
     )
 }

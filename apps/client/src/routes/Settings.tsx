@@ -1,9 +1,23 @@
-import { createSignal } from "solid-js"
 import { BE } from "../api";
-import { AuthForm, Container, Divider, Selector, Subtitle, Title } from "../styled/MainMenu";
+import { AuthForm, Container, Divider, Subtitle, Title } from "../styled/MainMenu";
 import Footer from "../components/Footer";
 import { useNavigate } from "@solidjs/router";
 import { refetchUser } from "../store";
+import { usePreferences } from "../context/Preferences";
+import { styled } from "solid-styled-components";
+
+const ToggleCon = styled('div')`
+    display: flex;
+    width: 70%;
+    align-items: center;
+
+    span {
+      flex-grow: 1;
+      height: 1px;
+      border-top: dashed gray 2px;
+      margin: 0 10px;
+    }
+`
 
 export default function Settings() {
     const navigate = useNavigate();
@@ -13,15 +27,22 @@ export default function Settings() {
         await refetchUser();
         navigate("/", { replace: true });
     }
-    //  When Iget more actions just make submenus like [ USERS ] [ INVITES ]...
+
+    const {preferences, setPreferences} = usePreferences();
+
     return <Container>
         <Title>Settings</Title>
         <Subtitle>User setting dashboard</Subtitle>
         <Divider />
         <AuthForm>
-            [ MORE WILL GO HERE LATER ]
-            <button onClick={logout}>[ LOGOUT ]</button>
-            <button onClick={() => navigate("/")}>[ BACK ]</button>
+            <ToggleCon>
+                <p>CHAT LAYOUT:</p><span/>
+                <button type="button" onClick={() => setPreferences('incomingOnRight', prev => !prev)}>
+                    {preferences.incomingOnRight ? '[ LEFT ]' : '[ RIGHT ]'}
+                </button>
+            </ToggleCon>
+            <button type="button" onClick={logout}>[ LOGOUT ]</button>
+            <button type="button" onClick={() => navigate("/")}>[ BACK ]</button>
         </AuthForm>
         <Footer>Use input device to select user option.</Footer>
     </Container>

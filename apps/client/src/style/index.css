@@ -53,7 +53,7 @@ button {
      font-family: 'main';
      border: none;
      background: none;
-     font-size: 1.15em;
+     /* font-size: 1.15em; */
 }
 
 button:hover,

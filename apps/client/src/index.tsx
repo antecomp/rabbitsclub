@@ -9,28 +9,33 @@ import Landing from "./routes/Landing"
 import './style/index.css'
 import About from "./routes/About"
 import Settings from "./routes/Settings"
+import { PreferencesProvider } from "./context/Preferences"
 
 render(
-    () => <Router>
-        <Route path="/" component={() => (
-            <Landing />
-        )} />
-        <Route path="/login" component={() => (
-            <GuestRoute><Login /></GuestRoute>
-        )} />
-        <Route path="/register" component={() => (
-            <GuestRoute><Register /></GuestRoute>
-        )} />
-        <Route path="/chat" component={() => (
-            <ProtectedRoute><Chat /></ProtectedRoute>
-        )} />
-        <Route path="/settings" component={() => (
-            <ProtectedRoute><Settings /></ProtectedRoute>
-        )} />
-        <Route path="/admin" component={() => (
-            <AdminRoute><Admin /></AdminRoute>
-        )} />
-        <Route path="/about" component={About} />
-    </Router>,
+    () => (
+        <PreferencesProvider>
+            <Router>
+                <Route path="/" component={() => (
+                    <Landing />
+                )} />
+                <Route path="/login" component={() => (
+                    <GuestRoute><Login /></GuestRoute>
+                )} />
+                <Route path="/register" component={() => (
+                    <GuestRoute><Register /></GuestRoute>
+                )} />
+                <Route path="/chat" component={() => (
+                    <ProtectedRoute><Chat /></ProtectedRoute>
+                )} />
+                <Route path="/settings" component={() => (
+                    <ProtectedRoute><Settings /></ProtectedRoute>
+                )} />
+                <Route path="/admin" component={() => (
+                    <AdminRoute><Admin /></AdminRoute>
+                )} />
+                <Route path="/about" component={About} />
+            </Router>
+        </PreferencesProvider>
+    ),
     document.getElementById("root")!
 )
