@@ -46,6 +46,8 @@ export const chatRoutes = new Elysia()
             ws.send({ type: 'online', users: getOnlineUsers() })
         },
         message(ws, message) {
+            const msgContent = message.content.trim();
+            if(!msgContent) return;
             const saved = actions.insertMessage(ws.data.user.username, message.content);
             if (!saved) {
                 console.error("Unable to post message to DB", message);
