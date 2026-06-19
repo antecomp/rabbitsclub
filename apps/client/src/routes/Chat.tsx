@@ -19,22 +19,55 @@ const ChatContainer = styled("div")`
     flex-direction: column;
     user-select: none;
     animation: flicker-in 0.3s steps(12, end) forwards;
-    
-    button {
-        border: none;
-        background: none;
-    }
-
-    button:hover, button:focus {
-        color: gray;
-        outline: none;
-        cursor: pointer;
-    }
 `
 
 // temp, will do better layout later.
 const Messages = styled('div')`
     overflow: auto;
+    &::-webkit-scrollbar {
+        visibility: hidden;
+    }
+`
+
+const SendInput = styled(`input`)`
+    background: lightgray;
+    border: none;
+    font-family: 'main';
+    font-size: 1rem;
+    padding: 5px;
+    outline: none;
+    flex-grow: 1;
+    clip-path: polygon(calc(100% - 5px) 0, 100% calc(0% + 5px), 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 0);
+
+    &:hover, &:focus {
+        background-color: #ddd;
+    }
+
+    &:focus + button {
+        padding: 5px 20px;
+    }
+`
+
+const SendForm = styled(`form`)`
+    display: flex;
+    margin-bottom: 10px;
+`
+
+
+const SendButton = styled(`button`)`
+    border: none;
+    padding: 5px 25px;
+    font-size: 1rem;
+    background: lightgray;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, calc(0% + 5px) calc(100% - 5px), calc(0% + 5px) calc(0% + 5px));
+
+    transition: padding 0.1s linear;
+    text-align: center;
+
+    &:hover, &:focus {
+        background-color: #ddd;
+        padding: 5px 30px !important;
+    }
 `
 
 export default function Chat() {
@@ -112,7 +145,7 @@ export default function Chat() {
         <ChatContainer>
             <header>
                 <Title>chat</Title>
-                <Divider/>
+                <Divider />
             </header>
             <Messages ref={messagesEl}>
                 <Show when={hasMoreMessages()}>
@@ -122,14 +155,14 @@ export default function Chat() {
                     {msg => Message(msg)}
                 </For>
             </Messages>
-            <form onsubmit={send}>
-                <input
+            <SendForm onsubmit={send}>
+                <SendInput
                     value={content()}
                     onInput={e => setContent(e.target.value)}
                     placeholder="Message"
                 />
-                <button type="submit">[ SEND ]</button>
-            </form>
+                <SendButton type="submit">SEND</SendButton>
+            </SendForm>
             <Footer>
                 <span>Logged in as {user()?.username}</span>
                 <button onClick={logout}>[ LOG OUT ]</button>
