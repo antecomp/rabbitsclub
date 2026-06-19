@@ -2,10 +2,17 @@ import { useNavigate } from "@solidjs/router";
 import { Show } from "solid-js";
 import { Container, Selector } from "../styled/MainMenu";
 import Footer from "../components/Footer";
-import { user } from "../store";
+import { refetchUser, user } from "../store";
+import { BE } from "../api";
 
 export default function Landing() {
     const navigate = useNavigate();
+
+    const logout = async () => {
+        await BE.auth.logout.post()
+        await refetchUser();
+        navigate("/", { replace: true });
+    }
     return <>
         <Container>
             <Show
@@ -16,6 +23,8 @@ export default function Landing() {
                 </>}
             >
                 <Selector onClick={() => navigate("/chat")}>resume</Selector>
+                {/* replace this with "settings" later? */}
+                <Selector onClick={logout}>logout</Selector>
             </Show>
             <Show when={user()?.is_admin}>
                 <Selector onClick={() => navigate("/admin")}>admin</Selector>

@@ -1,6 +1,6 @@
 import { styled } from "solid-styled-components"
 import pfp_placeholder from '../../assets/placeholder.png';
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import chatbox from '../../assets/chatbox.png';
 import taghead from '../../assets/taghead.png';
 import tagtail from '../../assets/tagtail.png';
@@ -34,7 +34,7 @@ const PfpContainer = styled("div")`
 const MessageBody = styled("div")`
     /* width: min(350px, 80%); */
     width: fit-content;
-    min-width: 250px;
+    min-width: 150px;
     max-width: 80%;
     
     background: white;
@@ -49,6 +49,18 @@ const MessageBody = styled("div")`
 
     padding-bottom: 8px;
     padding-right: 5px;
+
+    &:hover span.dateinfo:first-child {
+        display: none;
+    }
+
+    & span.dateinfo:first-child + span.dateinfo {
+        display: none;
+    }
+
+    &:hover span.dateinfo:first-child + span.dateinfo {
+        display: block;
+    }
     
 `
 
@@ -94,6 +106,9 @@ export default function Message(props: {
     content: string,
     created_at: string
 }) {
+    const niceDate = formatDistanceToNow(new Date(props.created_at), {addSuffix: true});
+    const fullDate = format(new Date(props.created_at), 'dd.MM.yy HH:mm');
+
     return (
         <MessageContainer>
             <PfpContainer>
@@ -101,7 +116,7 @@ export default function Message(props: {
             </PfpContainer>
             <Username>{props.username}</Username>
             <MessageBody>
-                <TimestampContainer>{formatDistanceToNow(new Date(props.created_at), {addSuffix: true})}</TimestampContainer>
+                <TimestampContainer><span class="dateinfo">{niceDate}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
                 <MessageContent>{props.content}</MessageContent>
             </MessageBody>
         </MessageContainer>

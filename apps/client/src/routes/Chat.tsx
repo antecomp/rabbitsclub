@@ -104,6 +104,8 @@ export default function Chat() {
     onMount(() => {
         sub = BE.ws.subscribe()
 
+        // Change this so we have system messages in there two but
+        // with a flag to render them differently.
         sub.on("message", ({ data }) => {
             switch (data.type) {
                 case 'user':
@@ -127,12 +129,6 @@ export default function Chat() {
         if (!content() || !user()) return
         sub.send({ username: user()!.username, content: content() })
         setContent("")
-    }
-
-    const logout = async () => {
-        await BE.auth.logout.post()
-        await refetchUser();
-        navigate("/", { replace: true })
     }
 
     // TODO: Disable when scrolled up enough & when LOAD MORE is clicked...
@@ -165,7 +161,6 @@ export default function Chat() {
             </SendForm>
             <Footer>
                 <span>Logged in as {user()?.username}</span>
-                <button onClick={logout}>[ LOG OUT ]</button>
                 <br />
                 online: {whoisOnline().join(", ")}
             </Footer>

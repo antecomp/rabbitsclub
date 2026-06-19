@@ -94,7 +94,7 @@ export const actions = {
 // Seed in root user invite
 actions.insertInviteCode("ADMIN", 1);
 
-// Manully elevate an admin fir now
+// Manully elevate an admin for now
 db.run(`UPDATE users SET is_admin = 1 WHERE username = 'R46617'`)
 
 console.log("db init");
