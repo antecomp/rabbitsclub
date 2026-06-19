@@ -14,7 +14,7 @@ const PFP_GAP = '5px';
 
 const MessageContainer = styled("div")`
     display: grid;
-    grid-template-columns: ${PFP_SIZE} auto;
+    grid-template-columns: ${PFP_SIZE} minmax(0, 1fr);
     margin: ${MESSAGE_MARGINS};
     margin-top: calc(${USERNAME_SIZE} + ${MESSAGE_MARGINS});
     position: relative;
@@ -33,10 +33,10 @@ const PfpContainer = styled("div")`
 `
 
 const MessageBody = styled("div")`
-    /* width: min(350px, 80%); */
     width: fit-content;
     min-width: 150px;
-    max-width: 75%;
+    max-width: 100%;
+    box-sizing: border-box;
 
     overflow-wrap: anywhere;
     

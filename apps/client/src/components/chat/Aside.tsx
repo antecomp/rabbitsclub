@@ -5,14 +5,9 @@ import { styled } from "solid-styled-components";
 const MAX_ONLINE_VISIBLE = 3;
 
 const Body = styled('aside')`
-    position: sticky;
-    right: 0;
-    margin-left: auto;
-    top: 0;
     text-align: right;
-    width: 18%;
     padding: 5px;
-    z-index: 2;
+    min-width: 0;
 
     button {
         font-size: 1em;

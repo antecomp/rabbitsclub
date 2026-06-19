@@ -1,7 +1,6 @@
-import { createEffect, createResource, createSignal, For, onCleanup, onMount, Show } from "solid-js"
-import { useNavigate } from "@solidjs/router"
+import { createEffect, createSignal, For, onCleanup, onMount, Show } from "solid-js"
 import { BE } from "../api"
-import { refetchUser, user } from "../store"
+import { user } from "../store"
 import { MessageHistoryData } from "../types/message.type";
 import Message from "../components/chat/Message";
 import Footer from "../components/Footer";
@@ -10,6 +9,10 @@ import { Divider, Title } from "../styled/MainMenu";
 import { playSoundOnce } from "../util/playSound";
 import ping from '../assets/ping.mp3';
 import Aside from "../components/chat/Aside";
+
+const MESSAGE_COLUMN_SIZE = '1fr';
+const ASIDE_COLUMN_SIZE = '120px';
+const CHAT_COLUMN_GAP = '10px';
 
 const ChatContainer = styled("div")`
     position: absolute;
@@ -24,14 +27,23 @@ const ChatContainer = styled("div")`
     animation: flicker-in 0.3s steps(12, end) forwards;
 `
 
-// temp, will do better layout later.
+const ChatBody = styled('div')`
+    display: grid;
+    grid-template-columns: minmax(0, ${MESSAGE_COLUMN_SIZE}) minmax(120px, ${ASIDE_COLUMN_SIZE});
+    gap: ${CHAT_COLUMN_GAP};
+    flex: 1;
+    min-height: 0;
+`
+
 const Messages = styled('div')`
     position: relative;
     overflow: auto;
+    min-width: 0;
+    min-height: 0;
+
     &::-webkit-scrollbar {
         visibility: hidden;
     }
-    /* margin-bottom: 5px; */
 `
 
 const SendInput = styled(`input`)`
@@ -149,15 +161,17 @@ export default function Chat() {
                 <Title>chat</Title>
                 <Divider />
             </header>
-            <Messages ref={messagesEl}>
+            <ChatBody>
+                <Messages ref={messagesEl}>
+                    <Show when={hasMoreMessages()}>
+                        <button style={'width: 100%;'} onClick={loadMore}>[ LOAD MORE ]</button>
+                    </Show>
+                    <For each={messages()}>
+                        {msg => Message(msg)}
+                    </For>
+                </Messages>
                 <Aside whoIsOnline={whoisOnline()}/>
-                <Show when={hasMoreMessages()}>
-                    <button style={'width: 100%;'} onClick={loadMore}>[ LOAD MORE ]</button>
-                </Show>
-                <For each={messages()}>
-                    {msg => Message(msg)}
-                </For>
-            </Messages>
+            </ChatBody>
             <Divider color={'gray'}/>
             <SendForm onsubmit={send}>
                 <SendInput
