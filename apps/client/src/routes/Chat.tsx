@@ -167,7 +167,12 @@ export default function Chat() {
                         <button style={'width: 100%;'} onClick={loadMore}>[ LOAD MORE ]</button>
                     </Show>
                     <For each={messages()}>
-                        {msg => Message(msg)}
+                        {msg => (
+                            <Message
+                                {...msg}
+                                isOwn={msg.username === user()?.username}
+                            />
+                        )}
                     </For>
                 </Messages>
                 <Aside whoIsOnline={whoisOnline()}/>

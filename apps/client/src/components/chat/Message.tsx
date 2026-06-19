@@ -2,6 +2,7 @@ import { styled } from "solid-styled-components"
 import pfp_placeholder from '../../assets/placeholder.png';
 import { format, formatDistanceToNow } from "date-fns";
 import chatbox from '../../assets/chatbox.png';
+import sentbox from '../../assets/sentbox.png';
 import taghead from '../../assets/taghead.png';
 import tagtail from '../../assets/tagtail.png';
 import { createSignal, onCleanup } from "solid-js";
@@ -67,6 +68,65 @@ const MessageBody = styled("div")`
     
 `
 
+const SentMessageContainer = styled("div")`
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) ${PFP_SIZE};
+    margin: ${MESSAGE_MARGINS};
+    position: relative;
+
+    gap: ${PFP_GAP};
+
+    image-rendering: pixelated;
+`
+
+const SentPfpContainer = styled("div")`
+    grid-column: 2;
+    grid-row: 1;
+
+    img {
+        display: block;
+        width: 100%;
+    }
+`
+
+const SentMessageBody = styled("div")`
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: end;
+    width: fit-content;
+    min-width: 150px;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    overflow-wrap: anywhere;
+    text-align: right;
+
+    background: #e5e5e5;
+    background-clip: padding-box;
+    border-image-slice: 10 10 6 5;
+    border-image-width: 10px 10px 6px 5px;
+    border-width: 10px 10px 6px 5px;
+    border-image-outset: 0px 0px 0px 0px;
+    border-image-repeat: stretch stretch;
+    border-image-source: url(${sentbox});
+    border-style: solid;
+
+    padding-bottom: 8px;
+    padding-left: 5px;
+
+    &:hover span.dateinfo:first-child {
+        display: none;
+    }
+
+    & span.dateinfo:first-child + span.dateinfo {
+        display: none;
+    }
+
+    &:hover span.dateinfo:first-child + span.dateinfo {
+        display: block;
+    }
+`
+
 const TimestampContainer = styled("div")`
     font-size: ${DATE_SIZE};
     text-align: right;
@@ -107,7 +167,8 @@ const MessageContent = styled("div")`
 export default function Message(props: {
     username: string,
     content: string,
-    created_at: string
+    created_at: string,
+    isOwn?: boolean
 }) {
     const createdAt = new Date(props.created_at);
     const [now, setNow] = createSignal(Date.now());
@@ -121,6 +182,20 @@ export default function Message(props: {
     };
 
     const fullDate = format(createdAt, 'dd.MM.yy HH:mm');
+
+    if (props.isOwn) {
+        return (
+            <SentMessageContainer>
+                <SentMessageBody>
+                    <TimestampContainer><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
+                    <MessageContent>{props.content}</MessageContent>
+                </SentMessageBody>
+                <SentPfpContainer>
+                    <img src={pfp_placeholder} />
+                </SentPfpContainer>
+            </SentMessageContainer>
+        )
+    }
 
     return (
         <MessageContainer>
