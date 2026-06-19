@@ -2,10 +2,16 @@ import { styled } from "solid-styled-components"
 import pfp_placeholder from '../../assets/placeholder.png';
 import { format, formatDistanceToNow } from "date-fns";
 import chatbox from '../../assets/chatbox.png';
+import chatbox_f from '../../assets/chatbox_f.png';
 import sentbox from '../../assets/sentbox.png';
+import sentbox_f from '../../assets/sentbox_f.png';
 import taghead from '../../assets/taghead.png';
+import taghead_f from '../../assets/taghead_f.png';
 import tagtail from '../../assets/tagtail.png';
+import tagtail_f from '../../assets/tagtail_f.png';
 import { createSignal, onCleanup } from "solid-js";
+
+const INCOMING_ON_RIGHT = false;
 
 const PFP_SIZE = '40px';
 const USERNAME_SIZE = '0.7rem';
@@ -13,7 +19,7 @@ const DATE_SIZE = '0.6rem';
 const MESSAGE_MARGINS = '15px';
 const PFP_GAP = '5px';
 
-const MessageContainer = styled("div")`
+const IncomingRightContainer = styled("div")`
     display: grid;
     grid-template-columns: minmax(0, 1fr) ${PFP_SIZE};
     margin: ${MESSAGE_MARGINS};
@@ -25,7 +31,7 @@ const MessageContainer = styled("div")`
     image-rendering: pixelated;
 `
 
-const PfpContainer = styled("div")`
+const IncomingRightPfpContainer = styled("div")`
     grid-column: 2;
     grid-row: 1;
 
@@ -36,7 +42,7 @@ const PfpContainer = styled("div")`
     }
 `
 
-const MessageBody = styled("div")`
+const IncomingRightBody = styled("div")`
     grid-column: 1;
     grid-row: 1;
     justify-self: end;
@@ -75,7 +81,62 @@ const MessageBody = styled("div")`
     
 `
 
-const SentMessageContainer = styled("div")`
+const IncomingLeftContainer = styled("div")`
+    display: grid;
+    grid-template-columns: ${PFP_SIZE} minmax(0, 1fr);
+    margin: ${MESSAGE_MARGINS};
+    margin-top: calc(${USERNAME_SIZE} + ${MESSAGE_MARGINS});
+    position: relative;
+
+    gap: ${PFP_GAP};
+
+    image-rendering: pixelated;
+`
+
+const IncomingLeftPfpContainer = styled("div")`
+    img {
+        display: block;
+        width: 100%;
+        transform: translateY(-${USERNAME_SIZE});
+    }
+`
+
+const IncomingLeftBody = styled("div")`
+    width: fit-content;
+    min-width: 150px;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    overflow-wrap: anywhere;
+    
+    background: #e5e5e5;
+    background-clip: padding-box;
+    border-image-slice: 10 5 6 10;
+    border-image-width: 10px 5px 6px 10px;
+    border-width: 10px 5px 6px 10px;
+    border-image-outset: 0px 0px 0px 0px;
+    border-image-repeat: stretch stretch;
+    border-image-source: url(${chatbox_f});
+    border-style: solid;
+
+    padding-bottom: 8px;
+    padding-right: 5px;
+
+    &:hover span.dateinfo:first-child {
+        display: none;
+    }
+
+    & span.dateinfo:first-child + span.dateinfo {
+        display: none;
+    }
+
+    &:hover span.dateinfo:first-child + span.dateinfo {
+        display: block;
+    }
+    
+`
+
+const OutgoingLeftContainer = styled("div")`
     display: grid;
     grid-template-columns: ${PFP_SIZE} minmax(0, 1fr);
     margin: ${MESSAGE_MARGINS};
@@ -86,7 +147,7 @@ const SentMessageContainer = styled("div")`
     image-rendering: pixelated;
 `
 
-const SentPfpContainer = styled("div")`
+const OutgoingLeftPfpContainer = styled("div")`
     grid-column: 1;
     grid-row: 1;
 
@@ -96,7 +157,7 @@ const SentPfpContainer = styled("div")`
     }
 `
 
-const SentMessageBody = styled("div")`
+const OutgoingLeftBody = styled("div")`
     grid-column: 2;
     grid-row: 1;
     justify-self: start;
@@ -134,6 +195,65 @@ const SentMessageBody = styled("div")`
     }
 `
 
+const OutgoingRightContainer = styled("div")`
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) ${PFP_SIZE};
+    margin: ${MESSAGE_MARGINS};
+    position: relative;
+
+    gap: ${PFP_GAP};
+
+    image-rendering: pixelated;
+`
+
+const OutgoingRightPfpContainer = styled("div")`
+    grid-column: 2;
+    grid-row: 1;
+
+    img {
+        display: block;
+        width: 100%;
+    }
+`
+
+const OutgoingRightBody = styled("div")`
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: end;
+    width: fit-content;
+    min-width: 150px;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    overflow-wrap: anywhere;
+    text-align: right;
+
+    background: #f7f7f7;
+    background-clip: padding-box;
+    border-image-slice: 10 10 6 5;
+    border-image-width: 10px 10px 6px 5px;
+    border-width: 10px 10px 6px 5px;
+    border-image-outset: 0px 0px 0px 0px;
+    border-image-repeat: stretch stretch;
+    border-image-source: url(${sentbox_f});
+    border-style: solid;
+
+    padding-bottom: 8px;
+    padding-left: 5px;
+
+    &:hover span.dateinfo:first-child {
+        display: none;
+    }
+
+    & span.dateinfo:first-child + span.dateinfo {
+        display: none;
+    }
+
+    &:hover span.dateinfo:first-child + span.dateinfo {
+        display: block;
+    }
+`
+
 const TimestampContainer = styled("div")`
     font-size: ${DATE_SIZE};
     text-align: right;
@@ -141,7 +261,7 @@ const TimestampContainer = styled("div")`
     transform: translate(2px, -4px);
 `
 
-const Username = styled(`div`)`
+const UsernameRight = styled(`div`)`
     position: absolute;
     right: calc(${PFP_SIZE} + ${PFP_GAP});
     top: -1px;
@@ -169,6 +289,32 @@ const Username = styled(`div`)`
     }
 `
 
+const UsernameLeft = styled(`div`)`
+    position: absolute;
+    left: calc(${PFP_SIZE} + ${PFP_GAP});
+    top: -1px;
+    font-size: ${USERNAME_SIZE};
+    transform: translateY(-100%);
+    background-color: #dcdcdc;
+    border: solid #5b5b5b 1px;
+    border-right: none;
+    padding-left: 2px;
+
+    &::before {
+        content: url(${taghead_f});
+        position: absolute;
+        top: -1px;
+        left: -1px;
+        z-index: 0;
+    }
+
+    &::after {
+        content: url(${tagtail_f});
+        position: absolute;
+        top: -1px;
+    }
+`
+
 const MessageContent = styled("div")`
     
 `
@@ -193,29 +339,58 @@ export default function Message(props: {
     const fullDate = format(createdAt, 'dd.MM.yy HH:mm');
 
     if (props.isOwn) {
+        if (!INCOMING_ON_RIGHT) {
+            return (
+                <OutgoingRightContainer>
+                    <OutgoingRightBody>
+                        <TimestampContainer><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
+                        <MessageContent>{props.content}</MessageContent>
+                    </OutgoingRightBody>
+                    <OutgoingRightPfpContainer>
+                        <img src={pfp_placeholder} />
+                    </OutgoingRightPfpContainer>
+                </OutgoingRightContainer>
+            )
+        }
+
         return (
-            <SentMessageContainer>
-                <SentMessageBody>
+            <OutgoingLeftContainer>
+                <OutgoingLeftBody>
                     <TimestampContainer><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
                     <MessageContent>{props.content}</MessageContent>
-                </SentMessageBody>
-                <SentPfpContainer>
+                </OutgoingLeftBody>
+                <OutgoingLeftPfpContainer>
                     <img src={pfp_placeholder} />
-                </SentPfpContainer>
-            </SentMessageContainer>
+                </OutgoingLeftPfpContainer>
+            </OutgoingLeftContainer>
+        )
+    }
+
+    if (!INCOMING_ON_RIGHT) {
+        return (
+            <IncomingLeftContainer>
+                <IncomingLeftPfpContainer>
+                    <img src={pfp_placeholder} />
+                </IncomingLeftPfpContainer>
+                <UsernameLeft>{props.username}</UsernameLeft>
+                <IncomingLeftBody>
+                    <TimestampContainer><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
+                    <MessageContent>{props.content}</MessageContent>
+                </IncomingLeftBody>
+            </IncomingLeftContainer>
         )
     }
 
     return (
-        <MessageContainer>
-            <PfpContainer>
+        <IncomingRightContainer>
+            <IncomingRightPfpContainer>
                 <img src={pfp_placeholder} />
-            </PfpContainer>
-            <Username>{props.username}</Username>
-            <MessageBody>
+            </IncomingRightPfpContainer>
+            <UsernameRight>{props.username}</UsernameRight>
+            <IncomingRightBody>
                 <TimestampContainer><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
                 <MessageContent>{props.content}</MessageContent>
-            </MessageBody>
-        </MessageContainer>
+            </IncomingRightBody>
+        </IncomingRightContainer>
     )
 }
