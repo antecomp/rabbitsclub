@@ -93,6 +93,7 @@ export default function Chat() {
     const [content, setContent] = createSignal("");
     const [whoisOnline, setWhoIsOnline] = createSignal<string[]>([]);
     let messagesEl: HTMLDivElement | undefined;
+    let sendInputEl: HTMLInputElement | undefined;
 
     const [messages, setMessages] = createSignal<MessageHistoryData>([]);
     const [hasMoreMessages, setHasMoreMessages] = createSignal(true);
@@ -160,6 +161,45 @@ export default function Chat() {
         setContent("")
     }
 
+    const isEditableElement = (target: EventTarget | null) => {
+        return target instanceof HTMLElement
+            && !!target.closest('input, textarea, select, [contenteditable=""], [contenteditable="true"]');
+    }
+
+    onMount(() => {
+        const focusSendInputOnTyping = (e: KeyboardEvent) => {
+            if (
+                e.defaultPrevented
+                || e.ctrlKey
+                || e.metaKey
+                || e.altKey
+                || e.key == ' '
+                || e.key.length !== 1
+                || e.isComposing
+                || !sendInputEl
+                || document.activeElement === sendInputEl
+                || isEditableElement(e.target)
+            ) {
+                return;
+            }
+
+            e.preventDefault();
+            sendInputEl.focus();
+            const start = sendInputEl.selectionStart ?? content().length;
+            const end = sendInputEl.selectionEnd ?? start;
+            const nextContent = `${content().slice(0, start)}${e.key}${content().slice(end)}`;
+            setContent(nextContent);
+
+            queueMicrotask(() => {
+                const caretPosition = start + e.key.length;
+                sendInputEl?.setSelectionRange(caretPosition, caretPosition);
+            });
+        }
+
+        document.addEventListener("keydown", focusSendInputOnTyping);
+        onCleanup(() => document.removeEventListener("keydown", focusSendInputOnTyping));
+    })
+
     const updateAutoScroll = () => {
         if (!messagesEl) return;
         const distanceFromBottom = messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight;
@@ -201,7 +241,7 @@ export default function Chat() {
             <ChatBody>
                 <Messages ref={messagesEl} onScroll={updateAutoScroll}>
                     <Show when={hasMoreMessages()}>
-                        <button style={'width: 100%; padding-top: 10px'} onClick={loadMore}>[ LOAD MORE ]</button>
+                        <button tabindex="-1" style={'width: 100%; padding-top: 10px'} onClick={loadMore}>[ LOAD MORE ]</button>
                     </Show>
                     <For each={messages()}>
                         {msg => (
@@ -221,11 +261,13 @@ export default function Chat() {
             <Divider color={'gray'}/>
             <SendForm onsubmit={send}>
                 <SendInput
+                    ref={sendInputEl}
                     value={content()}
                     onInput={e => setContent(e.target.value)}
                     placeholder="Message"
+                    tabindex="1"
                 />
-                <SendButton type="submit">SEND</SendButton>
+                <SendButton type="submit" tabindex="2">SEND</SendButton>
             </SendForm>
             <Footer>
                 Type messages and press [SEND] or RETURN to transmit. <br />
