@@ -13,7 +13,7 @@ const AvatarContainer = styled("div")`
     transform: translate(0%, -50%);
     max-width: 580px;
     width: 70vw;
-    height: 400px;
+    height: 300px;
     user-select: none;
     animation: flicker-in 0.3s steps(12, end) forwards;
 `
@@ -23,10 +23,11 @@ const Split = styled('div')`
     grid-template-columns: 5fr 4fr;
     gap: 10px;
     height: 100%;
-    /* padding-bottom: 10px; */
+    padding-bottom: 10px;
 
     canvas {
         width: 100%;
+        overflow: hidden;
         height: 100%;
         object-fit: contain;
     }
@@ -153,32 +154,6 @@ export default function Avatar() {
                             <MenuButton type="button" onClick={() => setMenu('leftEye')}>[ LEFT EYE ]</MenuButton>
                             <MenuButton type="button" onClick={() => setMenu('rightEye')}>[ RIGHT EYE ]</MenuButton>
                             <MenuButton type="button" onClick={() => navigate("/")}>[ BACK ]</MenuButton>
-                            OV <br />
-                            OV <br />
-                            OV <br />
-
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
-                            OV <br />
                         </Match>
                         <Match when={menu() === 'ears'}>
                             <MenuTitle>
