@@ -4,6 +4,7 @@ import { Container, Divider, Subtitle, Title } from "../styled/MainMenu";
 import Footer from "../components/Footer";
 import { styled } from "solid-styled-components";
 import { EyeVariant, eyeVariants } from "../avatar/assets";
+import mod from "../util/mod";
 
 const Split = styled('div')`
     display: grid;
@@ -29,8 +30,8 @@ export default function Avatar() {
                 <AvatarCanvas state={{ head: variant(), leftEye: leye(), rightEye: reye(), leftEyeOffset: { x: 0, y: 0 }, rightEyeOffset: { x: 0, y: 0 } }} />
                 <div>
                     EARS:
-                    <button onclick={() => setVariant(p => p - 1)}>[ PREV ]</button>
-                    <button onclick={() => setVariant(p => p + 1)}>[ NEXT ]</button>
+                    <button onclick={() => setVariant(p => mod(p - 1, 7))}>[ PREV ]</button>
+                    <button onclick={() => setVariant(p => mod(p + 1, 7))}>[ NEXT ]</button>
                     <br />
                     left eye:
                     <select
