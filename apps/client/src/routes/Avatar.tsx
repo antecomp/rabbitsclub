@@ -8,6 +8,7 @@ import { Divider, Subtitle, Title } from "../styled/MainMenu";
 import cbr from '../assets/c_br.png';
 import arrow from '../assets/dir.png';
 import { createStore, SetStoreFunction } from "solid-js/store";
+import { BE } from "../api";
 
 const AvatarContainer = styled("div")`
     position: absolute;
@@ -214,12 +215,23 @@ export default function Avatar() {
     const [leye, setLeye] = createSignal<EyeVariant>('bead');
     const [reye, setReye] = createSignal<EyeVariant>('bead');
 
-    const [leftOffset, setLeftOffset] = createStore<EyeOffset>({x: 0, y:0});
-    const [rightOffset, setRightOffset] = createStore<EyeOffset>({x: 0, y:0});
+    const [leftOffset, setLeftOffset] = createStore<EyeOffset>({ x: 0, y: 0 });
+    const [rightOffset, setRightOffset] = createStore<EyeOffset>({ x: 0, y: 0 });
 
     const eyeThumbnail = (variant: EyeVariant, side: 0 | 1) => {
         const src = eyes[variant].src;
         return Array.isArray(src) ? src[side] : src;
+    }
+
+    const save = async () => {
+        await BE.profile.avatar.put({
+            head: variant(),
+            leftEye: leye(),
+            rightEye: reye(),
+            leftEyeOffset: { x: leftOffset.x, y: leftOffset.y },
+            rightEyeOffset: { x: rightOffset.x, y: rightOffset.y }
+        })
+        navigate("/")
     }
 
     return (
@@ -243,6 +255,7 @@ export default function Avatar() {
                             <MenuButton type="button" onClick={() => setMenu('ears')}>[ EARS ]</MenuButton>
                             <MenuButton type="button" onClick={() => setMenu('leftEye')}>[ LEFT EYE ]</MenuButton>
                             <MenuButton type="button" onClick={() => setMenu('rightEye')}>[ RIGHT EYE ]</MenuButton>
+                            <MenuButton type="button" onClick={save}>[ SAVE ]</MenuButton>
                             <MenuButton type="button" onClick={() => navigate("/")}>[ BACK ]</MenuButton>
                         </Match>
                         <Match when={menu() === 'ears'}>

@@ -9,9 +9,11 @@ import taghead from '../../assets/taghead.png';
 import taghead_f from '../../assets/taghead_f.png';
 import tagtail from '../../assets/tagtail.png';
 import tagtail_f from '../../assets/tagtail_f.png';
-import { createSignal, onCleanup, Show } from "solid-js";
+import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import { usePreferences } from "../../context/Preferences";
 import { getAvatarUrl } from "../../avatar/createAvatarRenderer";
+import { BE } from "../../api";
+import { AvatarData } from "../../avatar/avatar.types";
 
 const PFP_SIZE = '50px';
 const USERNAME_SIZE = '0.7rem';
@@ -39,6 +41,8 @@ const IncomingRightPfpContainer = styled("div")`
         display: block;
         width: 100%;
         transform: translateY(-${USERNAME_SIZE});
+        aspect-ratio: 1;
+        object-fit: contain;
     }
 `
 
@@ -98,6 +102,8 @@ const IncomingLeftPfpContainer = styled("div")`
         display: block;
         width: 100%;
         transform: translateY(-${USERNAME_SIZE});
+        aspect-ratio: 1;
+        object-fit: contain;
     }
 `
 
@@ -154,6 +160,8 @@ const OutgoingLeftPfpContainer = styled("div")`
     img {
         display: block;
         width: 100%;
+        aspect-ratio: 1;
+        object-fit: contain;
     }
 `
 
@@ -213,6 +221,8 @@ const OutgoingRightPfpContainer = styled("div")`
     img {
         display: block;
         width: 100%;
+        aspect-ratio: 1;
+        object-fit: contain;
     }
 `
 
@@ -340,19 +350,18 @@ export default function Message(props: {
     const fullDate = format(createdAt, 'dd.MM.yy HH:mm');
 
     const [avatarSrc, setAvatarSrc] = createSignal(pfp_placeholder);
-    getAvatarUrl({
-        head: 4,
-        leftEye: "circle",
-        rightEye: "circle",
-        leftEyeOffset: {
-            x: 0,
-            y: 0
-        },
-        rightEyeOffset: {
-            x: 0,
-            y: 0
+    onMount(async () => {
+        const { data } = await BE.profile({username: props.username}).get()
+        const avatarData = data as AvatarData ?? {
+            head: 0,
+            leftEye: 'bead',
+            rightEye: "bead",
+            leftEyeOffset: { x: 0, y: 0 },
+            rightEyeOffset: { x: 0, y: 0 }
         }
-    }).then(r => setAvatarSrc(r));
+        const url = await getAvatarUrl(avatarData)
+        setAvatarSrc(url)
+    })
 
     return (
         <Show

@@ -3,6 +3,7 @@ import { Database } from "bun:sqlite"
 import { join } from "path"
 import type { Message } from "./schemas/messages.schema";
 import { type InviteCode, type User } from "./schemas/users.schema";
+import type { AvatarData } from "./schemas/profiles.schema";
 
 const db = new Database(join(import.meta.dir, "../chat.db"), { create: true })
 
@@ -38,13 +39,21 @@ db.run(`
     )
 `);
 
+db.run(`
+    CREATE TABLE IF NOT EXISTS profiles (
+        user_id     INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+        avatar      TEXT NOT NULL DEFAULT '{}',
+        updated_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+    )
+`)
+
 const queries = {
     insertMessage: db.prepare<Message, { $username: string, $content: string }>(`
         INSERT INTO messages (username, content)
         VALUES ($username, $content)
         RETURNING *
     `),
-    getRecent: db.prepare<Message, {$before: number, $limit: number} >(`
+    getRecent: db.prepare<Message, { $before: number, $limit: number }>(`
         SELECT * FROM messages
         WHERE id < $before
         ORDER BY id DESC
@@ -69,6 +78,19 @@ const queries = {
     `),
     getUserCount: db.prepare<{ count: number }, []>(`
         SELECT COUNT(*) AS count FROM users
+    `),
+    getProfile: db.prepare<{ user_id: number, avatar: string }, { $username: string }>(`
+        SELECT profiles.user_id, profiles.avatar 
+        FROM profiles 
+        JOIN users ON profiles.user_id = users.id
+        WHERE users.username = $username
+    `),
+    upsertProfile: db.prepare<{ user_id: number, avatar: string, updated_at: string }, { $user_id: number, $avatar: string }>(`
+        INSERT INTO profiles (user_id, avatar) VALUES ($user_id, $avatar)
+        ON CONFLICT (user_id) DO UPDATE SET 
+            avatar = excluded.avatar,
+            updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
+        RETURNING *
     `)
 }
 
@@ -76,7 +98,7 @@ export const actions = {
     insertMessage: (username: string, content: string) =>
         queries.insertMessage.get({ $username: username, $content: content }),
     getRecent: (before: number = 2147483647, limit: number = 50) =>
-        queries.getRecent.all({$before: before, $limit: limit}).reverse(),
+        queries.getRecent.all({ $before: before, $limit: limit }).reverse(),
     insertUser: (username: string, password: string) =>
         queries.insertUser.get({ $username: username, $password: password }),
     getUserByUsername: (username: string) =>
@@ -88,7 +110,15 @@ export const actions = {
     claimInviteCode: (code: string, userId: number) =>
         queries.claimInviteCode.get({ $code: code, $userId: userId }),
     getUserCount: () =>
-        queries.getUserCount.get()?.count ?? 0
+        queries.getUserCount.get()?.count ?? 0,
+    getProfile: (username: string) => {
+        const row = queries.getProfile.get({ $username: username })
+        if (!row) return null
+        // change to return more as needed...
+        return JSON.parse(row.avatar) as AvatarData
+    },
+    upsertProfile: (user_id: number, avatar: AvatarData) =>
+        queries.upsertProfile.get({ $user_id: user_id, $avatar: JSON.stringify(avatar) })
 };
 
 // Seed in root user invite
