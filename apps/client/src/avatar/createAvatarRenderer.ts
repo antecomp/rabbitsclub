@@ -28,7 +28,7 @@ const eyePromises: Record<string, [Promise<HTMLImageElement>, Promise<HTMLImageE
 
 export default function createAvatarRenderer() {
     const offscreen = new OffscreenCanvas(SIZE, SIZE);
-    const ctx = offscreen.getContext("2d");
+    const ctx = offscreen.getContext("2d", { willReadFrequently: true });
 
     async function render(state: AvatarData) {
         if (!ctx) return;
@@ -64,5 +64,45 @@ export default function createAvatarRenderer() {
         return offscreen.convertToBlob({ type });
     }
 
-    return { render, toImageBitmap, toBlob }
+    async function toContentBlob(type = "image/png"): Promise<Blob> {
+        if(!ctx) throw new Error("Unable to get canvas context");
+        const { data } = ctx.getImageData(0, 0, SIZE, SIZE);
+
+        let minX = SIZE, minY = SIZE, maxX = 0, maxY = 0;
+
+        for (let y = 0; y < SIZE; y++) {
+            for (let x = 0; x < SIZE; x++) {
+                const alpha = data[(y * SIZE + x) * 4 + 3];
+                if (alpha > 0) {
+                    if (x < minX) minX = x;
+                    if (x > maxX) maxX = x;
+                    if (y < minY) minY = y;
+                    if (y > maxY) maxY = y;
+                }
+            }
+        }
+
+        const w = maxX - minX + 1;
+        const h = maxY - minY + 1;
+
+        const temp = new OffscreenCanvas(w, h);
+        temp.getContext("2d")!.drawImage(offscreen, minX, minY, w, h, 0, 0, w, h);
+        return temp.convertToBlob({ type });
+    }
+
+    return { render, toImageBitmap, toBlob, toContentBlob }
+}
+
+const renderer = createAvatarRenderer();
+
+const urlCache = new Map<string, string>();
+
+export async function getAvatarUrl(state: AvatarData): Promise<string> {
+  const key = JSON.stringify(state);
+  if (urlCache.has(key)) return urlCache.get(key)!;
+  await renderer.render(state);
+  const blob = await renderer.toContentBlob();
+  const url = URL.createObjectURL(blob);
+  urlCache.set(key, url);
+  return url;
 }

@@ -11,8 +11,9 @@ import tagtail from '../../assets/tagtail.png';
 import tagtail_f from '../../assets/tagtail_f.png';
 import { createSignal, onCleanup, Show } from "solid-js";
 import { usePreferences } from "../../context/Preferences";
+import { getAvatarUrl } from "../../avatar/createAvatarRenderer";
 
-const PFP_SIZE = '40px';
+const PFP_SIZE = '50px';
 const USERNAME_SIZE = '0.7rem';
 const DATE_SIZE = '0.6rem';
 const MESSAGE_MARGINS = '15px';
@@ -27,7 +28,7 @@ const IncomingRightContainer = styled("div")`
 
     gap: ${PFP_GAP};
 
-    image-rendering: pixelated;
+    /* image-rendering: pixelated; */
 `
 
 const IncomingRightPfpContainer = styled("div")`
@@ -89,7 +90,7 @@ const IncomingLeftContainer = styled("div")`
 
     gap: ${PFP_GAP};
 
-    image-rendering: pixelated;
+    /* image-rendering: pixelated; */
 `
 
 const IncomingLeftPfpContainer = styled("div")`
@@ -143,7 +144,7 @@ const OutgoingLeftContainer = styled("div")`
 
     gap: ${PFP_GAP};
 
-    image-rendering: pixelated;
+    /* image-rendering: pixelated; */
 `
 
 const OutgoingLeftPfpContainer = styled("div")`
@@ -202,7 +203,7 @@ const OutgoingRightContainer = styled("div")`
 
     gap: ${PFP_GAP};
 
-    image-rendering: pixelated;
+    /* image-rendering: pixelated; */
 `
 
 const OutgoingRightPfpContainer = styled("div")`
@@ -338,6 +339,21 @@ export default function Message(props: {
 
     const fullDate = format(createdAt, 'dd.MM.yy HH:mm');
 
+    const [avatarSrc, setAvatarSrc] = createSignal(pfp_placeholder);
+    getAvatarUrl({
+        head: 4,
+        leftEye: "circle",
+        rightEye: "circle",
+        leftEyeOffset: {
+            x: 0,
+            y: 0
+        },
+        rightEyeOffset: {
+            x: 0,
+            y: 0
+        }
+    }).then(r => setAvatarSrc(r));
+
     return (
         <Show
             when={props.isOwn}
@@ -347,7 +363,7 @@ export default function Message(props: {
                     fallback={(
                         <IncomingLeftContainer>
                             <IncomingLeftPfpContainer>
-                                <img src={pfp_placeholder} />
+                                <img src={avatarSrc()} />
                             </IncomingLeftPfpContainer>
                             <UsernameLeft>{props.username}</UsernameLeft>
                             <IncomingLeftBody>
@@ -359,7 +375,7 @@ export default function Message(props: {
                 >
                     <IncomingRightContainer>
                         <IncomingRightPfpContainer>
-                            <img src={pfp_placeholder} />
+                            <img src={avatarSrc()} />
                         </IncomingRightPfpContainer>
                         <UsernameRight>{props.username}</UsernameRight>
                         <IncomingRightBody>
@@ -379,7 +395,7 @@ export default function Message(props: {
                             <MessageContent>{props.content}</MessageContent>
                         </OutgoingRightBody>
                         <OutgoingRightPfpContainer>
-                            <img src={pfp_placeholder} />
+                            <img src={avatarSrc()} />
                         </OutgoingRightPfpContainer>
                     </OutgoingRightContainer>
                 )}
@@ -390,7 +406,7 @@ export default function Message(props: {
                         <MessageContent>{props.content}</MessageContent>
                     </OutgoingLeftBody>
                     <OutgoingLeftPfpContainer>
-                        <img src={pfp_placeholder} />
+                        <img src={avatarSrc()} />
                     </OutgoingLeftPfpContainer>
                 </OutgoingLeftContainer>
             </Show>
