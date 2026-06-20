@@ -7,6 +7,10 @@ import { BE } from "../api";
 
 const Details = styled("p")`
     padding: 10px;
+
+    button {
+        font-size: 18px;
+    }
 `
 
 const [userCount] = createResource(async () => {

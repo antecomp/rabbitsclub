@@ -49,6 +49,7 @@ export const AuthForm = styled('form')`
     align-items: baseline;
     padding: 10px;
     gap: 5px;
+    font-size: 18px;
 
     input {
         background: lightgray;
@@ -88,6 +89,7 @@ export const AuthForm = styled('form')`
     button {
         border: none;
         background: none;
+        font-size: 18px;
     }
 
     button:hover, button:focus {
