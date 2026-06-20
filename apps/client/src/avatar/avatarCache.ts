@@ -1,6 +1,6 @@
 import { AvatarData } from "./avatar.types";
 import { api } from "../api/backend";
-import { getAvatarUrl } from "./createAvatarRenderer";
+import { generateAvatarAssetURL } from "./createAvatarRenderer";
 
 const DEFAULT_AVATAR: AvatarData = {
     head: 0,
@@ -20,7 +20,7 @@ const urlCache = new Map<string, string>()
 // prevent generating a ton of unique uneeded blobs by capturing inflight
 const inFlight = new Map<string, Promise<string>>()
 
-export async function getProfileAvatarURL(username: string): Promise<string> {
+export async function loadAvatarForUser(username: string): Promise<string> {
     // Return cached URL immediately if available
     if (profileCache.has(username)) {
         const key = JSON.stringify(profileCache.get(username))
@@ -41,7 +41,7 @@ export async function getProfileAvatarURL(username: string): Promise<string> {
         const key = JSON.stringify(avatar)
 
         if (!urlCache.has(key)) {
-            const url = await getAvatarUrl(avatar)
+            const url = await generateAvatarAssetURL(avatar)
             urlCache.set(key, url)
         }
 
@@ -53,7 +53,7 @@ export async function getProfileAvatarURL(username: string): Promise<string> {
     return promise
 }
 
-export function invalidateProfile(username: string) {
+export function invalidateCachedProfile(username: string) {
     inFlight.delete(username);
     const old = profileCache.get(username)
     if (old) {

@@ -11,7 +11,7 @@ import tagtail from '@/assets/ui/tagtail.png';
 import tagtail_f from '@/assets/ui/tagtail_f.png';
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import { usePreferences } from "@/context/Preferences";
-import { getProfileAvatarURL } from "@/avatar/avatarCache";
+import { loadAvatarForUser } from "@/avatar/avatarCache";
 
 const PFP_SIZE = '50px';
 const USERNAME_SIZE = '0.7rem';
@@ -349,7 +349,7 @@ export default function Message(props: {
 
     const [avatarSrc, setAvatarSrc] = createSignal(pfp_placeholder);
     onMount(async () => {
-        const url = await getProfileAvatarURL(props.username);
+        const url = await loadAvatarForUser(props.username);
         setAvatarSrc(url);
     })
 

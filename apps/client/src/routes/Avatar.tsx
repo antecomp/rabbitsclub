@@ -12,7 +12,7 @@ import { createStore, SetStoreFunction } from "solid-js/store";
 import { api } from "../api/backend";
 import { user } from "../api/user";
 import { SuggestedString } from "../types/misc.types";
-import { invalidateProfile } from "../avatar/avatarCache";
+import { invalidateCachedProfile } from "../avatar/avatarCache";
 
 const AvatarContainer = styled("div")`
     position: absolute;
@@ -251,7 +251,7 @@ export default function Avatar() {
         navigate("/");
 
         const username = user()?.username;
-        if (username) invalidateProfile(username);
+        if (username) invalidateCachedProfile(username);
     }
 
     createEffect(() => {

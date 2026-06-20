@@ -95,7 +95,7 @@ export default function createAvatarRenderer() {
 
 const renderer = createAvatarRenderer();
 
-export async function getAvatarUrl(state: AvatarData): Promise<string> {
+export async function generateAvatarAssetURL(state: AvatarData): Promise<string> {
     await renderer.render(state)
     const blob = await renderer.toContentBlob()
     return URL.createObjectURL(blob)
