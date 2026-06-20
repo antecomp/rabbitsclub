@@ -9,7 +9,7 @@ import cbr from '../assets/ui/c_br.png';
 import arrow from '../assets/ui/dir.png';
 import center from '../assets/ui/center.png';
 import { createStore, SetStoreFunction } from "solid-js/store";
-import { BE } from "../api";
+import { api } from "../api/backend";
 import { user } from "../api/user";
 import { SuggestedString } from "../types/misc.types";
 import { invalidateProfile } from "../avatar/avatarCache";
@@ -241,7 +241,7 @@ export default function Avatar() {
     }
 
     const save = async () => {
-        await BE.profile.avatar.put({
+        await api.profile.avatar.put({
             head: variant(),
             leftEye: leye(),
             rightEye: reye(),
@@ -267,7 +267,7 @@ export default function Avatar() {
         loadedUsername = username;
 
         void (async () => {
-            const profile = (await BE.profile({ username }).get()).data;
+            const profile = (await api.profile({ username }).get()).data;
             if (loadedUsername !== username || !profile) return;
 
             setVariant(profile.head);

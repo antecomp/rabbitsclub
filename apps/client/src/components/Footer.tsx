@@ -1,5 +1,5 @@
 import { createResource, ParentProps } from "solid-js";
-import { BE } from "../api";
+import { api } from "../api/backend";
 import { styled } from "solid-styled-components";
 
 const FooterContainer = styled('footer')`
@@ -21,7 +21,7 @@ const FooterContainer = styled('footer')`
 
 // Raised global to prevent requery on mount;
 const [status] = createResource(async () => {
-    const rez = (await BE.health.get()).data;
+    const rez = (await api.health.get()).data;
     return rez?.status;
 })
 

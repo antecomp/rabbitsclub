@@ -1,6 +1,6 @@
 import { createSignal } from "solid-js"
 import { useNavigate } from "@solidjs/router"
-import { BE } from "../api"
+import { api } from "../api/backend"
 import { refetchUser } from "../api/user"
 import Footer from "../components/Footer"
 import { Container, Title, Subtitle, Divider, AuthForm } from "../styled/MainMenu"
@@ -16,7 +16,7 @@ export default function Register() {
         e.preventDefault()
         setError("")
 
-        const { error: err } = await BE.auth.register.post({
+        const { error: err } = await api.auth.register.post({
             username: username(),
             password: password(),
             code: registerCode()

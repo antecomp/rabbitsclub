@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js"
-import { BE } from "../api";
+import { api } from "../api/backend";
 import { AuthForm, Container, Divider, Subtitle, Title } from "../styled/MainMenu";
 import Footer from "../components/Footer";
 import { useNavigate } from "@solidjs/router";
@@ -10,7 +10,7 @@ export default function Admin() {
     const sendInvite = (e: SubmitEvent) => {
         e.preventDefault();
         if(!inviteCode()) return;
-        BE.admin.invite.post({code: inviteCode()});
+        api.admin.invite.post({code: inviteCode()});
         setInviteCode("");
     }
     //  When Iget more actions just make submenus like [ USERS ] [ INVITES ]...

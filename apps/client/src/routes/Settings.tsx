@@ -1,4 +1,4 @@
-import { BE } from "../api";
+import { api } from "../api/backend";
 import { AuthForm, Container, Divider, Subtitle, Title } from "../styled/MainMenu";
 import Footer from "../components/Footer";
 import { useNavigate } from "@solidjs/router";
@@ -23,7 +23,7 @@ export default function Settings() {
     const navigate = useNavigate();
 
     const logout = async () => {
-        await BE.auth.logout.post()
+        await api.auth.logout.post()
         await refetchUser();
         navigate("/", { replace: true });
     }

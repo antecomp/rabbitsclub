@@ -1,5 +1,5 @@
 import { createEffect, createSignal, For, on, onCleanup, onMount, Show } from "solid-js"
-import { BE } from "../api"
+import { api } from "../api/backend"
 import { user } from "../api/user"
 import { MessageHistoryData } from "../types/message.type";
 import Message from "../components/chat/Message";
@@ -111,7 +111,7 @@ export default function Chat() {
     const [hasMoreMessages, setHasMoreMessages] = createSignal(true);
     const [autoScrollMessages, setAutoScrollMessages] = createSignal(true);
     onMount(async () => {
-        const { data } = await BE.messages.get({ query: {} });
+        const { data } = await api.messages.get({ query: {} });
         if (data) {
             setMessages(data);
             // todo: remove magic number (do the same on the BE too)
@@ -127,7 +127,7 @@ export default function Chat() {
         const previousScrollHeight = messagesEl?.scrollHeight ?? 0;
         const previousScrollTop = messagesEl?.scrollTop ?? 0;
 
-        const { data } = await BE.messages.get({
+        const { data } = await api.messages.get({
             query: { before: String(oldest.id) }
         });
         if (!data) return;
@@ -140,10 +140,10 @@ export default function Chat() {
         });
     }
 
-    let sub: ReturnType<typeof BE.ws.subscribe>
+    let sub: ReturnType<typeof api.ws.subscribe>
 
     onMount(() => {
-        sub = BE.ws.subscribe()
+        sub = api.ws.subscribe()
 
         // Change this so we have system messages in there two but
         // with a flag to render them differently.

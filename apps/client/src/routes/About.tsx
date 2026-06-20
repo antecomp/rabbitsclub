@@ -3,7 +3,7 @@ import { Container, Divider, Subtitle, Title } from "../styled/MainMenu";
 import { useNavigate } from "@solidjs/router";
 import Footer from "../components/Footer";
 import { createResource } from "solid-js";
-import { BE } from "../api";
+import { api } from "../api/backend";
 
 const Details = styled("p")`
     padding: 10px;
@@ -14,7 +14,7 @@ const Details = styled("p")`
 `
 
 const [userCount] = createResource(async () => {
-    return (await BE.usercount.get()).data
+    return (await api.usercount.get()).data
 })
 
 export default function About() {

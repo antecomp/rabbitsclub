@@ -1,7 +1,7 @@
 import { createResource } from "solid-js"
-import { BE } from "../api"
+import { api } from "./backend"
 
 export const [user, { refetch: refetchUser }] = createResource(async () => {
-    const { data } = await BE.auth.me.get()
+    const { data } = await api.auth.me.get()
     return data ?? null
 })

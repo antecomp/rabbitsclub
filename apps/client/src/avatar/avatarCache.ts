@@ -1,5 +1,5 @@
 import { AvatarData } from "./avatar.types";
-import { BE } from "../api";
+import { api } from "../api/backend";
 import { getAvatarUrl } from "./createAvatarRenderer";
 
 const DEFAULT_AVATAR: AvatarData = {
@@ -33,7 +33,7 @@ export async function getProfileAvatarURL(username: string): Promise<string> {
     // Otherwise start a new request and track it
     const promise = (async () => {
         if (!profileCache.has(username)) {
-            const { data } = await BE.profile({username}).get()
+            const { data } = await api.profile({username}).get()
             profileCache.set(username, data ?? DEFAULT_AVATAR)
         }
 
