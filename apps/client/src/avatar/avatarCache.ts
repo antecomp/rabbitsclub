@@ -16,24 +16,45 @@ const profileCache = new Map<string, AvatarData>()
 // Cache rendered URLs by avatar data key
 const urlCache = new Map<string, string>()
 
+// initial load of messages send a torrent of these requests.
+// prevent generating a ton of unique uneeded blobs by capturing inflight
+const inFlight = new Map<string, Promise<string>>()
+
 export async function getProfileAvatarURL(username: string): Promise<string> {
-    if(!profileCache.has(username)) {
-        const { data } = await BE.profile({username}).get();
-        profileCache.set(username, data ?? DEFAULT_AVATAR);
+    // Return cached URL immediately if available
+    if (profileCache.has(username)) {
+        const key = JSON.stringify(profileCache.get(username))
+        if (urlCache.has(key)) return urlCache.get(key)!
     }
 
-    const avatar = profileCache.get(username)!
-    const key = JSON.stringify(avatar);
+    // If already in flight, wait for that same promise
+    if (inFlight.has(username)) return inFlight.get(username)!
 
-    if(!urlCache.has(key)) {
-        const url = await getAvatarUrl(avatar);
-        urlCache.set(key, url);
-    }
+    // Otherwise start a new request and track it
+    const promise = (async () => {
+        if (!profileCache.has(username)) {
+            const { data } = await BE.profile({username}).get()
+            profileCache.set(username, data ?? DEFAULT_AVATAR)
+        }
 
-    return urlCache.get(key)!
+        const avatar = profileCache.get(username)!
+        const key = JSON.stringify(avatar)
+
+        if (!urlCache.has(key)) {
+            const url = await getAvatarUrl(avatar)
+            urlCache.set(key, url)
+        }
+
+        inFlight.delete(username)
+        return urlCache.get(JSON.stringify(profileCache.get(username)))!
+    })()
+
+    inFlight.set(username, promise)
+    return promise
 }
 
 export function invalidateProfile(username: string) {
+    inFlight.delete(username);
     const old = profileCache.get(username)
     if (old) {
         const key = JSON.stringify(old)

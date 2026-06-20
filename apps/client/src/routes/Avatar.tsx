@@ -1,5 +1,5 @@
 import { useNavigate } from "@solidjs/router";
-import { createSignal, For, Match, Switch } from "solid-js";
+import { createSignal, For, Match, onMount, Switch } from "solid-js";
 import { AvatarCanvas } from "../avatar/AvatarCanvas";
 import Footer from "../components/Footer";
 import { styled } from "solid-styled-components";
@@ -9,6 +9,9 @@ import cbr from '../assets/c_br.png';
 import arrow from '../assets/dir.png';
 import { createStore, SetStoreFunction } from "solid-js/store";
 import { BE } from "../api";
+import { user } from "../store";
+import { SuggestedString } from "../types/misc.types";
+import { invalidateProfile } from "../avatar/avatarCache";
 
 const AvatarContainer = styled("div")`
     position: absolute;
@@ -212,8 +215,8 @@ export default function Avatar() {
     const navigate = useNavigate();
     const [menu, setMenu] = createSignal<AvatarMenu>('root');
     const [variant, setVariant] = createSignal(0);
-    const [leye, setLeye] = createSignal<EyeVariant>('bead');
-    const [reye, setReye] = createSignal<EyeVariant>('bead');
+    const [leye, setLeye] = createSignal<SuggestedString<EyeVariant>>('bead');
+    const [reye, setReye] = createSignal<SuggestedString<EyeVariant>>('bead');
 
     const [leftOffset, setLeftOffset] = createStore<EyeOffset>({ x: 0, y: 0 });
     const [rightOffset, setRightOffset] = createStore<EyeOffset>({ x: 0, y: 0 });
@@ -231,8 +234,23 @@ export default function Avatar() {
             leftEyeOffset: { x: leftOffset.x, y: leftOffset.y },
             rightEyeOffset: { x: rightOffset.x, y: rightOffset.y }
         })
-        navigate("/")
+        navigate("/");
+
+        const username = user()?.username;
+        if (username) invalidateProfile(username);
     }
+
+    onMount(async () => {
+        const username = user()?.username;
+        if(!username) return;
+        const profile = (await BE.profile({username}).get()).data;
+        if(!profile) return;
+        setVariant(profile.head);
+        setLeye(profile.leftEye);
+        setReye(profile.rightEye);
+        setLeftOffset(profile.leftEyeOffset);
+        setRightOffset(profile.rightEyeOffset);
+    })
 
     return (
         <AvatarContainer>
@@ -327,7 +345,7 @@ export default function Avatar() {
                 </Menu>
             </Split>
             <Footer>
-                Use options to customize rabbit.
+                Select options on the right to customize rabbit.
             </Footer>
         </AvatarContainer>
     )
