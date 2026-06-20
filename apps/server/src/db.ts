@@ -143,10 +143,19 @@ export const actions = {
         queries.upsertProfile.get({ $user_id: user_id, $avatar: JSON.stringify(avatar) })
 };
 
-// Seed in root user invite
-actions.insertInviteCode("ADMIN", 1);
+const initialAdminUsername = process.env.INITIAL_ADMIN_USERNAME!
+const initialAdminPassword = process.env.INITIAL_ADMIN_PASSWORD!
 
-// Manully elevate an admin for now
-db.run(`UPDATE users SET is_admin = 1 WHERE username = 'R46617'`)
+if (initialAdminPassword) {
+    const hashedPassword = await Bun.password.hash(initialAdminPassword)
+    db.query<User, { $username: string, $password: string }>(`
+        INSERT INTO users (username, password, is_admin)
+        VALUES ($username, $password, 1)
+        ON CONFLICT(username) DO UPDATE SET
+            password = excluded.password,
+            is_admin = 1
+        RETURNING *
+    `).get({ $username: initialAdminUsername, $password: hashedPassword })
+}
 
 console.log("db init");
