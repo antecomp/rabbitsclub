@@ -7,7 +7,7 @@ import Footer from "../components/Footer";
 import { styled } from "solid-styled-components";
 import { Divider, Title } from "../styled/MainMenu";
 import { playSoundOnce } from "../util/playSound";
-import ping from '../assets/ping.mp3';
+import ping from '../assets/sfx/ping.mp3';
 import Aside from "../components/chat/Aside";
 
 const MESSAGE_COLUMN_SIZE = '1fr';

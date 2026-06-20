@@ -1,5 +1,5 @@
 import { styled } from "solid-styled-components"
-import pfp_placeholder from '../../assets/placeholder.png';
+import pfp_placeholder from '../../assets/ui/pfp_placeholder.png';
 import { format, formatDistanceToNow } from "date-fns";
 import chatbox from '../../assets/ui/chatbox.png';
 import chatbox_f from '../../assets/ui/chatbox_f.png';
@@ -11,9 +11,6 @@ import tagtail from '../../assets/ui/tagtail.png';
 import tagtail_f from '../../assets/ui/tagtail_f.png';
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import { usePreferences } from "../../context/Preferences";
-import { getAvatarUrl } from "../../avatar/createAvatarRenderer";
-import { BE } from "../../api";
-import { AvatarData } from "../../avatar/avatar.types";
 import { getProfileAvatarURL } from "../../avatar/avatarCache";
 
 const PFP_SIZE = '50px';

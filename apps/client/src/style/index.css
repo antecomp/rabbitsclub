@@ -1,11 +1,11 @@
 @font-face {
      font-family: 'wo3';
-     src: url('../assets/WO3.ttf');
+     src: url('../assets/fonts/WO3.ttf');
 }
 
 @font-face {
      font-family: 'main';
-     src: url('../assets/ShareTechMono-Regular.ttf');
+     src: url('../assets/fonts/ShareTechMono-Regular.ttf');
 }
 
 * {
@@ -21,7 +21,7 @@ body {
 
      background-image: 
           url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Ccircle cx='4.5' cy='4.5' r='.5' fill='%23ABABAB'/%3E%3C/svg%3E"),
-          url('../assets/brand.svg');
+          url('../assets/misc/brand.svg');
           background-position: top left, bottom right;
           background-repeat: repeat, no-repeat;
           background-size: auto, 35vh;
