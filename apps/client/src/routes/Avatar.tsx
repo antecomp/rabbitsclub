@@ -1,5 +1,5 @@
 import { useNavigate } from "@solidjs/router";
-import { createSignal, For, Match, onMount, Switch } from "solid-js";
+import { createEffect, createSignal, For, Match, Switch } from "solid-js";
 import { AvatarCanvas } from "../avatar/AvatarCanvas";
 import Footer from "../components/Footer";
 import { styled } from "solid-styled-components";
@@ -220,6 +220,7 @@ export default function Avatar() {
 
     const [leftOffset, setLeftOffset] = createStore<EyeOffset>({ x: 0, y: 0 });
     const [rightOffset, setRightOffset] = createStore<EyeOffset>({ x: 0, y: 0 });
+    let loadedUsername: string | undefined;
 
     const eyeThumbnail = (variant: EyeVariant, side: 0 | 1) => {
         const src = eyes[variant].src;
@@ -240,16 +241,28 @@ export default function Avatar() {
         if (username) invalidateProfile(username);
     }
 
-    onMount(async () => {
+    createEffect(() => {
+        if (user.loading) return;
+
         const username = user()?.username;
-        if(!username) return;
-        const profile = (await BE.profile({username}).get()).data;
-        if(!profile) return;
-        setVariant(profile.head);
-        setLeye(profile.leftEye);
-        setReye(profile.rightEye);
-        setLeftOffset(profile.leftEyeOffset);
-        setRightOffset(profile.rightEyeOffset);
+        if (!username) {
+            loadedUsername = undefined;
+            return;
+        }
+
+        if (loadedUsername === username) return;
+        loadedUsername = username;
+
+        void (async () => {
+            const profile = (await BE.profile({ username }).get()).data;
+            if (loadedUsername !== username || !profile) return;
+
+            setVariant(profile.head);
+            setLeye(profile.leftEye);
+            setReye(profile.rightEye);
+            setLeftOffset(profile.leftEyeOffset);
+            setRightOffset(profile.rightEyeOffset);
+        })();
     })
 
     return (

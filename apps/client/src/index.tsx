@@ -35,7 +35,9 @@ render(
                     <AdminRoute><Admin /></AdminRoute>
                 )} />
                 <Route path="/about" component={About} />
-                <Route path="/avatar" component={Avatar} />
+                <Route path="/avatar" component={() => (
+                    <ProtectedRoute><Avatar /></ProtectedRoute>
+                )} />
             </Router>
         </PreferencesProvider>
     ),
