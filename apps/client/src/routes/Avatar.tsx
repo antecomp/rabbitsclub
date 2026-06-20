@@ -1,20 +1,34 @@
 import { useNavigate } from "@solidjs/router";
 import { createSignal, For, Match, Switch } from "solid-js";
 import { AvatarCanvas } from "../avatar/AvatarCanvas";
-import { Container, Divider, Subtitle, Title } from "../styled/MainMenu";
 import Footer from "../components/Footer";
 import { styled } from "solid-styled-components";
 import { EyeVariant, eyeVariants, eyes, heads } from "../avatar/assets";
+import { Divider, Subtitle, Title } from "../styled/MainMenu";
+
+const AvatarContainer = styled("div")`
+    position: absolute;
+    top: 40%;
+    left: 10vw;
+    transform: translate(0%, -50%);
+    max-width: 580px;
+    width: 70vw;
+    height: 400px;
+    user-select: none;
+    animation: flicker-in 0.3s steps(12, end) forwards;
+`
 
 const Split = styled('div')`
     display: grid;
-    grid-template-columns: 5fr 3fr;
-    gap: 20px;
-    padding: 10px 0px;
-    align-items: start;
+    grid-template-columns: 5fr 4fr;
+    gap: 10px;
+    height: 100%;
+    /* padding-bottom: 10px; */
 
     canvas {
         width: 100%;
+        height: 100%;
+        object-fit: contain;
     }
 `
 
@@ -22,6 +36,13 @@ const Menu = styled('div')`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    padding: 10px;
+    box-sizing: border-box;
+
+    height: 100%;
+    /* min-height: 0; */
+    /* overflow: auto; */
+    overflow: hidden;
 `
 
 const MenuButton = styled('button')`
@@ -59,10 +80,12 @@ const BackButton = styled('button')`
 `
 
 const ThumbnailGrid = styled('div')`
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 64px);
     gap: 4px;
     width: 100%;
+    overflow: auto;
+    padding: 4px;
+    display: flex;
+    flex-wrap: wrap;
 `
 
 const ThumbnailButton = styled('button')`
@@ -75,9 +98,12 @@ const ThumbnailButton = styled('button')`
     padding: 6px;
     border: 1px solid black;
     outline: 1px solid transparent;
-    background: #eee;
+    background: #aaa;
     font-family: 'main';
     font-size: 0.8rem;
+    aspect-ratio: 1;
+    flex-grow: 1;
+    max-width: 32%;
 
     &:hover, &:focus {
         background: lightgray;
@@ -95,6 +121,7 @@ const ThumbnailButton = styled('button')`
         max-height: 48px;
         image-rendering: pixelated;
         object-fit: contain;
+        flex-grow: 1;
     }
 `
 
@@ -113,7 +140,7 @@ export default function Avatar() {
     }
 
     return (
-        <Container>
+        <AvatarContainer>
             <Title>avatar</Title>
             <Subtitle>Rabbit Generation System</Subtitle>
             <Divider />
@@ -126,6 +153,32 @@ export default function Avatar() {
                             <MenuButton type="button" onClick={() => setMenu('leftEye')}>[ LEFT EYE ]</MenuButton>
                             <MenuButton type="button" onClick={() => setMenu('rightEye')}>[ RIGHT EYE ]</MenuButton>
                             <MenuButton type="button" onClick={() => navigate("/")}>[ BACK ]</MenuButton>
+                            OV <br />
+                            OV <br />
+                            OV <br />
+
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
+                            OV <br />
                         </Match>
                         <Match when={menu() === 'ears'}>
                             <MenuTitle>
@@ -188,6 +241,20 @@ export default function Avatar() {
                                         </ThumbnailButton>
                                     )}
                                 </For>
+                                {/* again for overflow */}
+                                <For each={eyeVariants}>
+                                    {eye => (
+                                        <ThumbnailButton
+                                            type="button"
+                                            data-selected={reye() === eye}
+                                            aria-pressed={reye() === eye}
+                                            onClick={() => setReye(eye)}
+                                        >
+                                            <img src={eyeThumbnail(eye, 1)} alt={`${eye} right eye`} />
+                                            {eye}
+                                        </ThumbnailButton>
+                                    )}
+                                </For>
                             </ThumbnailGrid>
                         </Match>
                     </Switch>
@@ -196,6 +263,6 @@ export default function Avatar() {
             <Footer>
                 Use options to customize rabbit.
             </Footer>
-        </Container>
+        </AvatarContainer>
     )
 }
