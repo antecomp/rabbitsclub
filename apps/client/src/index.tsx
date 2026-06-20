@@ -10,6 +10,7 @@ import './style/index.css'
 import About from "./routes/About"
 import Settings from "./routes/Settings"
 import { PreferencesProvider } from "./context/Preferences"
+import Avatar from "./routes/Avatar"
 
 render(
     () => (
@@ -34,6 +35,7 @@ render(
                     <AdminRoute><Admin /></AdminRoute>
                 )} />
                 <Route path="/about" component={About} />
+                <Route path="/avatar" component={Avatar} />
             </Router>
         </PreferencesProvider>
     ),
