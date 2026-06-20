@@ -21,7 +21,7 @@ import LazyRight from '../assets/avatars/eyes/lazy right.png';
 import CurlLeft from '../assets/avatars/eyes/curl left.png';
 import CurlRight from '../assets/avatars/eyes/curl right.png';
 
-const DEFAULT_EYE_OFFSET = { x: 70, y: 80 };
+const DEFAULT_EYE_OFFSET = { x: 70, y: 90 };
 
 
 export const eyes = {
