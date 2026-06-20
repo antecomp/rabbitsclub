@@ -1,6 +1,6 @@
 import { useNavigate } from "@solidjs/router";
 import { createEffect, ParentProps } from "solid-js";
-import { user } from "../store";
+import { user } from "../api/user";
 
 export function ProtectedRoute(props: ParentProps) {
     const navigate = useNavigate();

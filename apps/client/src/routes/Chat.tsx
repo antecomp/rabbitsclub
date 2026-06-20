@@ -1,6 +1,6 @@
 import { createEffect, createSignal, For, on, onCleanup, onMount, Show } from "solid-js"
 import { BE } from "../api"
-import { user } from "../store"
+import { user } from "../api/user"
 import { MessageHistoryData } from "../types/message.type";
 import Message from "../components/chat/Message";
 import Footer from "../components/Footer";

@@ -10,7 +10,7 @@ import arrow from '../assets/ui/dir.png';
 import center from '../assets/ui/center.png';
 import { createStore, SetStoreFunction } from "solid-js/store";
 import { BE } from "../api";
-import { user } from "../store";
+import { user } from "../api/user";
 import { SuggestedString } from "../types/misc.types";
 import { invalidateProfile } from "../avatar/avatarCache";
 

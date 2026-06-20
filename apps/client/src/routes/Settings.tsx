@@ -2,7 +2,7 @@ import { BE } from "../api";
 import { AuthForm, Container, Divider, Subtitle, Title } from "../styled/MainMenu";
 import Footer from "../components/Footer";
 import { useNavigate } from "@solidjs/router";
-import { refetchUser } from "../store";
+import { refetchUser } from "../api/user";
 import { usePreferences } from "../context/Preferences";
 import { styled } from "solid-styled-components";
 

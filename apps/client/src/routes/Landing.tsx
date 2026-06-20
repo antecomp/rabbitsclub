@@ -2,7 +2,7 @@ import { useNavigate } from "@solidjs/router";
 import { Show } from "solid-js";
 import { Container, Selector } from "../styled/MainMenu";
 import Footer from "../components/Footer";
-import { user } from "../store";
+import { user } from "../api/user";
 
 export default function Landing() {
 
