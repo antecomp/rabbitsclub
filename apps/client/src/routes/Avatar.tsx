@@ -7,6 +7,7 @@ import { EyeVariant, eyeVariants, eyes, heads } from "../avatar/assets";
 import { Divider, Subtitle, Title } from "../styled/MainMenu";
 import cbr from '../assets/c_br.png';
 import arrow from '../assets/dir.png';
+import center from '../assets/center.png';
 import { createStore, SetStoreFunction } from "solid-js/store";
 import { BE } from "../api";
 import { user } from "../store";
@@ -193,6 +194,10 @@ function EyeOffsetControls(props: { setOffset: SetStoreFunction<EyeOffset> }) {
         props.setOffset('y', value => value + y);
     }
 
+    const reset = () => {
+        props.setOffset({ x: 0, y: 0 });
+    }
+
     return (
         <OffsetControls aria-label="Eye position controls">
             <For each={directions}>
@@ -207,6 +212,14 @@ function EyeOffsetControls(props: { setOffset: SetStoreFunction<EyeOffset> }) {
                     </OffsetButton>
                 )}
             </For>
+            <OffsetButton
+                type="button"
+                aria-label="Reset eye position"
+                onClick={reset}
+                style={{ 'grid-column': 2, 'grid-row': 2 }}
+            >
+                <img src={center} alt="" />
+            </OffsetButton>
         </OffsetControls>
     );
 }
