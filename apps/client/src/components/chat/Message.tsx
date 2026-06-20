@@ -6,12 +6,12 @@ import chatbox_f from '../../assets/ui/chatbox_f.png';
 import sentbox from '../../assets/ui/sentbox.png';
 import sentbox_f from '../../assets/ui/sentbox_f.png';
 import taghead from '../../assets/ui/taghead.png';
-import taghead_f from '../../assets/ui/taghead_f.png';
-import tagtail from '../../assets/ui/tagtail.png';
-import tagtail_f from '../../assets/ui/tagtail_f.png';
+import taghead_f from '@/assets/ui/taghead_f.png';
+import tagtail from '@/assets/ui/tagtail.png';
+import tagtail_f from '@/assets/ui/tagtail_f.png';
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
-import { usePreferences } from "../../context/Preferences";
-import { getProfileAvatarURL } from "../../avatar/avatarCache";
+import { usePreferences } from "@/context/Preferences";
+import { getProfileAvatarURL } from "@/avatar/avatarCache";
 
 const PFP_SIZE = '50px';
 const USERNAME_SIZE = '0.7rem';
