@@ -18,11 +18,14 @@ export default function Landing() {
             >
                 <Selector onClick={() => navigate("/chat")}>chat</Selector>
                 <Selector onClick={() => navigate("/settings")}>settings</Selector>
+                <Selector onClick={() => navigate("/avatar")}>avatar</Selector>
             </Show>
             <Show when={user()?.is_admin}>
                 <Selector onClick={() => navigate("/admin")}>admin</Selector>
             </Show>
-            <Selector onClick={() => navigate("/about")}>about</Selector>
+            <Show when={!user()}>
+                <Selector onClick={() => navigate("/about")}>about</Selector>
+            </Show>
             <Footer>
                 <Show when={user()}>
                     Hello, {user()?.username}. <br />
