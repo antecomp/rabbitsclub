@@ -5,6 +5,9 @@ import Footer from "../components/Footer";
 import { styled } from "solid-styled-components";
 import { EyeVariant, eyeVariants, eyes, heads } from "../avatar/assets";
 import { Divider, Subtitle, Title } from "../styled/MainMenu";
+import cbr from '../assets/c_br.png';
+import arrow from '../assets/dir.png';
+import { createStore, SetStoreFunction } from "solid-js/store";
 
 const AvatarContainer = styled("div")`
     position: absolute;
@@ -20,16 +23,32 @@ const AvatarContainer = styled("div")`
 
 const Split = styled('div')`
     display: grid;
-    grid-template-columns: 5fr 4fr;
+    grid-template-columns: 300px 1fr;
     gap: 10px;
     height: 100%;
     padding-bottom: 10px;
+    padding-top: 10px;
 
     canvas {
         width: 100%;
         overflow: hidden;
         height: 100%;
         object-fit: contain;
+
+        background: url(${cbr});
+
+        --bevel: 20px;
+
+        clip-path: polygon(
+            var(--bevel) 0,
+            calc(100% - var(--bevel)) 0,
+            100% var(--bevel),
+            100% calc(100% - var(--bevel)),
+            calc(100% - var(--bevel)) 100%,
+            var(--bevel) 100%,
+            0 calc(100% - var(--bevel)),
+            0 var(--bevel)
+        );
     }
 `
 
@@ -84,7 +103,7 @@ const ThumbnailGrid = styled('div')`
     gap: 4px;
     width: 100%;
     overflow: auto;
-    padding: 4px;
+    padding: 1px;
     display: flex;
     flex-wrap: wrap;
 `
@@ -113,7 +132,7 @@ const ThumbnailButton = styled('button')`
     }
 
     &[data-selected='true'] {
-        outline: 2px solid black;
+        outline: 1px solid black;
         background: #ddd;
     }
 
@@ -126,7 +145,67 @@ const ThumbnailButton = styled('button')`
     }
 `
 
+const OffsetControls = styled('div')`
+    display: grid;
+    grid-template-columns: repeat(3, 15px);
+    grid-template-rows: repeat(3, 15px);
+    gap: 1px;
+    margin-bottom: 5px;
+    align-self: center;
+`
+
+const OffsetButton = styled('button')`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+
+    &:hover, &:focus {
+        filter: brightness(1.5);
+        cursor: pointer;
+    }
+
+    img {
+        object-fit: contain;
+        image-rendering: pixelated;
+    }
+`
+
 type AvatarMenu = 'root' | 'ears' | 'leftEye' | 'rightEye';
+type EyeOffset = { x: number; y: number };
+
+const OFFSET_STEP = 4;
+
+const directions: { x: number; y: number; rotation: number; gridColumn: number; gridRow: number; label: string }[] = [
+    { x: 0, y: -OFFSET_STEP, rotation: -90, gridColumn: 2, gridRow: 1, label: 'Move eye up' },
+    { x: -OFFSET_STEP, y: 0, rotation: 180, gridColumn: 1, gridRow: 2, label: 'Move eye left' },
+    { x: OFFSET_STEP, y: 0, rotation: 0, gridColumn: 3, gridRow: 2, label: 'Move eye right' },
+    { x: 0, y: OFFSET_STEP, rotation: 90, gridColumn: 2, gridRow: 3, label: 'Move eye down' },
+];
+
+function EyeOffsetControls(props: { setOffset: SetStoreFunction<EyeOffset> }) {
+    const move = (x: number, y: number) => {
+        props.setOffset('x', value => value + x);
+        props.setOffset('y', value => value + y);
+    }
+
+    return (
+        <OffsetControls aria-label="Eye position controls">
+            <For each={directions}>
+                {({ x, y, rotation, gridColumn, gridRow, label }) => (
+                    <OffsetButton
+                        type="button"
+                        aria-label={label}
+                        onClick={() => move(x, y)}
+                        style={{ 'grid-column': gridColumn, 'grid-row': gridRow }}
+                    >
+                        <img src={arrow} alt="" style={{ transform: `rotate(${rotation}deg)` }} />
+                    </OffsetButton>
+                )}
+            </For>
+        </OffsetControls>
+    );
+}
 
 export default function Avatar() {
     const navigate = useNavigate();
@@ -134,6 +213,9 @@ export default function Avatar() {
     const [variant, setVariant] = createSignal(0);
     const [leye, setLeye] = createSignal<EyeVariant>('bead');
     const [reye, setReye] = createSignal<EyeVariant>('bead');
+
+    const [leftOffset, setLeftOffset] = createStore<EyeOffset>({x: 0, y:0});
+    const [rightOffset, setRightOffset] = createStore<EyeOffset>({x: 0, y:0});
 
     const eyeThumbnail = (variant: EyeVariant, side: 0 | 1) => {
         const src = eyes[variant].src;
@@ -143,10 +225,18 @@ export default function Avatar() {
     return (
         <AvatarContainer>
             <Title>avatar</Title>
-            <Subtitle>Rabbit Generation System</Subtitle>
+            <Subtitle>rabbit customization</Subtitle>
             <Divider />
             <Split>
-                <AvatarCanvas state={{ head: variant(), leftEye: leye(), rightEye: reye(), leftEyeOffset: { x: 0, y: 0 }, rightEyeOffset: { x: 0, y: 0 } }} />
+                <AvatarCanvas
+                    state={{
+                        head: variant(),
+                        leftEye: leye(),
+                        rightEye: reye(),
+                        leftEyeOffset: { x: leftOffset.x, y: leftOffset.y },
+                        rightEyeOffset: { x: rightOffset.x, y: rightOffset.y },
+                    }}
+                />
                 <Menu>
                     <Switch>
                         <Match when={menu() === 'root'}>
@@ -181,6 +271,7 @@ export default function Avatar() {
                                 LEFT EYE
                                 <BackButton type="button" onClick={() => setMenu('root')}>[ BACK ]</BackButton>
                             </MenuTitle>
+                            <EyeOffsetControls setOffset={setLeftOffset} />
                             <ThumbnailGrid>
                                 <For each={eyeVariants}>
                                     {eye => (
@@ -202,21 +293,8 @@ export default function Avatar() {
                                 RIGHT EYE
                                 <BackButton type="button" onClick={() => setMenu('root')}>[ BACK ]</BackButton>
                             </MenuTitle>
+                            <EyeOffsetControls setOffset={setRightOffset} />
                             <ThumbnailGrid>
-                                <For each={eyeVariants}>
-                                    {eye => (
-                                        <ThumbnailButton
-                                            type="button"
-                                            data-selected={reye() === eye}
-                                            aria-pressed={reye() === eye}
-                                            onClick={() => setReye(eye)}
-                                        >
-                                            <img src={eyeThumbnail(eye, 1)} alt={`${eye} right eye`} />
-                                            {eye}
-                                        </ThumbnailButton>
-                                    )}
-                                </For>
-                                {/* again for overflow */}
                                 <For each={eyeVariants}>
                                     {eye => (
                                         <ThumbnailButton
