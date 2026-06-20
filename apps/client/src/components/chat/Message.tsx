@@ -1,14 +1,14 @@
 import { styled } from "solid-styled-components"
 import pfp_placeholder from '../../assets/placeholder.png';
 import { format, formatDistanceToNow } from "date-fns";
-import chatbox from '../../assets/chatbox.png';
-import chatbox_f from '../../assets/chatbox_f.png';
-import sentbox from '../../assets/sentbox.png';
-import sentbox_f from '../../assets/sentbox_f.png';
-import taghead from '../../assets/taghead.png';
-import taghead_f from '../../assets/taghead_f.png';
-import tagtail from '../../assets/tagtail.png';
-import tagtail_f from '../../assets/tagtail_f.png';
+import chatbox from '../../assets/ui/chatbox.png';
+import chatbox_f from '../../assets/ui/chatbox_f.png';
+import sentbox from '../../assets/ui/sentbox.png';
+import sentbox_f from '../../assets/ui/sentbox_f.png';
+import taghead from '../../assets/ui/taghead.png';
+import taghead_f from '../../assets/ui/taghead_f.png';
+import tagtail from '../../assets/ui/tagtail.png';
+import tagtail_f from '../../assets/ui/tagtail_f.png';
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import { usePreferences } from "../../context/Preferences";
 import { getAvatarUrl } from "../../avatar/createAvatarRenderer";
