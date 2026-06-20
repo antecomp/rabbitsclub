@@ -42,10 +42,33 @@ db.run(`
 db.run(`
     CREATE TABLE IF NOT EXISTS profiles (
         user_id     INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
-        avatar      TEXT NOT NULL DEFAULT '{}',
+        avatar      TEXT DEFAULT NULL,
         updated_at  TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
     )
 `)
+
+function parseAvatarData(value: string | null): AvatarData | null {
+    if (!value) return null
+
+    try {
+        const avatar = JSON.parse(value) as Partial<AvatarData>
+        if (
+            typeof avatar.head !== "number" ||
+            typeof avatar.leftEye !== "string" ||
+            typeof avatar.rightEye !== "string" ||
+            typeof avatar.leftEyeOffset?.x !== "number" ||
+            typeof avatar.leftEyeOffset?.y !== "number" ||
+            typeof avatar.rightEyeOffset?.x !== "number" ||
+            typeof avatar.rightEyeOffset?.y !== "number"
+        ) {
+            return null
+        }
+
+        return avatar as AvatarData
+    } catch {
+        return null
+    }
+}
 
 const queries = {
     insertMessage: db.prepare<Message, { $username: string, $content: string }>(`
@@ -79,7 +102,7 @@ const queries = {
     getUserCount: db.prepare<{ count: number }, []>(`
         SELECT COUNT(*) AS count FROM users
     `),
-    getProfile: db.prepare<{ user_id: number, avatar: string }, { $username: string }>(`
+    getProfile: db.prepare<{ user_id: number, avatar: string | null }, { $username: string }>(`
         SELECT profiles.user_id, profiles.avatar 
         FROM profiles 
         JOIN users ON profiles.user_id = users.id
@@ -114,8 +137,7 @@ export const actions = {
     getProfile: (username: string) => {
         const row = queries.getProfile.get({ $username: username })
         if (!row) return null
-        // change to return more as needed...
-        return JSON.parse(row.avatar) as AvatarData
+        return parseAvatarData(row.avatar)
     },
     upsertProfile: (user_id: number, avatar: AvatarData) =>
         queries.upsertProfile.get({ $user_id: user_id, $avatar: JSON.stringify(avatar) })

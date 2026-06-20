@@ -43,8 +43,8 @@ export default function createAvatarRenderer() {
         const leftImg = await eyePromises[state.leftEye][0];
         const rightImg = await eyePromises[state.rightEye][1];
 
-        const leftBase = eyes[state.leftEye].defaultOffset;
-        const rightBase = eyes[state.rightEye].defaultOffset;
+        const leftBase = eyes[state.leftEye as EyeVariant].defaultOffset;
+        const rightBase = eyes[state.rightEye as EyeVariant].defaultOffset;
 
         const leftX = (SIZE / 2) + (-leftBase.x) + state.leftEyeOffset.x;
         const leftY = (SIZE / 2) + leftBase.y + state.leftEyeOffset.y;
@@ -95,14 +95,8 @@ export default function createAvatarRenderer() {
 
 const renderer = createAvatarRenderer();
 
-const urlCache = new Map<string, string>();
-
 export async function getAvatarUrl(state: AvatarData): Promise<string> {
-  const key = JSON.stringify(state);
-  if (urlCache.has(key)) return urlCache.get(key)!;
-  await renderer.render(state);
-  const blob = await renderer.toContentBlob();
-  const url = URL.createObjectURL(blob);
-  urlCache.set(key, url);
-  return url;
+    await renderer.render(state)
+    const blob = await renderer.toContentBlob()
+    return URL.createObjectURL(blob)
 }

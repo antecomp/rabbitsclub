@@ -14,6 +14,7 @@ import { usePreferences } from "../../context/Preferences";
 import { getAvatarUrl } from "../../avatar/createAvatarRenderer";
 import { BE } from "../../api";
 import { AvatarData } from "../../avatar/avatar.types";
+import { getProfileAvatarURL } from "../../avatar/avatarCache";
 
 const PFP_SIZE = '50px';
 const USERNAME_SIZE = '0.7rem';
@@ -351,16 +352,8 @@ export default function Message(props: {
 
     const [avatarSrc, setAvatarSrc] = createSignal(pfp_placeholder);
     onMount(async () => {
-        const { data } = await BE.profile({username: props.username}).get()
-        const avatarData = data as AvatarData ?? {
-            head: 0,
-            leftEye: 'bead',
-            rightEye: "bead",
-            leftEyeOffset: { x: 0, y: 0 },
-            rightEyeOffset: { x: 0, y: 0 }
-        }
-        const url = await getAvatarUrl(avatarData)
-        setAvatarSrc(url)
+        const url = await getProfileAvatarURL(props.username);
+        setAvatarSrc(url);
     })
 
     return (
