@@ -32,11 +32,11 @@ export default function Settings() {
 
     return <Container>
         <Title>Settings</Title>
-        <Subtitle>User setting dashboard</Subtitle>
+        <Subtitle>configure experience</Subtitle>
         <Divider />
         <AuthForm>
             <ToggleCon>
-                <p>CHAT LAYOUT:</p><span/>
+                <p>CHAT LAYOUT</p><span/>
                 <button type="button" onClick={() => setPreferences('incomingOnRight', prev => !prev)}>
                     {preferences.incomingOnRight ? '[ LEFT ]' : '[ RIGHT ]'}
                 </button>

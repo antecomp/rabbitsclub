@@ -276,7 +276,14 @@ export default function Avatar() {
             setLeftOffset(profile.leftEyeOffset);
             setRightOffset(profile.rightEyeOffset);
         })();
-    })
+    });
+
+    const menuDescription = () => ({
+        ears: 'Select ear variation by clicking preview buttons.',
+        leftEye: 'Select eye variation by clicking preview buttons. Shift eye position using arrow buttons.',
+        rightEye: 'Select eye variation by clicking preview buttons. Shift eye position using arrow buttons.',
+        root: 'Select options on the right to customize rabbit.'
+    } satisfies Record<AvatarMenu, string>)[menu()]
 
     return (
         <AvatarContainer>
@@ -371,7 +378,7 @@ export default function Avatar() {
                 </Menu>
             </Split>
             <Footer>
-                Select options on the right to customize rabbit.
+                {menuDescription()}
             </Footer>
         </AvatarContainer>
     )
