@@ -89,6 +89,18 @@ const SendButton = styled(`button`)`
     }
 `
 
+const LoadMoreButton = styled('a')`
+    width: 100%; 
+    padding-top: 10px;
+    display: block;
+    cursor: pointer;
+    text-align: center;
+
+    &:hover {
+        color: gray;
+    }
+`
+
 export default function Chat() {
     const [content, setContent] = createSignal("");
     const [whoisOnline, setWhoIsOnline] = createSignal<string[]>([]);
@@ -241,7 +253,7 @@ export default function Chat() {
             <ChatBody>
                 <Messages ref={messagesEl} onScroll={updateAutoScroll}>
                     <Show when={hasMoreMessages()}>
-                        <button tabindex="-1" style={'width: 100%; padding-top: 10px'} onClick={loadMore}>[ LOAD MORE ]</button>
+                        <LoadMoreButton onClick={loadMore}>[ LOAD MORE ]</LoadMoreButton>
                     </Show>
                     <For each={messages()}>
                         {msg => (
