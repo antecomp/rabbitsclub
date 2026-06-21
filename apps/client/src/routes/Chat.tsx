@@ -4,7 +4,7 @@ import { user } from "../api/user"
 import { MessageHistoryData } from "../types/message.type";
 import Message from "../components/chat/Message";
 import Footer from "../components/Footer";
-import { Divider, Title } from "../styled/MainMenu";
+import { Divider, Title } from "../styled/shared.styles";
 import { playSoundOnce } from "../util/playSound";
 import ping from '../assets/sfx/ping.mp3';
 import enter from '../assets/sfx/enter.mp3'

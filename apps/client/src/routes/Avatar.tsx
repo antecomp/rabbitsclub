@@ -3,7 +3,7 @@ import { createEffect, createSignal, For, Match, Show, Switch } from "solid-js";
 import { AvatarCanvas } from "../avatar/AvatarCanvas";
 import Footer from "../components/Footer";
 import { EyeVariant, clampedHeadVariant, eyeVariants, eyes, heads, isEyeVariant } from "../avatar/avatar.assets";
-import { Divider, Subtitle, Title } from "../styled/MainMenu";
+import { Divider, Subtitle, Title } from "../styled/shared.styles";
 import { createStore, SetStoreFunction } from "solid-js/store";
 import { api } from "../api/backend";
 import { user } from "../api/user"; 

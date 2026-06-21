@@ -3,7 +3,7 @@ import { useNavigate } from "@solidjs/router"
 import { api } from "../api/backend"
 import { refetchUser } from "../api/user"
 import Footer from "../components/Footer"
-import { Container, Title, Subtitle, Divider, AuthForm } from "../styled/MainMenu"
+import { Container, Title, Subtitle, Divider, AuthForm } from "../styled/shared.styles"
 
 export default function Login() {
     const navigate = useNavigate()

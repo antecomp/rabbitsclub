@@ -1,6 +1,6 @@
 import { createSignal } from "solid-js"
 import { api } from "../api/backend";
-import { AuthForm, Container, Divider, Subtitle, Title } from "../styled/MainMenu";
+import { AuthForm, Container, Divider, Subtitle, Title } from "../styled/shared.styles";
 import Footer from "../components/Footer";
 import { useNavigate } from "@solidjs/router";
 

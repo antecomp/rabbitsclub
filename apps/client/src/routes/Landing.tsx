@@ -1,6 +1,6 @@
 import { useNavigate } from "@solidjs/router";
 import { Show } from "solid-js";
-import { Container, Selector } from "../styled/MainMenu";
+import { Container, Selector } from "../styled/shared.styles";
 import Footer from "../components/Footer";
 import { user } from "../api/user";
 

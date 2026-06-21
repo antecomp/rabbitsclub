@@ -1,5 +1,5 @@
 import { styled } from "solid-styled-components";
-import { Container, Divider, Subtitle, Title } from "../styled/MainMenu";
+import { Container, Divider, Subtitle, Title } from "../styled/shared.styles";
 import { useNavigate } from "@solidjs/router";
 import Footer from "../components/Footer";
 import { createResource } from "solid-js";
