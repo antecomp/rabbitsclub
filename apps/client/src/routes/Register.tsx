@@ -28,7 +28,6 @@ export default function Register() {
         }
 
         await refetchUser()
-        navigate("/")
     }
 
     return (

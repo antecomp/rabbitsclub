@@ -18,7 +18,7 @@ export function GuestRoute(props: ParentProps) {
 
     createEffect(() => {
         if (user.loading) return
-        if (user()) navigate("/chat", { replace: true })
+        if (user()) navigate("/", { replace: true })
     })
 
     return <>{props.children}</>
