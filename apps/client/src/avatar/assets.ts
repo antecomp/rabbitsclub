@@ -38,9 +38,23 @@ export const eyes = {
 } satisfies Record<string, { src: string | [string, string]; defaultOffset: { x: number; y: number } }>;
 
 export type EyeVariant = keyof typeof eyes;
-export const eyeVariants = Object.keys(eyes) as EyeVariant[];
 export type EyeImageEntry = HTMLImageElement | [HTMLImageElement, HTMLImageElement];
+
+export const eyeVariants = Object.keys(eyes) as EyeVariant[];
+export function isEyeVariant(variant: string): variant is EyeVariant {
+  return variant in eyes;
+}
 
 export const heads = [
     head1, head2, head3, head4, head5, head6, head7
 ];
+
+export function clampedHeadVariant(variant: number) {
+  if(variant < 0) {
+    return 0;
+  }
+  if(variant >= heads.length) {
+    return heads.length - 1;
+  }
+  return variant;
+}

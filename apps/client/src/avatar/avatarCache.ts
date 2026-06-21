@@ -1,14 +1,8 @@
 import { AvatarData } from "./avatar.types";
 import { api } from "../api/backend";
 import { generateAvatarAssetURL } from "./createAvatarRenderer";
-
-const DEFAULT_AVATAR: AvatarData = {
-    head: 0,
-    leftEye: 'bead',
-    rightEye: "bead",
-    leftEyeOffset: { x: 0, y: 0 },
-    rightEyeOffset: { x: 0, y: 0 }
-}
+import { clampedHeadVariant, isEyeVariant } from "./assets";
+import { DEFAULT_AVATAR } from "./const";
 
 // Cache profile data by username
 const profileCache = new Map<string, AvatarData>()
@@ -33,8 +27,19 @@ export async function loadAvatarForUser(username: string): Promise<string> {
     // Otherwise start a new request and track it
     const promise = (async () => {
         if (!profileCache.has(username)) {
-            const { data } = await api.profile({username}).get()
-            profileCache.set(username, data ?? DEFAULT_AVATAR)
+            const { data } = await api.profile({ username }).get()
+            if (!data) {
+                profileCache.set(username, DEFAULT_AVATAR);
+            } else {
+                const avatar: AvatarData = {
+                    head: clampedHeadVariant(data.head),
+                    leftEye: isEyeVariant(data.leftEye) ? data.leftEye : DEFAULT_AVATAR.leftEye,
+                    rightEye: isEyeVariant(data.rightEye) ? data.rightEye : DEFAULT_AVATAR.rightEye,
+                    leftEyeOffset: data.leftEyeOffset,
+                    rightEyeOffset: data.rightEyeOffset
+                }
+                profileCache.set(username, avatar);
+            }
         }
 
         const avatar = profileCache.get(username)!

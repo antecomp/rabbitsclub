@@ -3,7 +3,7 @@ import { createEffect, createSignal, For, Match, Switch } from "solid-js";
 import { AvatarCanvas } from "../avatar/AvatarCanvas";
 import Footer from "../components/Footer";
 import { styled } from "solid-styled-components";
-import { EyeVariant, eyeVariants, eyes, heads } from "../avatar/assets";
+import { EyeVariant, clampedHeadVariant, eyeVariants, eyes, heads, isEyeVariant } from "../avatar/assets";
 import { Divider, Subtitle, Title } from "../styled/MainMenu";
 import cbr from '../assets/ui/c_br.png';
 import arrow from '../assets/ui/dir.png';
@@ -13,6 +13,7 @@ import { api } from "../api/backend";
 import { user } from "../api/user";
 import { SuggestedString } from "../types/misc.types";
 import { invalidateCachedProfile } from "../avatar/avatarCache";
+import { DEFAULT_AVATAR } from "@/avatar/const";
 
 const AvatarContainer = styled("div")`
     position: absolute;
@@ -228,8 +229,8 @@ export default function Avatar() {
     const navigate = useNavigate();
     const [menu, setMenu] = createSignal<AvatarMenu>('root');
     const [variant, setVariant] = createSignal(0);
-    const [leye, setLeye] = createSignal<SuggestedString<EyeVariant>>('bead');
-    const [reye, setReye] = createSignal<SuggestedString<EyeVariant>>('bead');
+    const [leye, setLeye] = createSignal<EyeVariant>('bead');
+    const [reye, setReye] = createSignal<EyeVariant>('bead');
 
     const [leftOffset, setLeftOffset] = createStore<EyeOffset>({ x: 0, y: 0 });
     const [rightOffset, setRightOffset] = createStore<EyeOffset>({ x: 0, y: 0 });
@@ -270,9 +271,9 @@ export default function Avatar() {
             const profile = (await api.profile({ username }).get()).data;
             if (loadedUsername !== username || !profile) return;
 
-            setVariant(profile.head);
-            setLeye(profile.leftEye);
-            setReye(profile.rightEye);
+            setVariant(clampedHeadVariant(profile.head));
+            setLeye(isEyeVariant(profile.leftEye) ? profile.leftEye : DEFAULT_AVATAR.leftEye);
+            setReye(isEyeVariant(profile.rightEye) ? profile.rightEye : DEFAULT_AVATAR.rightEye);
             setLeftOffset(profile.leftEyeOffset);
             setRightOffset(profile.rightEyeOffset);
         })();

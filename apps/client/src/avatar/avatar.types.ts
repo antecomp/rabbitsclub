@@ -5,8 +5,8 @@ export type HeadVariant = number;
 
 export interface AvatarData {
     head: HeadVariant;
-    leftEye: SuggestedString<EyeVariant>;
-    rightEye: SuggestedString<EyeVariant>;
+    leftEye: EyeVariant;
+    rightEye: EyeVariant;
     leftEyeOffset: { x: number; y: number };
     rightEyeOffset: { x: number; y: number };
 }
