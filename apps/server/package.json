@@ -3,16 +3,19 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun --watch src/index.ts"
+    "dev": "bun --watch src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "bun run typecheck && bun build src/index.ts --target=bun --outdir=dist"
   },
   "dependencies": {
-    "@elysiajs/cors": "^1.4.2",
-    "@elysiajs/jwt": "^1.4.2",
-    "elysia": "latest",
+    "@elysiajs/cors": "1.4.2",
+    "@elysiajs/jwt": "1.4.2",
+    "elysia": "1.4.29",
     "http-status-ts": "^2.0.1"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "typescript": "^5.8.0"
   },
   "peerDependencies": {
     "typescript": "^5"

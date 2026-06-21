@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia"
 import { jwt } from "@elysiajs/jwt"
-import { actions } from "~/db"
+import { actions } from "../db"
 import { LoginBodySchema, AuthCookieSchema, LoginResponseSchema, ErrorSchema, JWTSchema, RegisterBodySchema } from "../schemas/users.schema"
 import { JWT_TOKEN_LIFESPAN } from "../config"
 

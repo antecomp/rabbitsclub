@@ -9,9 +9,10 @@
       "name": "client",
       "version": "0.0.0",
       "dependencies": {
-        "@elysiajs/eden": "latest",
+        "@elysiajs/eden": "1.4.9",
         "@solidjs/router": "^0.16.1",
         "date-fns": "^4.4.0",
+        "elysia": "1.4.29",
         "solid-js": "^1.9.12",
         "solid-styled-components": "^0.28.5",
       },
@@ -24,13 +25,14 @@
     "apps/server": {
       "name": "server",
       "dependencies": {
-        "@elysiajs/cors": "^1.4.2",
-        "@elysiajs/jwt": "^1.4.2",
-        "elysia": "latest",
+        "@elysiajs/cors": "1.4.2",
+        "@elysiajs/jwt": "1.4.2",
+        "elysia": "1.4.29",
         "http-status-ts": "^2.0.1",
       },
       "devDependencies": {
         "@types/bun": "latest",
+        "typescript": "^5.8.0",
       },
       "peerDependencies": {
         "typescript": "^5",
@@ -184,7 +186,7 @@
 
     "electron-to-chromium": ["electron-to-chromium@1.5.372", "", {}, "sha512-M3yhbAlilnwqC8D21t28UCDGHyitShTmmLRU/H+b74P6Ski16Nb9HONYEaVpMj/pwC7BEo5B95FpjODLCWbtfA=="],
 
-    "elysia": ["elysia@1.4.28", "", { "dependencies": { "cookie": "^1.1.1", "exact-mirror": "^0.2.7", "fast-decode-uri-component": "^1.0.1", "memoirist": "^0.4.0" }, "peerDependencies": { "@sinclair/typebox": ">= 0.34.0 < 1", "@types/bun": ">= 1.2.0", "file-type": ">= 20.0.0", "openapi-types": ">= 12.0.0", "typescript": ">= 5.0.0" }, "optionalPeers": ["@types/bun", "typescript"] }, "sha512-Vrx8sBnvq8squS/3yNBzR1jBXI+SgmnmvwawPjNuEHndUe5l1jV2Gp6JJ4ulDkEB8On6bWmmuyPpA+bq4t+WYg=="],
+    "elysia": ["elysia@1.4.29", "", { "dependencies": { "cookie": "^1.1.1", "exact-mirror": "^0.2.7", "fast-decode-uri-component": "^1.0.1", "memoirist": "^0.4.0" }, "peerDependencies": { "@sinclair/typebox": ">= 0.34.0 < 1", "@types/bun": ">= 1.2.0", "file-type": ">= 20.0.0", "openapi-types": ">= 12.0.0", "typescript": ">= 5.0.0" }, "optionalPeers": ["@types/bun", "typescript"] }, "sha512-GwMRGGwSdjfPt+w3LA0fqTuYJtS8uVRJicvoar98/HrO5qdFKDc9CwjIb6Kja+v39lkY+58hr2JvdR9jQzlUuA=="],
 
     "entities": ["entities@6.0.1", "", {}, "sha512-aN97NXWF6AWBTahfVOIrB/NShkzi5H7F9r1s9mD3cDj4Ko5f2qhhVoYMibXF7GlLveb/D2ioWay8lxI97Ven3g=="],
 
