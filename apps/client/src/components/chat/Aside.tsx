@@ -58,7 +58,7 @@ export default function Aside(props: {
             <Show when={props.showReturnToPresent}>
                 <button onClick={props.onReturnToPresent}>[ PRESENT ]</button>
             </Show>
-            <button onClick={() => navigate("/")}>[ RETURN ]</button>
+            <button onClick={() => navigate("/")}>[ EXIT ]</button>
         </Body>
     )
 }
