@@ -169,7 +169,7 @@ export default function Chat() {
     const send = (e: SubmitEvent) => {
         e.preventDefault()
         if (!content() || !user()) return
-        sub.send({ username: user()!.username, content: content() })
+        sub.send({ content: content() })
         setContent("")
     }
 

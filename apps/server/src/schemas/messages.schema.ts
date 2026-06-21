@@ -1,7 +1,6 @@
 import { t } from 'elysia'
 
 export const SentMessageSchema = t.Object({
-    username: t.String(),
     content: t.String()
 });
 
