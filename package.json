@@ -1,5 +1,5 @@
 {
-  "name": "chat-app",
+  "name": "rabbits.club",
   "private": true,
   "workspaces": ["apps/*"],
   "scripts": {
