@@ -1,4 +1,5 @@
 import { createEffect, createSignal, For, on, onCleanup, onMount, Show } from "solid-js"
+import { MESSAGE_PAGE_SIZE } from "../../../../config";
 import { api } from "../api/backend"
 import { user } from "../api/user"
 import { MessageHistoryData } from "../types/message.type";
@@ -24,11 +25,10 @@ export default function Chat() {
     const [hasMoreMessages, setHasMoreMessages] = createSignal(true);
     const [autoScrollMessages, setAutoScrollMessages] = createSignal(true);
     onMount(async () => {
-        const { data } = await api.messages.get({ query: {} });
+        const { data } = await api.messages.get({ query: { limit: String(MESSAGE_PAGE_SIZE) } });
         if (data) {
             setMessages(data);
-            // todo: remove magic number (do the same on the BE too)
-            setHasMoreMessages(data.length == 50);
+            setHasMoreMessages(data.length === MESSAGE_PAGE_SIZE);
         }
     });
 
@@ -41,11 +41,11 @@ export default function Chat() {
         const previousScrollTop = messagesEl?.scrollTop ?? 0;
 
         const { data } = await api.messages.get({
-            query: { before: String(oldest.id) }
+            query: { before: String(oldest.id), limit: String(MESSAGE_PAGE_SIZE) }
         });
         if (!data) return;
         setMessages(prev => [...data, ...prev])
-        setHasMoreMessages(data.length === 50)
+        setHasMoreMessages(data.length === MESSAGE_PAGE_SIZE)
 
         queueMicrotask(() => {
             if (!messagesEl) return;

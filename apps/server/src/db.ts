@@ -1,6 +1,7 @@
 import { Database } from "bun:sqlite"
 
 import { join } from "path"
+import { MESSAGE_PAGE_SIZE } from "../../../config";
 import type { Message } from "./schemas/messages.schema";
 import { type InviteCode, type User } from "./schemas/users.schema";
 import type { AvatarData } from "./schemas/profiles.schema";
@@ -120,7 +121,7 @@ const queries = {
 export const actions = {
     insertMessage: (username: string, content: string) =>
         queries.insertMessage.get({ $username: username, $content: content }),
-    getRecent: (before: number = 2147483647, limit: number = 50) =>
+    getRecent: (before: number = 2147483647, limit: number = MESSAGE_PAGE_SIZE) =>
         queries.getRecent.all({ $before: before, $limit: limit }).reverse(),
     insertUser: (username: string, password: string) =>
         queries.insertUser.get({ $username: username, $password: password }),
