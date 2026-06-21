@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { actions } from "../db";
-import { MessageSchema, SentMessageSchema, WSMessageSchema } from "../schemas/messages.schema";
+import { MessageSchema, SentMessageSchema, SystemEvents, WSMessageSchema } from "../schemas/messages.schema";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { CHAT_WS_NAME } from "../config";
 
@@ -38,7 +38,7 @@ export const chatRoutes = new Elysia()
                 current.count++
             } else {
                 onlineUsers.set(id, { username, count: 1 });
-                ws.publish(CHAT_WS_NAME, { type: 'system', content: `${username} is now online` })
+                ws.publish(CHAT_WS_NAME, { type: 'system', event: SystemEvents.USER_JOINED, content: username })
                 ws.publish(CHAT_WS_NAME, { type: 'online', users: getOnlineUsers() })
             }
 
@@ -64,7 +64,7 @@ export const chatRoutes = new Elysia()
             current.count--;
             if (current.count === 0) {
                 onlineUsers.delete(id);
-                ws.publish(CHAT_WS_NAME, { type: "system", content: `${username} has left` });
+                ws.publish(CHAT_WS_NAME, { type: "system", event: SystemEvents.USER_LEFT, content: username });
                 ws.publish(CHAT_WS_NAME, { type: 'online', users: getOnlineUsers() })
             }
 

@@ -8,6 +8,8 @@ import { styled } from "solid-styled-components";
 import { Divider, Title } from "../styled/MainMenu";
 import { playSoundOnce } from "../util/playSound";
 import ping from '../assets/sfx/ping.mp3';
+import enter from '../assets/sfx/enter.mp3'
+import leave from '../assets/sfx/leave.mp3'
 import Aside from "../components/chat/Aside";
 
 const MESSAGE_COLUMN_SIZE = '1fr';
@@ -155,7 +157,15 @@ export default function Chat() {
                     break;
                 case 'system':
                     // will add toasts later
-                    console.log(data.content);
+                    console.log(data);
+                    switch(data.event) {
+                        case 'user_joined':
+                            playSoundOnce(enter);
+                            break;
+                        case 'user_left':
+                            playSoundOnce(leave);
+                            break;
+                    }
                     break;
                 case 'online':
                     setWhoIsOnline(data.users)

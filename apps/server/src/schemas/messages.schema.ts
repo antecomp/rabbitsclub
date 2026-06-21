@@ -12,9 +12,18 @@ export const MessageSchema = t.Object({
 })
 export type Message = typeof MessageSchema['static'];
 
+export enum SystemEvents {
+    USER_JOINED = "user_joined",
+    USER_LEFT = "user_left"
+}
+
 export const WSBroadcastMessageSchema = t.Object({
     type: t.Literal("system"),
-    content: t.String()
+    event: t.Union([
+        t.Literal(SystemEvents.USER_JOINED),
+        t.Literal(SystemEvents.USER_LEFT)
+    ]),
+    content: t.Optional(t.String())
 });
 
 export const WSBroadcastOnlineSchema = t.Object({
