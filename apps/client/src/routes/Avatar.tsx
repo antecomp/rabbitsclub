@@ -2,190 +2,28 @@ import { useNavigate } from "@solidjs/router";
 import { createEffect, createSignal, For, Match, Show, Switch } from "solid-js";
 import { AvatarCanvas } from "../avatar/AvatarCanvas";
 import Footer from "../components/Footer";
-import { styled } from "solid-styled-components";
 import { EyeVariant, clampedHeadVariant, eyeVariants, eyes, heads, isEyeVariant } from "../avatar/avatar.assets";
 import { Divider, Subtitle, Title } from "../styled/MainMenu";
-import cbr from '../assets/ui/c_br.png';
-import arrow from '../assets/ui/dir.png';
-import center from '../assets/ui/center.png';
 import { createStore, SetStoreFunction } from "solid-js/store";
 import { api } from "../api/backend";
 import { user } from "../api/user"; 
 import { invalidateCachedProfile } from "../avatar/avatarCache";
 import { DEFAULT_AVATAR } from "@/avatar/avatar.const";
+import { AvatarContainer, BackButton, Menu, MenuButton, MenuTitle, OffsetButton, OffsetControls, Split, ThumbnailButton, ThumbnailGrid } from "./Avatar.styles";
 
-const AvatarContainer = styled("div")`
-    position: absolute;
-    top: 40%;
-    left: 10vw;
-    transform: translate(0%, -50%);
-    max-width: 580px;
-    width: 70vw;
-    height: 300px;
-    user-select: none;
-    animation: flicker-in 0.3s steps(12, end) forwards;
-`
-
-const Split = styled('div')`
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 10px;
-    height: 100%;
-    padding-bottom: 10px;
-    padding-top: 10px;
-
-    canvas {
-        width: 100%;
-        overflow: hidden;
-        height: 100%;
-        object-fit: contain;
-
-        background: url(${cbr});
-
-        --bevel: 20px;
-
-        clip-path: polygon(
-            var(--bevel) 0,
-            calc(100% - var(--bevel)) 0,
-            100% var(--bevel),
-            100% calc(100% - var(--bevel)),
-            calc(100% - var(--bevel)) 100%,
-            var(--bevel) 100%,
-            0 calc(100% - var(--bevel)),
-            0 var(--bevel)
-        );
-    }
-`
-
-const Menu = styled('div')`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 10px;
-    box-sizing: border-box;
-
-    height: 100%;
-    /* min-height: 0; */
-    /* overflow: auto; */
-    overflow: hidden;
-`
-
-const MenuButton = styled('button')`
-    border: none;
-    background: none;
-    padding: 0;
-    font-size: 18px;
-
-    &:hover, &:focus {
-        color: gray;
-        cursor: pointer;
-        outline: none;
-    }
-`
-
-const MenuTitle = styled('div')`
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-    font-size: 18px;
-`
-
-const BackButton = styled('button')`
-    border: none;
-    background: none;
-    padding: 0;
-    font-size: 18px;
-
-    &:hover, &:focus {
-        color: gray;
-        cursor: pointer;
-        outline: none;
-    }
-`
-
-const ThumbnailGrid = styled('div')`
-    gap: 4px;
-    width: 100%;
-    overflow: auto;
-    padding: 1px;
-    display: flex;
-    flex-wrap: wrap;
-`
-
-const ThumbnailButton = styled('button')`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    min-height: 78px;
-    padding: 6px;
-    border: 1px solid black;
-    outline: 1px solid transparent;
-    background: #aaa;
-    font-family: 'main';
-    font-size: 0.8rem;
-    aspect-ratio: 1;
-    flex-grow: 1;
-    max-width: 32%;
-
-    &:hover, &:focus {
-        background: lightgray;
-        cursor: pointer;
-        outline-color: gray;
-    }
-
-    &[data-selected='true'] {
-        outline: 1px solid black;
-        background: #ddd;
-    }
-
-    img {
-        max-width: 48px;
-        max-height: 48px;
-        image-rendering: pixelated;
-        object-fit: contain;
-        flex-grow: 1;
-    }
-`
-
-const OffsetControls = styled('div')`
-    display: grid;
-    grid-template-columns: repeat(3, 15px);
-    grid-template-rows: repeat(3, 15px);
-    gap: 1px;
-    margin-bottom: 5px;
-    align-self: center;
-`
-
-const OffsetButton = styled('button')`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-
-    &:hover, &:focus {
-        filter: brightness(1.5);
-        cursor: pointer;
-    }
-
-    img {
-        object-fit: contain;
-        image-rendering: pixelated;
-    }
-`
+import arrow from '../assets/ui/dir.png';
+import center from '../assets/ui/center.png';
 
 type AvatarMenu = 'root' | 'ears' | 'leftEye' | 'rightEye';
 type EyeOffset = { x: number; y: number };
 
-const OFFSET_STEP = 4;
+const EYE_OFFSET_STEP = 4;
 
 const directions: { x: number; y: number; rotation: number; gridColumn: number; gridRow: number; label: string }[] = [
-    { x: 0, y: -OFFSET_STEP, rotation: -90, gridColumn: 2, gridRow: 1, label: 'Move eye up' },
-    { x: -OFFSET_STEP, y: 0, rotation: 180, gridColumn: 1, gridRow: 2, label: 'Move eye left' },
-    { x: OFFSET_STEP, y: 0, rotation: 0, gridColumn: 3, gridRow: 2, label: 'Move eye right' },
-    { x: 0, y: OFFSET_STEP, rotation: 90, gridColumn: 2, gridRow: 3, label: 'Move eye down' },
+    { x: 0, y: -EYE_OFFSET_STEP, rotation: -90, gridColumn: 2, gridRow: 1, label: 'Move eye up' },
+    { x: -EYE_OFFSET_STEP, y: 0, rotation: 180, gridColumn: 1, gridRow: 2, label: 'Move eye left' },
+    { x: EYE_OFFSET_STEP, y: 0, rotation: 0, gridColumn: 3, gridRow: 2, label: 'Move eye right' },
+    { x: 0, y: EYE_OFFSET_STEP, rotation: 90, gridColumn: 2, gridRow: 3, label: 'Move eye down' },
 ];
 
 function EyeOffsetControls(props: { setOffset: SetStoreFunction<EyeOffset> }) {
