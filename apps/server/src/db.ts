@@ -6,7 +6,8 @@ import type { Message } from "./schemas/messages.schema";
 import { type InviteCode, type User } from "./schemas/users.schema";
 import type { AvatarData } from "./schemas/profiles.schema";
 
-const db = new Database(join(import.meta.dir, "../chat.db"), { create: true })
+const dbPath = process.env.DB_PATH ?? join(import.meta.dir, "../chat.db")
+const db = new Database(dbPath, { create: true })
 
 // Enable WAL for concurrent reads (needed for multiuser chat, ofc).
 db.run("PRAGMA journal_mode = WAL");
@@ -144,10 +145,14 @@ export const actions = {
         queries.upsertProfile.get({ $user_id: user_id, $avatar: JSON.stringify(avatar) })
 };
 
-const initialAdminUsername = process.env.INITIAL_ADMIN_USERNAME!
-const initialAdminPassword = process.env.INITIAL_ADMIN_PASSWORD!
+if (process.env.SEED_ADMIN === "true") {
+    const initialAdminUsername = process.env.INITIAL_ADMIN_USERNAME
+    const initialAdminPassword = process.env.INITIAL_ADMIN_PASSWORD
 
-if (initialAdminPassword) {
+    if (!initialAdminUsername || !initialAdminPassword) {
+        throw new Error("SEED_ADMIN=true requires INITIAL_ADMIN_USERNAME and INITIAL_ADMIN_PASSWORD")
+    }
+
     const hashedPassword = await Bun.password.hash(initialAdminPassword)
     db.query<User, { $username: string, $password: string }>(`
         INSERT INTO users (username, password, is_admin)

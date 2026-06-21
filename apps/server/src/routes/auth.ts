@@ -4,6 +4,19 @@ import { actions } from "~/db"
 import { LoginBodySchema, AuthCookieSchema, LoginResponseSchema, ErrorSchema, JWTSchema, RegisterBodySchema } from "../schemas/users.schema"
 import { JWT_TOKEN_LIFESPAN } from "../config"
 
+const cookieSameSite = (() => {
+    const value = process.env.COOKIE_SAME_SITE
+    if (value === "strict" || value === "lax" || value === "none") return value
+    return "lax"
+})()
+
+const authCookieOptions = {
+    httpOnly: true,
+    secure: process.env.COOKIE_SECURE === "true",
+    sameSite: cookieSameSite,
+    maxAge: JWT_TOKEN_LIFESPAN
+} as const
+
 export const authRoutes = new Elysia({ prefix: "/auth" })
     .use(jwt({
         name: "jwt",
@@ -35,10 +48,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         });
         auth.set({
             value: token,
-            httpOnly: true,
-            secure: false, // set to true in prod (requires https)
-            sameSite: "lax", // change to strict for stronger CSRF protection
-            maxAge: JWT_TOKEN_LIFESPAN
+            ...authCookieOptions
         });
 
         return { success: true }
@@ -68,10 +78,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
 
         auth.set({
             value: token,
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: JWT_TOKEN_LIFESPAN
+            ...authCookieOptions
         });
 
         return { success: true }
