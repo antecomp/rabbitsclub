@@ -6,7 +6,8 @@ export default defineConfig({
   plugins: [solidPlugin()],
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url))
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "~": fileURLToPath(new URL("../server/src", import.meta.url))
     }
   },
   appType: 'spa'
