@@ -1,5 +1,5 @@
 # RABBITS.CLUB
-![logo](apps/client/src/assets/misc/brand.svg | width=100)
+<img src="apps/client/src/assets/misc/brand.svg" alt="logo" width="500"/>
 
 bun workspace with a Solid/Vite client and an Elysia API server.
 
