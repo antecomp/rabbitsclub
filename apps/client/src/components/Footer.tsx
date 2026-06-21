@@ -18,7 +18,6 @@ const FooterContainer = styled('footer')`
     }
 `
 
-
 // Raised global to prevent requery on mount;
 const [status] = createResource(async () => {
     const rez = (await api.health.get()).data;

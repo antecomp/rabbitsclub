@@ -2,12 +2,10 @@ import { createEffect, onCleanup } from "solid-js";
 import createAvatarRenderer from "./createAvatarRenderer";
 import { AvatarData } from "./avatar.types";
 
-interface Props {
+export function AvatarCanvas(props: {
   state: AvatarData;
   size?: number;
-}
-
-export function AvatarCanvas(props: Props) {
+}) {
   const renderer = createAvatarRenderer();
   let canvas!: HTMLCanvasElement;
   let queuedState: AvatarData | undefined;
