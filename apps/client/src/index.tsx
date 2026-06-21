@@ -36,7 +36,7 @@ render(
                 )} />
                 <Route path="/about" component={About} />
                 <Route path="/avatar" component={() => (
-                    <ProtectedRoute><Avatar /></ProtectedRoute>
+                    <Avatar />
                 )} />
             </Router>
         </PreferencesProvider>

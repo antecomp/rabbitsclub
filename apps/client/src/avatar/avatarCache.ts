@@ -21,10 +21,8 @@ export async function loadAvatarForUser(username: string): Promise<string> {
         if (urlCache.has(key)) return urlCache.get(key)!
     }
 
-    // If already in flight, wait for that same promise
     if (inFlight.has(username)) return inFlight.get(username)!
 
-    // Otherwise start a new request and track it
     const promise = (async () => {
         if (!profileCache.has(username)) {
             const { data } = await api.profile({ username }).get()

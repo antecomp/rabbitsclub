@@ -1,5 +1,5 @@
 import { useNavigate } from "@solidjs/router";
-import { createEffect, createSignal, For, Match, Switch } from "solid-js";
+import { createEffect, createSignal, For, Match, Show, Switch } from "solid-js";
 import { AvatarCanvas } from "../avatar/AvatarCanvas";
 import Footer from "../components/Footer";
 import { styled } from "solid-styled-components";
@@ -306,7 +306,9 @@ export default function Avatar() {
                             <MenuButton type="button" onClick={() => setMenu('ears')}>[ EARS ]</MenuButton>
                             <MenuButton type="button" onClick={() => setMenu('leftEye')}>[ LEFT EYE ]</MenuButton>
                             <MenuButton type="button" onClick={() => setMenu('rightEye')}>[ RIGHT EYE ]</MenuButton>
-                            <MenuButton type="button" onClick={save}>[ SAVE ]</MenuButton>
+                            <Show when={user()}>
+                                <MenuButton type="button" onClick={save}>[ SAVE ]</MenuButton>
+                            </Show>
                             <MenuButton type="button" onClick={() => navigate("/")}>[ BACK ]</MenuButton>
                         </Match>
                         <Match when={menu() === 'ears'}>
