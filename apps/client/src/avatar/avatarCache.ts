@@ -1,8 +1,8 @@
 import { AvatarData } from "./avatar.types";
 import { api } from "../api/backend";
 import { generateAvatarAssetURL } from "./createAvatarRenderer";
-import { clampedHeadVariant, isEyeVariant } from "./assets";
-import { DEFAULT_AVATAR } from "./const";
+import { clampedHeadVariant, isEyeVariant } from "./avatar.assets";
+import { DEFAULT_AVATAR } from "./avatar.const";
 
 // Cache profile data by username
 const profileCache = new Map<string, AvatarData>()

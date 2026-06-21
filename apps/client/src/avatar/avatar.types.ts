@@ -1,5 +1,5 @@
 import { SuggestedString } from "../types/misc.types";
-import { EyeVariant } from "./assets";
+import { EyeVariant } from "./avatar.assets";
 
 export type HeadVariant = number;
 

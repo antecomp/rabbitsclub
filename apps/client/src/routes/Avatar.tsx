@@ -3,7 +3,7 @@ import { createEffect, createSignal, For, Match, Switch } from "solid-js";
 import { AvatarCanvas } from "../avatar/AvatarCanvas";
 import Footer from "../components/Footer";
 import { styled } from "solid-styled-components";
-import { EyeVariant, clampedHeadVariant, eyeVariants, eyes, heads, isEyeVariant } from "../avatar/assets";
+import { EyeVariant, clampedHeadVariant, eyeVariants, eyes, heads, isEyeVariant } from "../avatar/avatar.assets";
 import { Divider, Subtitle, Title } from "../styled/MainMenu";
 import cbr from '../assets/ui/c_br.png';
 import arrow from '../assets/ui/dir.png';
@@ -13,7 +13,7 @@ import { api } from "../api/backend";
 import { user } from "../api/user";
 import { SuggestedString } from "../types/misc.types";
 import { invalidateCachedProfile } from "../avatar/avatarCache";
-import { DEFAULT_AVATAR } from "@/avatar/const";
+import { DEFAULT_AVATAR } from "@/avatar/avatar.const";
 
 const AvatarContainer = styled("div")`
     position: absolute;

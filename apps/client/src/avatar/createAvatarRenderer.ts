@@ -1,4 +1,4 @@
-import { EyeImageEntry, eyes, EyeVariant, heads } from "./assets";
+import { EyeImageEntry, eyes, EyeVariant, heads } from "./avatar.assets";
 import { AvatarData } from "./avatar.types";
 
 const SIZE = 400;
