@@ -142,8 +142,8 @@ export default function Avatar() {
                     <Switch>
                         <Match when={menu() === 'root'}>
                             <MenuButton type="button" onClick={() => setMenu('ears')}>[ EARS ]</MenuButton>
-                            <MenuButton type="button" onClick={() => setMenu('leftEye')}>[ LEFT EYE ]</MenuButton>
-                            <MenuButton type="button" onClick={() => setMenu('rightEye')}>[ RIGHT EYE ]</MenuButton>
+                            <MenuButton type="button" onClick={() => setMenu('leftEye')}>[ EYE L ]</MenuButton>
+                            <MenuButton type="button" onClick={() => setMenu('rightEye')}>[ EYE R ]</MenuButton>
                             <Show when={user()}>
                                 <MenuButton type="button" onClick={save}>[ SAVE ]</MenuButton>
                             </Show>
@@ -151,8 +151,8 @@ export default function Avatar() {
                         </Match>
                         <Match when={menu() === 'ears'}>
                             <MenuTitle>
-                                EARS
                                 <BackButton type="button" onClick={() => setMenu('root')}>[ BACK ]</BackButton>
+                                <p>EARS</p>
                             </MenuTitle>
                             <ThumbnailGrid>
                                 <For each={heads}>
@@ -172,8 +172,8 @@ export default function Avatar() {
                         </Match>
                         <Match when={menu() === 'leftEye'}>
                             <MenuTitle>
-                                LEFT EYE
                                 <BackButton type="button" onClick={() => setMenu('root')}>[ BACK ]</BackButton>
+                                <p>LEFT EYE</p>
                             </MenuTitle>
                             <EyeOffsetControls setOffset={setLeftOffset} />
                             <ThumbnailGrid>
@@ -194,8 +194,8 @@ export default function Avatar() {
                         </Match>
                         <Match when={menu() === 'rightEye'}>
                             <MenuTitle>
-                                RIGHT EYE
                                 <BackButton type="button" onClick={() => setMenu('root')}>[ BACK ]</BackButton>
+                                <p>RIGHT EYE</p>
                             </MenuTitle>
                             <EyeOffsetControls setOffset={setRightOffset} />
                             <ThumbnailGrid>

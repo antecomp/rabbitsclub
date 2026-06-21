@@ -70,7 +70,8 @@ export const MenuButton = styled('button')`
 
 export const MenuTitle = styled('div')`
     display: flex;
-    align-items: center;
+    justify-content: space-between;
+    width: 100%;
     gap: 12px;
     margin-bottom: 10px;
     font-size: 18px;
