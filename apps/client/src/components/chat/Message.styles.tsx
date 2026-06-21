@@ -1,10 +1,11 @@
+import { splitProps, type JSX } from "solid-js";
 import { styled } from "solid-styled-components";
 
-import chatbox from '../../assets/ui/chatbox.png';
-import chatbox_f from '../../assets/ui/chatbox_f.png';
-import sentbox from '../../assets/ui/sentbox.png';
-import sentbox_f from '../../assets/ui/sentbox_f.png';
-import taghead from '../../assets/ui/taghead.png';
+import chatbox from '@/assets/ui/chatbox.png';
+import chatbox_f from '@/assets/ui/chatbox_f.png';
+import sentbox from '@/assets/ui/sentbox.png';
+import sentbox_f from '@/assets/ui/sentbox_f.png';
+import taghead from '@/assets/ui/taghead.png';
 import taghead_f from '@/assets/ui/taghead_f.png';
 import tagtail from '@/assets/ui/tagtail.png';
 import tagtail_f from '@/assets/ui/tagtail_f.png';
@@ -15,170 +16,34 @@ export const DATE_SIZE = '0.6rem';
 export const MESSAGE_MARGINS = '15px';
 export const PFP_GAP = '5px';
 
+type Side = 'left' | 'right';
+type Variant = 'incoming' | 'outgoing';
+type MessageContainerProps = JSX.HTMLAttributes<HTMLDivElement> & { side: Side; withUsername?: boolean; };
+type MessagePfpContainerProps = JSX.HTMLAttributes<HTMLDivElement> & { side: Side; raised?: boolean; };
+type MessageBodyProps = JSX.HTMLAttributes<HTMLDivElement> & { side: Side; variant: Variant; };
+type UsernameTagProps = JSX.HTMLAttributes<HTMLDivElement> & { side: Side; };
 
-export const IncomingRightContainer = styled("div")`
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) ${PFP_SIZE};
-    margin: ${MESSAGE_MARGINS};
-    margin-top: calc(${USERNAME_SIZE} + ${MESSAGE_MARGINS});
-    position: relative;
+const MessageContainerBase = (props: MessageContainerProps) => {
+    const [, divProps] = splitProps(props, ["side", "withUsername"]);
+    return <div {...divProps} />;
+};
 
-    gap: ${PFP_GAP};
-`;
+const MessagePfpContainerBase = (props: MessagePfpContainerProps) => {
+    const [, divProps] = splitProps(props, ["side", "raised"]);
+    return <div {...divProps} />;
+};
 
-export const IncomingRightPfpContainer = styled("div")`
-    grid-column: 2;
-    grid-row: 1;
+const MessageBodyBase = (props: MessageBodyProps) => {
+    const [, divProps] = splitProps(props, ["side", "variant"]);
+    return <div {...divProps} />;
+};
 
-    img {
-        display: block;
-        width: 100%;
-        transform: translateY(-${USERNAME_SIZE});
-        aspect-ratio: 1;
-        object-fit: contain;
-    }
-`;
+const UsernameTagBase = (props: UsernameTagProps) => {
+    const [, divProps] = splitProps(props, ["side"]);
+    return <div {...divProps} />;
+};
 
-export const IncomingRightBody = styled("div")`
-    grid-column: 1;
-    grid-row: 1;
-    justify-self: end;
-    width: fit-content;
-    min-width: 150px;
-    max-width: 100%;
-    box-sizing: border-box;
-
-    overflow-wrap: anywhere;
-    text-align: right;
-    
-    background: #e5e5e5;
-    background-clip: padding-box;
-    border-image-slice: 10 10 6 5;
-    border-image-width: 10px 10px 6px 5px;
-    border-width: 10px 10px 6px 5px;
-    border-image-outset: 0px 0px 0px 0px;
-    border-image-repeat: stretch stretch;
-    border-image-source: url(${chatbox});
-    border-style: solid;
-
-    padding-bottom: 8px;
-    padding-left: 5px;
-
-    &:hover span.dateinfo:first-child {
-        display: none;
-    }
-
-    & span.dateinfo:first-child + span.dateinfo {
-        display: none;
-    }
-
-    &:hover span.dateinfo:first-child + span.dateinfo {
-        display: block;
-    }
-    
-`;
-
-export const IncomingLeftContainer = styled("div")`
-    display: grid;
-    grid-template-columns: ${PFP_SIZE} minmax(0, 1fr);
-    margin: ${MESSAGE_MARGINS};
-    margin-top: calc(${USERNAME_SIZE} + ${MESSAGE_MARGINS});
-    position: relative;
-
-    gap: ${PFP_GAP};
-`;
-
-export const IncomingLeftPfpContainer = styled("div")`
-    img {
-        display: block;
-        width: 100%;
-        transform: translateY(-${USERNAME_SIZE});
-        aspect-ratio: 1;
-        object-fit: contain;
-    }
-`;
-
-export const IncomingLeftBody = styled("div")`
-    width: fit-content;
-    min-width: 150px;
-    max-width: 100%;
-    box-sizing: border-box;
-
-    overflow-wrap: anywhere;
-    
-    background: #e5e5e5;
-    background-clip: padding-box;
-    border-image-slice: 10 5 6 10;
-    border-image-width: 10px 5px 6px 10px;
-    border-width: 10px 5px 6px 10px;
-    border-image-outset: 0px 0px 0px 0px;
-    border-image-repeat: stretch stretch;
-    border-image-source: url(${chatbox_f});
-    border-style: solid;
-
-    padding-bottom: 8px;
-    padding-right: 5px;
-
-    &:hover span.dateinfo:first-child {
-        display: none;
-    }
-
-    & span.dateinfo:first-child + span.dateinfo {
-        display: none;
-    }
-
-    &:hover span.dateinfo:first-child + span.dateinfo {
-        display: block;
-    }
-    
-`;
-
-export const OutgoingLeftContainer = styled("div")`
-    display: grid;
-    grid-template-columns: ${PFP_SIZE} minmax(0, 1fr);
-    margin: ${MESSAGE_MARGINS};
-    position: relative;
-
-    gap: ${PFP_GAP};
-`;
-
-export const OutgoingLeftPfpContainer = styled("div")`
-    grid-column: 1;
-    grid-row: 1;
-
-    img {
-        display: block;
-        width: 100%;
-        aspect-ratio: 1;
-        object-fit: contain;
-    }
-`;
-
-export const OutgoingLeftBody = styled("div")`
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: start;
-    width: fit-content;
-    min-width: 150px;
-    max-width: 100%;
-    box-sizing: border-box;
-
-    overflow-wrap: anywhere;
-    text-align: left;
-
-    background: #f7f7f7;
-    background-clip: padding-box;
-    border-image-slice: 10 5 6 10;
-    border-image-width: 10px 5px 6px 10px;
-    border-width: 10px 5px 6px 10px;
-    border-image-outset: 0px 0px 0px 0px;
-    border-image-repeat: stretch stretch;
-    border-image-source: url(${sentbox});
-    border-style: solid;
-
-    padding-bottom: 8px;
-    padding-right: 5px;
-
+const dateInfoHoverCss = `
     &:hover span.dateinfo:first-child {
         display: none;
     }
@@ -192,63 +57,100 @@ export const OutgoingLeftBody = styled("div")`
     }
 `;
 
-export const OutgoingRightContainer = styled("div")`
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) ${PFP_SIZE};
-    margin: ${MESSAGE_MARGINS};
-    position: relative;
+const bubbleAsset = (variant: Variant, side: Side) => {
+    if (variant === 'incoming') {
+        return side === 'right' ? chatbox : chatbox_f;
+    }
 
+    return side === 'left' ? sentbox : sentbox_f;
+};
+
+const sideCss = (side: Side) => {
+    if (side === 'right') {
+        return `
+            grid-template-columns: minmax(0, 1fr) ${PFP_SIZE};
+        `;
+    }
+
+    return `
+        grid-template-columns: ${PFP_SIZE} minmax(0, 1fr);
+    `;
+};
+
+const pfpSideCss = (side: Side) => {
+    if (side === 'right') {
+        return `
+            grid-column: 2;
+        `;
+    }
+
+    return `
+        grid-column: 1;
+    `;
+};
+
+const bodySideCss = (side: Side) => {
+    if (side === 'right') {
+        return `
+            grid-column: 1;
+            justify-self: end;
+            text-align: right;
+            border-image-slice: 10 10 6 5;
+            border-image-width: 10px 10px 6px 5px;
+            border-width: 10px 10px 6px 5px;
+            padding-left: 5px;
+        `;
+    }
+
+    return `
+        grid-column: 2;
+        justify-self: start;
+        text-align: left;
+        border-image-slice: 10 5 6 10;
+        border-image-width: 10px 5px 6px 10px;
+        border-width: 10px 5px 6px 10px;
+        padding-right: 5px;
+    `;
+};
+
+export const MessageContainer = styled(MessageContainerBase)<MessageContainerProps>`
+    display: grid;
+    ${({ side }) => sideCss(side)}
+    margin: ${MESSAGE_MARGINS};
+    margin-top: ${({ withUsername }) => withUsername ? `calc(${USERNAME_SIZE} + ${MESSAGE_MARGINS})` : MESSAGE_MARGINS};
+    position: relative;
     gap: ${PFP_GAP};
 `;
 
-export const OutgoingRightPfpContainer = styled("div")`
-    grid-column: 2;
+export const MessagePfpContainer = styled(MessagePfpContainerBase)<MessagePfpContainerProps>`
+    ${({ side }) => pfpSideCss(side)}
     grid-row: 1;
 
     img {
         display: block;
         width: 100%;
+        transform: ${({ raised }) => raised ? `translateY(-${USERNAME_SIZE})` : 'none'};
         aspect-ratio: 1;
         object-fit: contain;
     }
 `;
 
-export const OutgoingRightBody = styled("div")`
-    grid-column: 1;
+export const MessageBody = styled(MessageBodyBase)<MessageBodyProps>`
+    ${({ side }) => bodySideCss(side)}
     grid-row: 1;
-    justify-self: end;
     width: fit-content;
     min-width: 150px;
     max-width: 100%;
     box-sizing: border-box;
-
     overflow-wrap: anywhere;
-    text-align: right;
-
-    background: #f7f7f7;
+    background: ${({ variant }) => variant === 'incoming' ? '#e5e5e5' : '#f7f7f7'};
     background-clip: padding-box;
-    border-image-slice: 10 10 6 5;
-    border-image-width: 10px 10px 6px 5px;
-    border-width: 10px 10px 6px 5px;
     border-image-outset: 0px 0px 0px 0px;
     border-image-repeat: stretch stretch;
-    border-image-source: url(${sentbox_f});
+    border-image-source: ${({ variant, side }) => `url(${bubbleAsset(variant, side)})`};
     border-style: solid;
-
     padding-bottom: 8px;
-    padding-left: 5px;
-
-    &:hover span.dateinfo:first-child {
-        display: none;
-    }
-
-    & span.dateinfo:first-child + span.dateinfo {
-        display: none;
-    }
-
-    &:hover span.dateinfo:first-child + span.dateinfo {
-        display: block;
-    }
+    ${dateInfoHoverCss}
 `;
 
 export const TimestampContainer = styled("div") <{ align: 'right' | 'left'; }> `
@@ -258,57 +160,30 @@ export const TimestampContainer = styled("div") <{ align: 'right' | 'left'; }> `
     transform: translate(2px, -4px);
 `;
 
-export const UsernameRight = styled(`div`)`
+export const UsernameTag = styled(UsernameTagBase)<UsernameTagProps>`
     position: absolute;
-    right: calc(${PFP_SIZE} + ${PFP_GAP});
+    ${({ side }) => side === 'right' ? `right: calc(${PFP_SIZE} + ${PFP_GAP});` : `left: calc(${PFP_SIZE} + ${PFP_GAP});`}
     top: -1px;
     font-size: ${USERNAME_SIZE};
     transform: translateY(-100%);
     background-color: #dcdcdc;
     border: solid #5b5b5b 1px;
-    border-left: none;
-    padding-right: 2px;
+    ${({ side }) => side === 'right' ? 'border-left: none; padding-right: 2px;' : 'border-right: none; padding-left: 2px;'}
 
     &::before {
-        content: url(${tagtail});
+        content: ${({ side }) => side === 'right' ? `url(${tagtail})` : `url(${taghead_f})`};
         position: absolute;
         top: -1px;
-        left: 0px;
+        left: ${({ side }) => side === 'right' ? '0px' : '-1px'};
         z-index: 0;
-        transform: translateX(-100%);
+        transform: ${({ side }) => side === 'right' ? 'translateX(-100%)' : 'none'};
     }
 
     &::after {
-        content: url(${taghead});
+        content: ${({ side }) => side === 'right' ? `url(${taghead})` : `url(${tagtail_f})`};
         position: absolute;
         top: -1px;
-        right: -1px;
-    }
-`
-
-export const UsernameLeft = styled(`div`)`
-    position: absolute;
-    left: calc(${PFP_SIZE} + ${PFP_GAP});
-    top: -1px;
-    font-size: ${USERNAME_SIZE};
-    transform: translateY(-100%);
-    background-color: #dcdcdc;
-    border: solid #5b5b5b 1px;
-    border-right: none;
-    padding-left: 2px;
-
-    &::before {
-        content: url(${taghead_f});
-        position: absolute;
-        top: -1px;
-        left: -1px;
-        z-index: 0;
-    }
-
-    &::after {
-        content: url(${tagtail_f});
-        position: absolute;
-        top: -1px;
+        right: ${({ side }) => side === 'right' ? '-1px' : 'auto'};
     }
 `;
 

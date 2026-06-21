@@ -1,25 +1,15 @@
-import pfp_placeholder from '../../assets/ui/pfp_placeholder.png';
+import pfp_placeholder from '@/assets/ui/pfp_placeholder.png';
 import { format, formatDistanceToNow } from "date-fns";
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import { usePreferences } from "@/context/Preferences";
 import { loadAvatarForUser } from "@/avatar/avatarCache";
 import {
-    IncomingLeftBody,
-    IncomingLeftContainer,
-    UsernameRight,
-    UsernameLeft,
-    IncomingLeftPfpContainer,
-    IncomingRightBody,
-    IncomingRightContainer,
-    IncomingRightPfpContainer,
-    OutgoingLeftBody,
-    OutgoingLeftContainer,
-    OutgoingLeftPfpContainer,
-    OutgoingRightBody,
-    OutgoingRightContainer,
-    OutgoingRightPfpContainer,
+    MessageBody,
+    MessageContainer,
+    MessagePfpContainer,
     TimestampContainer,
-    MessageContent
+    MessageContent,
+    UsernameTag
 } from "./Message.styles";
 
 export default function Message(props: {
@@ -55,54 +45,54 @@ export default function Message(props: {
                 <Show
                     when={preferences.incomingOnRight}
                     fallback={(
-                        <IncomingLeftContainer>
-                            <IncomingLeftPfpContainer>
+                        <MessageContainer side="left" withUsername>
+                            <MessagePfpContainer side="left" raised>
                                 <img src={avatarSrc()} />
-                            </IncomingLeftPfpContainer>
-                            <UsernameLeft>{props.username}</UsernameLeft>
-                            <IncomingLeftBody>
+                            </MessagePfpContainer>
+                            <UsernameTag side="left">{props.username}</UsernameTag>
+                            <MessageBody side="left" variant="incoming">
                                 <TimestampContainer align="right"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
                                 <MessageContent>{props.content}</MessageContent>
-                            </IncomingLeftBody>
-                        </IncomingLeftContainer>
+                            </MessageBody>
+                        </MessageContainer>
                     )}
                 >
-                    <IncomingRightContainer>
-                        <IncomingRightPfpContainer>
+                    <MessageContainer side="right" withUsername>
+                        <MessagePfpContainer side="right" raised>
                             <img src={avatarSrc()} />
-                        </IncomingRightPfpContainer>
-                        <UsernameRight>{props.username}</UsernameRight>
-                        <IncomingRightBody>
+                        </MessagePfpContainer>
+                        <UsernameTag side="right">{props.username}</UsernameTag>
+                        <MessageBody side="right" variant="incoming">
                             <TimestampContainer align="left"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
                             <MessageContent>{props.content}</MessageContent>
-                        </IncomingRightBody>
-                    </IncomingRightContainer>
+                        </MessageBody>
+                    </MessageContainer>
                 </Show>
             )}
         >
             <Show
                 when={preferences.incomingOnRight}
                 fallback={(
-                    <OutgoingRightContainer>
-                        <OutgoingRightBody>
+                    <MessageContainer side="right">
+                        <MessageBody side="right" variant="outgoing">
                             <TimestampContainer align="left"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
                             <MessageContent>{props.content}</MessageContent>
-                        </OutgoingRightBody>
-                        <OutgoingRightPfpContainer>
+                        </MessageBody>
+                        <MessagePfpContainer side="right">
                             <img src={avatarSrc()} />
-                        </OutgoingRightPfpContainer>
-                    </OutgoingRightContainer>
+                        </MessagePfpContainer>
+                    </MessageContainer>
                 )}
             >
-                <OutgoingLeftContainer>
-                    <OutgoingLeftBody>
+                <MessageContainer side="left">
+                    <MessageBody side="left" variant="outgoing">
                         <TimestampContainer align="right"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
                         <MessageContent>{props.content}</MessageContent>
-                    </OutgoingLeftBody>
-                    <OutgoingLeftPfpContainer>
+                    </MessageBody>
+                    <MessagePfpContainer side="left">
                         <img src={avatarSrc()} />
-                    </OutgoingLeftPfpContainer>
-                </OutgoingLeftContainer>
+                    </MessagePfpContainer>
+                </MessageContainer>
             </Show>
         </Show>
     )
