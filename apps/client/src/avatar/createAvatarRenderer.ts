@@ -1,9 +1,7 @@
-import { EyeImageEntry, eyes, EyeVariant, heads } from "./avatar.assets";
+import { eyes, EyeVariant, heads } from "./avatar.assets";
 import { AvatarData } from "./avatar.types";
 
 const SIZE = 400;
-
-const imageCache = new Map<string, HTMLImageElement>();
 
 function loadImage(src: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
@@ -69,7 +67,17 @@ export default function createAvatarRenderer() {
         const { data } = ctx.getImageData(0, 0, SIZE, SIZE);
 
         let minX = SIZE, minY = SIZE, maxX = 0, maxY = 0;
-
+    
+        /*  TODO: I think we can greatly reduce average-case complexity if we break early.
+            The break would need to be per scan direction (top/max, bottom/min, etc...)
+            fe...
+            let minY = 0;
+            top: for (; minY < SIZE; minY++) {
+                for (let x = 0; x < SIZE; x++) {
+                    if (data[(minY * SIZE + x) * 4 + 3] > 0) break top;
+                }
+            }
+         */
         for (let y = 0; y < SIZE; y++) {
             for (let x = 0; x < SIZE; x++) {
                 const alpha = data[(y * SIZE + x) * 4 + 3];

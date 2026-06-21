@@ -1,5 +1,4 @@
 import { styled } from "solid-styled-components";
-import iend from '../assets/iend.png';
 
 export const Container = styled("div")`
     position: absolute;
