@@ -6,14 +6,6 @@ import { HttpStatus } from "http-status-ts";
 
 export const adminRoutes = new Elysia({prefix: '/admin'})
     .use(authMiddleware)
-    .get("/secret", ({user}) => {
-        return {
-            content: "You are an admin, only you should see this.",
-            you: user
-        }
-    }, {
-        useAdmin: true
-    })
     .post("/invite", ({body, user, status}) => {
         const existingCode = actions.getInviteCode(body.code);
         if(existingCode) return status(HttpStatus.CONFLICT, {message: "code already exists"});
