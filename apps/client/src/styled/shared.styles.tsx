@@ -21,7 +21,7 @@ export const Selector = styled("button")`
     border: none;
     background: none;
     font-family: 'wo3';
-    font-size: 4rem;
+    font-size: 64px;
     font-weight: normal;
 
     &:hover, &:focus {
@@ -31,10 +31,10 @@ export const Selector = styled("button")`
     }
 `
 export const Title = styled("h1")`
-    font-size: 4rem;
+    font-size: 64px;
 `
 export const Subtitle = styled("h2")`
-    font-size: 2rem;
+    font-size: 32px;
 `
 export const Divider = styled("hr")<{color?: string}>`
     border-color: ${props => props.color ?? "black"};

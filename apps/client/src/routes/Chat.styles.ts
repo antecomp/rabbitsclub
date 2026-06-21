@@ -40,7 +40,7 @@ export const SendInput = styled(`input`)`
     background: lightgray;
     border: none;
     font-family: 'main';
-    font-size: 1rem;
+    font-size: 16px;
     padding: 5px;
     outline: none;
     flex-grow: 1;
@@ -64,7 +64,7 @@ export const SendForm = styled(`form`)`
 export const SendButton = styled(`button`)`
     border: none;
     padding: 5px 25px;
-    font-size: 1rem;
+    font-size: 16px;
     background: lightgray;
     clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, calc(0% + 5px) calc(100% - 5px), calc(0% + 5px) calc(0% + 5px));
 

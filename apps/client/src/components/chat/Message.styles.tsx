@@ -11,8 +11,8 @@ import tagtail from '@/assets/ui/tagtail.png';
 import tagtail_f from '@/assets/ui/tagtail_f.png';
 
 export const PFP_SIZE = '50px';
-export const USERNAME_SIZE = '0.7rem';
-export const DATE_SIZE = '0.6rem';
+export const USERNAME_SIZE = '11.2px';
+export const DATE_SIZE = '10px';
 export const MESSAGE_MARGINS = '15px';
 export const PFP_GAP = '5px';
 

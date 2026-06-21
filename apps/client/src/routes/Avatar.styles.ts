@@ -111,7 +111,7 @@ export const ThumbnailButton = styled('button')`
     outline: 1px solid transparent;
     background: #aaa;
     font-family: 'main';
-    font-size: 0.8rem;
+    font-size: 12px;
     aspect-ratio: 1;
     flex-grow: 1;
     max-width: 32%;
