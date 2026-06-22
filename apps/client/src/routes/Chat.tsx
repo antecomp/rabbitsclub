@@ -2,8 +2,9 @@ import { createEffect, createSignal, For, on, onCleanup, onMount, Show } from "s
 import { MESSAGE_PAGE_SIZE } from "../../../../config";
 import { api } from "../api/backend"
 import { user } from "../api/user"
-import { MessageHistoryData } from "../types/message.type";
+import type { ChatMessage, MessageHistoryData } from "../types/message.type";
 import Message from "../components/chat/Message";
+import SystemMessage from "../components/chat/SystemMessage";
 import Footer from "../components/Footer";
 import { Divider, Title } from "../styled/shared.styles";
 import { playSoundOnce } from "../util/playSound";
@@ -14,6 +15,10 @@ import Aside from "../components/chat/Aside";
 import { ChatBody, ChatContainer, LoadMoreButton, Messages, SendButton, SendForm, SendInput } from "./Chat.styles";
 
 const AUTO_SCROLL_THRESHOLD = 300;
+const toUserChatMessage = (message: MessageHistoryData[number]): ChatMessage => ({
+    type: "user",
+    message
+});
 
 export default function Chat() {
     const [content, setContent] = createSignal("");
@@ -21,19 +26,23 @@ export default function Chat() {
     let messagesEl: HTMLDivElement | undefined;
     let sendInputEl: HTMLInputElement | undefined;
 
-    const [messages, setMessages] = createSignal<MessageHistoryData>([]);
+    const [messages, setMessages] = createSignal<ChatMessage[]>([]);
     const [hasMoreMessages, setHasMoreMessages] = createSignal(true);
     const [autoScrollMessages, setAutoScrollMessages] = createSignal(true);
     onMount(async () => {
         const { data } = await api.messages.get({ query: { limit: String(MESSAGE_PAGE_SIZE) } });
         if (data) {
-            setMessages(data);
+            const historyIds = new Set(data.map(msg => msg.id));
+            setMessages(prev => [
+                ...data.map(toUserChatMessage),
+                ...prev.filter(msg => msg.type === "system" || !historyIds.has(msg.message.id))
+            ]);
             setHasMoreMessages(data.length === MESSAGE_PAGE_SIZE);
         }
     });
 
     const loadMore = async () => {
-        const oldest = messages()![0];
+        const oldest = messages().find(msg => msg.type === "user");
         if (!oldest) return;
 
         setAutoScrollMessages(false);
@@ -41,10 +50,10 @@ export default function Chat() {
         const previousScrollTop = messagesEl?.scrollTop ?? 0;
 
         const { data } = await api.messages.get({
-            query: { before: String(oldest.id), limit: String(MESSAGE_PAGE_SIZE) }
+            query: { before: String(oldest.message.id), limit: String(MESSAGE_PAGE_SIZE) }
         });
         if (!data) return;
-        setMessages(prev => [...data, ...prev])
+        setMessages(prev => [...data.map(toUserChatMessage), ...prev])
         setHasMoreMessages(data.length === MESSAGE_PAGE_SIZE)
 
         queueMicrotask(() => {
@@ -58,18 +67,15 @@ export default function Chat() {
     onMount(() => {
         sub = api.ws.subscribe()
 
-        // Change this so we have system messages in there two but
-        // with a flag to render them differently.
         sub.on("message", ({ data }) => {
             switch (data.type) {
                 case 'user':
-                    setMessages(prev => [...prev, data])
+                    setMessages(prev => [...prev, { type: "user", message: data }])
                     if (!document.hasFocus() || !autoScrollMessages()) void playSoundOnce(ping);
                     break;
                 case 'system':
-                    // will add toasts later
-                    console.log(data);
-                    switch(data.event) {
+                    setMessages(prev => [...prev, { type: "system", message: data }]);
+                    switch (data.event) {
                         case 'user_joined':
                             playSoundOnce(enter);
                             break;
@@ -178,10 +184,14 @@ export default function Chat() {
                     </Show>
                     <For each={messages()}>
                         {msg => (
-                            <Message
-                                {...msg}
-                                isOwn={msg.username === user()?.username}
-                            />
+                            msg.type === "system"
+                                ? <SystemMessage message={msg.message} />
+                                : (
+                                    <Message
+                                        {...msg.message}
+                                        isOwn={msg.message.username === user()?.username}
+                                    />
+                                )
                         )}
                     </For>
                 </Messages>
@@ -191,7 +201,7 @@ export default function Chat() {
                     onReturnToPresent={returnToPresent}
                 />
             </ChatBody>
-            <Divider color={'gray'}/>
+            <Divider color={'gray'} />
             <SendForm onsubmit={send}>
                 <SendInput
                     ref={sendInputEl}
