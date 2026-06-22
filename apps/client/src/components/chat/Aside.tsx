@@ -2,7 +2,7 @@ import { useNavigate } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import { styled } from "solid-styled-components";
 
-const MAX_ONLINE_VISIBLE = 3;
+const MAX_ONLINE_VISIBLE = 10;
 
 const Body = styled('aside')`
     text-align: right;
@@ -36,8 +36,9 @@ export default function Aside(props: {
     showReturnToPresent?: boolean
     onReturnToPresent?: () => void
 }) {
-    const onlineToDisplay = () => props.whoIsOnline.slice(undefined, MAX_ONLINE_VISIBLE);
-    const andMoreCount = () => props.whoIsOnline.length - onlineToDisplay().length;
+    const onlineToDisplay = () => props.whoIsOnline.slice(0, MAX_ONLINE_VISIBLE);
+    const onlineHidden = () => props.whoIsOnline.slice(MAX_ONLINE_VISIBLE);
+    const andMoreCount = () => onlineHidden().length;
 
     const navigate = useNavigate();
 
@@ -52,7 +53,7 @@ export default function Aside(props: {
                 )}
             </For>
             <Show when={andMoreCount() > 0}>
-                ...and {andMoreCount()} more
+                <p title={onlineHidden().join(',')}>...and {andMoreCount()} more</p>
             </Show>
             <SmallDivider />
             <Show when={props.showReturnToPresent}>

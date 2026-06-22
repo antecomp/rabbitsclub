@@ -1,16 +1,21 @@
-import { createSignal } from "solid-js"
+import { createSignal, Show } from "solid-js"
 import { useNavigate } from "@solidjs/router"
 import { api } from "../api/backend"
 import { refetchUser } from "../api/user"
 import Footer from "../components/Footer"
 import { Container, Title, Subtitle, Divider, AuthForm } from "../styled/shared.styles"
+import { useUrlParams } from "@/hooks/useUrlParams"
 
 export default function Register() {
     const navigate = useNavigate()
     const [username, setUsername] = createSignal("")
     const [password, setPassword] = createSignal("")
-    const [registerCode, setRegisterCode] = createSignal("")
-    const [error, setError] = createSignal("")
+    const [error, setError] = createSignal("");
+
+    const { getParam } = useUrlParams();
+    const regCodeFromURL = getParam('regcode');
+    const [registerCode, setRegisterCode] = createSignal(regCodeFromURL ?? "");
+
 
     const submit = async (e: SubmitEvent) => {
         e.preventDefault()
@@ -47,16 +52,22 @@ export default function Register() {
                     onInput={e => setPassword(e.target.value)}
                     placeholder="Password"
                 />
-                <input
-                    value={registerCode()}
-                    onInput={e => setRegisterCode(e.target.value)}
-                    placeholder="Registration Code"
-                />
+                <Show when={!regCodeFromURL}>
+                    <input
+                        value={registerCode()}
+                        onInput={e => setRegisterCode(e.target.value)}
+                        placeholder="Registration Code"
+                    />
+                </Show>
                 <button type="submit">[ REGISTER ]</button>
                 <button onClick={() => navigate("/")}>[ BACK ]</button>
             </AuthForm>
             <Footer>
-                You must have a valid registration code to join. <br /> {error()}
+                {regCodeFromURL
+                    ? 'Code preapplied. Pick a username and password.'
+                    : 'You must have a valid registration code to join.'
+                }
+                <br /> {error()}
             </Footer>
         </Container>
     )
