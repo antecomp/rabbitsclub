@@ -5,15 +5,23 @@ import { PFP_SIZE } from "./Message.styles";
 const SystemMessageContainer = styled("div")`
     margin: 15px auto;
     max-width: min(420px, calc(100% - ${PFP_SIZE}));
-    padding: 8px 12px;
     box-sizing: border-box;
     color: #5b5b5b;
-    background: #ebebeb;
-    border: 1px solid #5b5b5b;
     text-align: center;
     overflow-wrap: anywhere;
-    font-style: italic;
-    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+
+    span {
+        flex-grow: 1;
+        height: 1px;
+        background-color: #5b5b5b;
+    }
+
+    p {
+        margin: 0 5px;
+    }
 `;
 
 export default function SystemMessage(props: {
@@ -29,7 +37,9 @@ export default function SystemMessage(props: {
 
     return (
         <SystemMessageContainer>
-            {eventToMessage}
+            <span/>
+                <p>&lt; {eventToMessage} &gt;</p>
+            <span/>
         </SystemMessageContainer>
     );
 }
