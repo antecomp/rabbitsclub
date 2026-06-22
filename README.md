@@ -1,5 +1,5 @@
 # RABBITS.CLUB
-<img src="apps/client/src/assets/misc/brand.svg" alt="logo" width="500"/>
+<img src="apps/client/src/assets/misc/brand.svg" alt="logo" width="400"/>
 
 bun workspace with a Solid/Vite client and an Elysia API server.
 
@@ -72,11 +72,13 @@ Example service:
 
 ```ini
 [Unit]
-Description=Rabbitclub Bun Server
+Description=Rabbitsclub Server
 After=network.target
 
 [Service]
 Type=simple
+User=deploy
+Group=deploy
 WorkingDirectory=/opt/rabbitclub
 EnvironmentFile=/opt/rabbitclub/.prod.env
 ExecStart=/home/deploy/.bun/bin/bun /opt/rabbitclub/apps/server/dist/index.js
@@ -85,6 +87,27 @@ RestartSec=3
 
 [Install]
 WantedBy=multi-user.target
+```
+
+Create a dedicated deploy account, install Bun for that account, and keep the app checkout in `/opt`:
+
+```bash
+sudo adduser --disabled-password --gecos "" deploy
+sudo mkdir -p /opt
+sudo chown deploy:deploy /opt
+sudo -iu deploy
+curl -fsSL https://bun.sh/install | bash
+source ~/.bashrc
+git clone https://github.com/antecomp/rabbitsclub /opt/rabbitclub
+cd /opt/rabbitclub
+bun install --frozen-lockfile
+```
+
+Keep the production SQLite database outside the code checkout:
+
+```bash
+sudo mkdir -p /var/lib/rabbitclub
+sudo chown deploy:deploy /var/lib/rabbitclub
 ```
 
 After installing the service:
