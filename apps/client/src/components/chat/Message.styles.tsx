@@ -1,14 +1,14 @@
 import { splitProps, type JSX } from "solid-js";
 import { styled } from "solid-styled-components";
 
-import chatbox from '@/assets/ui/chatbox.png';
-import chatbox_f from '@/assets/ui/chatbox_f.png';
-import sentbox from '@/assets/ui/sentbox.png';
-import sentbox_f from '@/assets/ui/sentbox_f.png';
-import taghead from '@/assets/ui/taghead.png';
-import taghead_f from '@/assets/ui/taghead_f.png';
-import tagtail from '@/assets/ui/tagtail.png';
-import tagtail_f from '@/assets/ui/tagtail_f.png';
+import chatbox from '@/assets/ui/chatbox.png?url&no-inline';
+import chatbox_f from '@/assets/ui/chatbox_f.png?url&no-inline';
+import sentbox from '@/assets/ui/sentbox.png?url&no-inline';
+import sentbox_f from '@/assets/ui/sentbox_f.png?url&no-inline';
+import taghead from '@/assets/ui/taghead.png?url&no-inline';
+import taghead_f from '@/assets/ui/taghead_f.png?url&no-inline';
+import tagtail from '@/assets/ui/tagtail.png?url&no-inline';
+import tagtail_f from '@/assets/ui/tagtail_f.png?url&no-inline';
 
 export const PFP_SIZE = '50px';
 export const USERNAME_SIZE = '11.2px';
