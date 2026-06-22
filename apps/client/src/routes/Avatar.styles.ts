@@ -1,5 +1,5 @@
 import { styled } from "solid-styled-components";
-import cbr from '../assets/ui/c_br.png';
+import cbr from '../assets/ui/c_br.png?url&no-inline';
 
 export const AvatarContainer = styled("div")`
     position: absolute;
