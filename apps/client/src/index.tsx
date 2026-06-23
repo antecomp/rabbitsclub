@@ -11,6 +11,8 @@ import About from "./routes/About"
 import Settings from "./routes/Settings"
 import { PreferencesProvider } from "./context/Preferences"
 import Avatar from "@/routes/Avatar"
+import AdminIndex from "./routes/admin/AdminIndex"
+import AdminInvites from "./routes/admin/AdminInvites"
 
 render(
     () => (
@@ -31,9 +33,12 @@ render(
                 <Route path="/settings" component={() => (
                     <ProtectedRoute><Settings /></ProtectedRoute>
                 )} />
-                <Route path="/admin" component={() => (
-                    <AdminRoute><Admin /></AdminRoute>
-                )} />
+                <Route path="/admin" component={(props) => (
+                    <AdminRoute><Admin>{props.children}</Admin></AdminRoute>
+                )}>
+                    <Route path="/" component={AdminIndex} />
+                    <Route path="/invites" component={AdminInvites} />
+                </Route>
                 <Route path="/about" component={About} />
                 <Route path="/avatar" component={() => (
                     <Avatar />
