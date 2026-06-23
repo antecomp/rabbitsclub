@@ -9,13 +9,14 @@ import { MESSAGE_PAGE_SIZE } from "../../../../config"
 import parseAvatarData from "~/util/parseAvatarData"
 
 const dbPath = process.env.DB_PATH ?? join(import.meta.dir, "../../chat.db")
+const migrationsPath = process.env.MIGRATIONS_PATH ?? join(import.meta.dir, "../../migrations")
 const sqlite = new Database(dbPath, { create: true })
 sqlite.run("PRAGMA journal_mode = WAL")
 
 export const db = drizzle(sqlite, { schema })
 
 // Auto-apply pending migrations on startup
-migrate(db, { migrationsFolder: join(import.meta.dir, "../../migrations") })
+migrate(db, { migrationsFolder: migrationsPath });
 
 export const actions = {
     insertMessage: (username: string, content: string) =>
