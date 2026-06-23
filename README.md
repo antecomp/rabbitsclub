@@ -22,6 +22,8 @@ JWT_SECRET=replace-with-long-random-secret
 COOKIE_SECURE=true
 COOKIE_SAME_SITE=lax
 DB_PATH=/var/lib/rabbitclub/chat.db
+# this is usually going to reflect the directory you cloned into
+MIGRATIONS_PATH=/opt/rabbitclub/apps/server/migrations
 SEED_ADMIN=false
 INITIAL_ADMIN_USERNAME=admin
 INITIAL_ADMIN_PASSWORD=replace-only-for-first-seed
