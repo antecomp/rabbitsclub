@@ -13,6 +13,8 @@ import Dash from '../assets/avatars/eyes/dash.png';
 import Diamond from '../assets/avatars/eyes/diamond.png';
 import Glee from '../assets/avatars/eyes/glee.png';
 import Square from '../assets/avatars/eyes/square.png';
+import Gleam from '@/assets/avatars/eyes/gleam.png';
+import Shock from '@/assets/avatars/eyes/shockalt.png';
 
 import WedgeLeft from '../assets/avatars/eyes/wedge left.png';
 import WedgeRight from '../assets/avatars/eyes/wedge right.png';
@@ -20,6 +22,8 @@ import LazyLeft from '../assets/avatars/eyes/lazy left.png';
 import LazyRight from '../assets/avatars/eyes/lazy right.png';
 import CurlLeft from '../assets/avatars/eyes/curl left.png';
 import CurlRight from '../assets/avatars/eyes/curl right.png';
+import ClenchLeft from '@/assets/avatars/eyes/clench left.png';
+import ClenchRight from '@/assets/avatars/eyes/clench right.png';
 
 const DEFAULT_EYE_OFFSET = { x: 80, y: 100 };
 
@@ -32,9 +36,12 @@ export const eyes = {
   diamond: { src: Diamond,                  defaultOffset: DEFAULT_EYE_OFFSET },
   glee:    { src: Glee,                     defaultOffset: DEFAULT_EYE_OFFSET },
   square:  { src: Square,                   defaultOffset: DEFAULT_EYE_OFFSET },
+  gleam:   { src: Gleam,                    defaultOffset: DEFAULT_EYE_OFFSET },
+  shock:   {src: Shock,                     defaultOffset: DEFAULT_EYE_OFFSET },
   wedge:   { src: [WedgeLeft, WedgeRight],  defaultOffset: DEFAULT_EYE_OFFSET },
   lazy:    { src: [LazyLeft,  LazyRight],   defaultOffset: DEFAULT_EYE_OFFSET },
   curl:    { src: [CurlLeft,  CurlRight],   defaultOffset: DEFAULT_EYE_OFFSET },
+  clench:  { src: [ClenchLeft, ClenchRight], defaultOffset: DEFAULT_EYE_OFFSET },
 } satisfies Record<string, { src: string | [string, string]; defaultOffset: { x: number; y: number } }>;
 
 export type EyeVariant = keyof typeof eyes;
