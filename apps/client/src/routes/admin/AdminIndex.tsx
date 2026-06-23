@@ -11,6 +11,7 @@ export default function AdminIndex() {
         <Divider />
         <AuthForm>
         <button type="button" onClick={() => navigate("/admin/invites")}>[ INVITES ]</button>
+        <button type="button" onClick={() => navigate("/")}>[ BACK ]</button>
         </AuthForm>
         <Footer>I trust you know what you're doing...</Footer>
     </>
