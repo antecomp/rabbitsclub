@@ -1,16 +1,11 @@
-import { t } from 'elysia'
+import { t } from "elysia"
+import { model } from "../db/model"
 
-export const SentMessageSchema = t.Object({
-    content: t.String()
-});
+export const MessageSchema = t.Object(model.select.messages)
+export type Message = typeof MessageSchema['static']
 
-export const MessageSchema = t.Object({
-    id: t.Number(),
-    username: t.String(),
-    content: t.String(),
-    created_at: t.String()
-})
-export type Message = typeof MessageSchema['static'];
+// These stay manual
+export const SentMessageSchema = t.Object({ content: t.String() })
 
 export enum SystemEvents {
     USER_JOINED = "user_joined",

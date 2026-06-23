@@ -1,6 +1,5 @@
 import { Elysia, t } from "elysia"
 import { cors } from "@elysiajs/cors"
-import "./db"
 import { chatRoutes } from "./routes/chat"
 import { authRoutes } from "./routes/auth"
 import { adminRoutes } from "./routes/admin"
