@@ -101,14 +101,13 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         },
         cookie: AuthCookieSchema
     })
-    .get("/me", async ({ jwt, cookie: { auth }, status }) => {
+    .get("/me", async ({ jwt, cookie: { auth } }) => {
         const payload = await jwt.verify(auth.value);
-        if (!payload) return status(401, {message: "unauthenticated"});
+        if (!payload) return null;
         return { id: payload.id, username: payload.username, is_admin: payload.is_admin }
     }, {
         response: {
-            200: t.Object({ id: t.Number(), username: t.String(), is_admin: t.Integer() }),
-            401: ErrorSchema
+            200: t.Union([t.Object({ id: t.Number(), username: t.String(), is_admin: t.Integer() }), t.Null()]),
         },
         cookie: AuthCookieSchema
     })
