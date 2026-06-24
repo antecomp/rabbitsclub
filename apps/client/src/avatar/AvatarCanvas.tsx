@@ -47,6 +47,7 @@ export function AvatarCanvas(props: {
   }
 
   createEffect(() => {
+    JSON.stringify(props.state);   // forces deep tracking
     queuedState = props.state;
     void renderQueued();
   });

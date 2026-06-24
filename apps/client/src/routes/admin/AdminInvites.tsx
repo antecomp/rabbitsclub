@@ -64,6 +64,6 @@ export default function AdminInvites() {
                 </For>
             </AuthForm>
         </Show>
-        <Footer>Create new invite by putting key in input field.</Footer>
+        <Footer>Create new invite by putting key in input field. <br /> {error()} </Footer>
     </>
 }
