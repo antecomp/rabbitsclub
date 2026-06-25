@@ -132,6 +132,8 @@ export const MessagePfpContainer = styled(MessagePfpContainerBase)<MessagePfpCon
         transform: ${({ raised }) => raised ? `translateY(-${USERNAME_SIZE})` : 'none'};
         aspect-ratio: 1;
         object-fit: contain;
+        -webkit-user-drag: none;
+        user-select: none;
     }
 `;
 
@@ -188,5 +190,5 @@ export const UsernameTag = styled(UsernameTagBase)<UsernameTagProps>`
 `;
 
 export const MessageContent = styled("div")`
-    
+    user-select: text;
 `;

@@ -13,7 +13,7 @@ export const ChatContainer = styled("div")`
     height: 750px;
     display: flex;
     flex-direction: column;
-    user-select: none;
+    user-select: auto;
     animation: flicker-in 0.3s steps(12, end) forwards;
 `;
 
