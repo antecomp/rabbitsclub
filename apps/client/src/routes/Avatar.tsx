@@ -8,7 +8,7 @@ import { createStore } from "solid-js/store";
 import { api } from "../api/backend";
 import { user } from "../api/user";
 import { invalidateCachedProfile } from "../avatar/avatarCache";
-import { DEFAULT_AVATAR } from "@/avatar/avatar.const";
+import { createDefaultAvatar } from "@/avatar/avatar.const";
 import { AvatarData } from "@/avatar/avatar.types";
 import { AvatarContainer, BackButton, Menu, MenuButton, MenuTitle, MiniDivider, OffsetButton, OffsetControls, Split, ThumbnailButton, ThumbnailGrid } from "./Avatar.styles";
 
@@ -59,7 +59,7 @@ function EyeOffsetControls(props: { setOffset: (x: number, y: number) => void; o
 export default function Avatar() {
     const navigate = useNavigate();
     const [menu, setMenu] = createSignal<AvatarMenu>('root');
-    const [avatar, setAvatar] = createStore<AvatarData>({ ...DEFAULT_AVATAR });
+    const [avatar, setAvatar] = createStore<AvatarData>(createDefaultAvatar());
     let loadedUsername: string | undefined;
 
     const eyeThumbnail = (variant: EyeVariant, side: 0 | 1) => {
@@ -98,12 +98,15 @@ export default function Avatar() {
         void (async () => {
             const profile = (await api.profile({ username }).get()).data;
             if (loadedUsername !== username || !profile) return;
+            const defaultAvatar = createDefaultAvatar();
 
             setAvatar({
-                ...DEFAULT_AVATAR,
+                ...defaultAvatar,
                 ...profile,
-                leftEye: isEyeVariant(profile.leftEye) ? profile.leftEye : DEFAULT_AVATAR.leftEye,
-                rightEye: isEyeVariant(profile.rightEye) ? profile.rightEye : DEFAULT_AVATAR.rightEye,
+                leftEye: isEyeVariant(profile.leftEye) ? profile.leftEye : defaultAvatar.leftEye,
+                rightEye: isEyeVariant(profile.rightEye) ? profile.rightEye : defaultAvatar.rightEye,
+                leftEyeOffset: profile.leftEyeOffset ? { ...profile.leftEyeOffset } : defaultAvatar.leftEyeOffset,
+                rightEyeOffset: profile.rightEyeOffset ? { ...profile.rightEyeOffset } : defaultAvatar.rightEyeOffset,
                 head: clampedHeadVariant(profile.head)
             });
         })();
