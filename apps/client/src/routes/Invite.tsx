@@ -6,13 +6,11 @@ import { AuthForm, Container, Divider, Subtitle, Title } from "../styled/shared.
 import Register from "./Register"
 import { styled } from "solid-styled-components"
 import { AvatarCanvas } from "@/avatar/AvatarCanvas"
-import { DEFAULT_AVATAR } from "@/avatar/avatar.const"
 
 import cbr from '../assets/ui/c_br.png?url&no-inline';
-import { clampedHeadVariant, eyeVariants, heads } from "@/avatar/avatar.assets"
-import pickRandom from "@/util/pickRandom"
 import { createStore } from "solid-js/store"
 import { AvatarData } from "@/avatar/avatar.types"
+import { createRandomAvatar } from "../avatar/createRandomAvatar"
 
 const InviteMessage = styled('p')`
     font-size: 18px;
@@ -59,15 +57,6 @@ const RegisterGrid = styled('div')`
         }
     }
 `
-
-function createRandomAvatar(): AvatarData {
-    return {
-        ...DEFAULT_AVATAR,
-        head: clampedHeadVariant(Math.floor(Math.random() * heads.length)),
-        leftEye: pickRandom(eyeVariants),
-        rightEye: pickRandom(eyeVariants),
-    }
-}
 
 export default function Invite() {
     const params = useParams()
@@ -131,7 +120,7 @@ export default function Invite() {
                                 avatar={avatar}
                             />
                         </RegisterGrid>
-                        <Footer>Fill out input fields to register a new account.</Footer>
+                        <Footer>Fill out input fields to register a new account. <br /> Avatar can be fully customized after regristration.</Footer>
                     </Container>
                 )}
             </Show>

@@ -162,3 +162,10 @@ export const OffsetButton = styled('button')`
     }
 `;
 
+export const MiniDivider = styled('hr')`
+    width: 100%;
+    height: 1px;
+    border: none;
+    background: #bfbfbf;
+    margin: 5px;
+`

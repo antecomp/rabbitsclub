@@ -10,10 +10,11 @@ import { user } from "../api/user";
 import { invalidateCachedProfile } from "../avatar/avatarCache";
 import { DEFAULT_AVATAR } from "@/avatar/avatar.const";
 import { AvatarData } from "@/avatar/avatar.types";
-import { AvatarContainer, BackButton, Menu, MenuButton, MenuTitle, OffsetButton, OffsetControls, Split, ThumbnailButton, ThumbnailGrid } from "./Avatar.styles";
+import { AvatarContainer, BackButton, Menu, MenuButton, MenuTitle, MiniDivider, OffsetButton, OffsetControls, Split, ThumbnailButton, ThumbnailGrid } from "./Avatar.styles";
 
 import arrow from '../assets/ui/dir.png';
 import center from '../assets/ui/center.png';
+import { createRandomAvatar } from "@/avatar/createRandomAvatar";
 
 type AvatarMenu = 'root' | 'ears' | 'leftEye' | 'rightEye';
 
@@ -128,6 +129,8 @@ export default function Avatar() {
                             <MenuButton type="button" onClick={() => setMenu('ears')}>[ EARS ]</MenuButton>
                             <MenuButton type="button" onClick={() => setMenu('leftEye')}>[ EYE L ]</MenuButton>
                             <MenuButton type="button" onClick={() => setMenu('rightEye')}>[ EYE R ]</MenuButton>
+                            <MiniDivider/>
+                            <MenuButton type="button" onClick={() => setAvatar(createRandomAvatar())}>[ RANDOM ]</MenuButton>
                             <Show when={user()}>
                                 <MenuButton type="button" onClick={save}>[ SAVE ]</MenuButton>
                             </Show>
