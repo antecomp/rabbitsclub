@@ -1,5 +1,5 @@
 import { useNavigate } from "@solidjs/router";
-import { createEffect, ParentProps } from "solid-js";
+import { createEffect, ParentProps, Show } from "solid-js";
 import { user } from "../api/user";
 
 export function ProtectedRoute(props: ParentProps) {
@@ -10,7 +10,7 @@ export function ProtectedRoute(props: ParentProps) {
         if (!user()) navigate("/", { replace: true })
     });
 
-    return <>{props.children}</>
+    return <Show when={!user.loading}>{props.children}</Show>
 }
 
 export function GuestRoute(props: ParentProps) {
@@ -21,7 +21,7 @@ export function GuestRoute(props: ParentProps) {
         if (user()) navigate("/", { replace: true })
     })
 
-    return <>{props.children}</>
+    return <Show when={!user.loading}>{props.children}</Show>
 }
 
 export function AdminRoute(props: ParentProps) {
@@ -32,5 +32,5 @@ export function AdminRoute(props: ParentProps) {
         if (!user()?.is_admin) navigate("/", { replace: true })
     });
 
-    return <>{props.children}</>
+    return <Show when={!user.loading}>{props.children}</Show>
 }
