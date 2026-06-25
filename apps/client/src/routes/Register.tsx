@@ -66,9 +66,12 @@ export default function Register(props: RegisterProps) {
                     />
                     <button type="submit">[ REGISTER ]</button>
                     <button type="button" onClick={() => navigate("/")}>[ BACK ]</button>
+                    <Show when={error()}>
+                        <hr/>
+                        {error()}
+                    </Show>
                 </AuthForm>
             </Show>
-            {error()}
         </>
     )
 }
