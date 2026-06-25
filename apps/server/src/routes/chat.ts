@@ -39,6 +39,7 @@ export const chatRoutes = new Elysia()
             } else {
                 onlineUsers.set(id, { username, count: 1 });
                 ws.publish(CHAT_WS_NAME, { type: 'system', event: SystemEvents.USER_JOINED, content: username })
+                ws.send({ type: 'system', event: SystemEvents.USER_JOINED, content: username })
                 ws.publish(CHAT_WS_NAME, { type: 'online', users: getOnlineUsers() })
             }
 
