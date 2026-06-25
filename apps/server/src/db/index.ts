@@ -72,7 +72,7 @@ export const actions = {
             ))
             .get(),
 
-    insertUserWithInvite: (username: string, password: string, code: string) =>
+    insertUserWithInvite: (username: string, password: string, code: string, avatar?: AvatarData) =>
         db.transaction((tx) => {
             const user = tx.insert(schema.users)
                 .values({ username, password })
@@ -90,6 +90,12 @@ export const actions = {
 
             if (!invite) {
                 throw new Error("INVITE_CLAIM_FAILED")
+            }
+
+            if (avatar) {
+                tx.insert(schema.profiles)
+                    .values({ user_id: user.id, avatar: JSON.stringify(avatar) })
+                    .run()
             }
 
             return user

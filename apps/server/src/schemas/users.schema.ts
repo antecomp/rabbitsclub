@@ -1,5 +1,6 @@
 import { t } from "elysia"
 import { model } from "../db/model"
+import { AvatarDataSchema } from "./profiles.schema"
 
 // These replace your manual UserSchema, InviteCode interface etc.
 export const UserSchema = t.Object(model.select.users)
@@ -17,7 +18,8 @@ export const LoginBodySchema = t.Object({
 export const RegisterBodySchema = t.Object({
     username: t.String({ minLength: 3 }),
     password: t.String({ minLength: 8 }),
-    code: t.String({ minLength: 1 })
+    code: t.String({ minLength: 1 }),
+    avatar: t.Optional(AvatarDataSchema)
 })
 
 export const InviteLookupResponseSchema = t.Object({

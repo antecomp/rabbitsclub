@@ -3,9 +3,11 @@ import { useNavigate } from "@solidjs/router"
 import { api } from "../api/backend"
 import { refetchUser } from "../api/user"
 import { AuthForm } from "../styled/shared.styles"
+import { AvatarData } from "@/avatar/avatar.types"
 
 type RegisterProps = {
     inviteCode?: string
+    avatar?: AvatarData
 }
 
 export default function Register(props: RegisterProps) {
@@ -26,6 +28,7 @@ export default function Register(props: RegisterProps) {
         const { error: err } = await api.auth.register.post({
             username: username(),
             password: password(),
+            avatar: props.avatar,
             code: props.inviteCode
         })
 

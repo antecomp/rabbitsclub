@@ -128,6 +128,7 @@ export default function Invite() {
                             </div>
                             <Register
                                 inviteCode={inviteData().code}
+                                avatar={avatar}
                             />
                         </RegisterGrid>
                         <Footer>Fill out input fields to register a new account.</Footer>

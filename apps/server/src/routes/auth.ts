@@ -48,7 +48,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         const hashed = await Bun.password.hash(body.password);
         let user;
         try {
-            user = actions.insertUserWithInvite(body.username, hashed, body.code);
+            user = actions.insertUserWithInvite(body.username, hashed, body.code, body.avatar);
         } catch (error) {
             if (error instanceof Error && error.message === "INVITE_CLAIM_FAILED") {
                 return status(403, { message: "Invalid or already used invite code" });
