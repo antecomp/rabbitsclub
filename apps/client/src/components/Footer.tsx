@@ -2,12 +2,12 @@ import { createResource, ParentProps } from "solid-js";
 import { api } from "../api/backend";
 import { styled } from "solid-styled-components";
 
-const FooterContainer = styled('footer')`
+const FooterContainer = styled('footer')<{showborder: boolean}>`
     margin-top: auto;
     width: 100%;
     display: flex;
     >div:first-child {
-        border-right: solid black 2px;
+        border-right: ${props => props.showborder ? 'solid black 2px' : 'none'};
         width: auto;
     }
     >div {
@@ -25,7 +25,7 @@ const [status] = createResource(async () => {
 })
 
 export default function Footer(props: ParentProps) {
-    return <FooterContainer>
+    return <FooterContainer showborder={!!props.children}>
         <div>
             <span>RABBITS.CLUB v1.0</span> <br />
             {status.loading

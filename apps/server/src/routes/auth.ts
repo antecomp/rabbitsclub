@@ -1,7 +1,7 @@
 import { Elysia, t } from "elysia"
 import { jwt } from "@elysiajs/jwt"
 import { actions } from "~/db"
-import { LoginBodySchema, AuthCookieSchema, LoginResponseSchema, ErrorSchema, JWTSchema, RegisterBodySchema } from "../schemas/users.schema"
+import { LoginBodySchema, AuthCookieSchema, LoginResponseSchema, ErrorSchema, JWTSchema, RegisterBodySchema, InviteLookupResponseSchema } from "../schemas/users.schema"
 import { JWT_TOKEN_LIFESPAN } from "../config"
 
 const cookieSameSite = (() => {
@@ -23,6 +23,19 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         secret: process.env.JWT_SECRET!,
         schema: JWTSchema
     }))
+    .get("/invite/:code", ({ params, status }) => {
+        const invite = actions.getAvailableInvite(params.code)
+        if (!invite) {
+            return status(404, { message: "Invalid or already used invite code" })
+        }
+
+        return invite
+    }, {
+        response: {
+            200: InviteLookupResponseSchema,
+            404: ErrorSchema
+        }
+    })
     .post("/register", async ({ jwt, body, cookie: { auth }, status }) => {
         const invite = actions.getInviteCode(body.code);
         if (!invite || invite.used_by !== null) 
@@ -33,12 +46,18 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
             return status(409, { message: "Username already taken" });
 
         const hashed = await Bun.password.hash(body.password);
-        const user = actions.insertUser(body.username, hashed);
+        let user;
+        try {
+            user = actions.insertUserWithInvite(body.username, hashed, body.code);
+        } catch (error) {
+            if (error instanceof Error && error.message === "INVITE_CLAIM_FAILED") {
+                return status(403, { message: "Invalid or already used invite code" });
+            }
+            return status(500, { message: "Failed to create user" });
+        }
 
         if (!user) 
             return status(500, { message: "Failed to create user" });
-
-        actions.claimInviteCode(body.code, user.id);
 
         const token = await jwt.sign({ 
             id: user.id, 

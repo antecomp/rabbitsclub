@@ -13,6 +13,7 @@ import { PreferencesProvider } from "./context/Preferences"
 import Avatar from "@/routes/Avatar"
 import AdminIndex from "./routes/admin/AdminIndex"
 import AdminInvites from "./routes/admin/AdminInvites"
+import Invite from "./routes/Invite"
 
 render(
     () => (
@@ -26,6 +27,9 @@ render(
                 )} />
                 <Route path="/register" component={() => (
                     <GuestRoute><Register /></GuestRoute>
+                )} />
+                <Route path="/invite/:code" component={() => (
+                    <GuestRoute><Invite /></GuestRoute>
                 )} />
                 <Route path="/chat" component={() => (
                     <ProtectedRoute><Chat /></ProtectedRoute>

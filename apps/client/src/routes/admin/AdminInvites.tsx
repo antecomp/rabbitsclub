@@ -11,8 +11,7 @@ export default function AdminInvites() {
     const [error, setError] = createSignal("");
 
     const createInviteLink = (code: string) => {
-        const url = new URL("/register", window.location.origin);
-        url.searchParams.set("regcode", code);
+        const url = new URL(`/invite/${encodeURIComponent(code)}`, window.location.origin);
         return url.toString();
     }
 

@@ -13,7 +13,6 @@ export default function Landing() {
                 when={user()}
                 fallback={<>
                     <Selector onClick={() => navigate("/login")}>login</Selector>
-                    <Selector onClick={() => navigate("/register")}>register</Selector>
                 </>}
             >
                 <Selector onClick={() => navigate("/chat")}>chat</Selector>

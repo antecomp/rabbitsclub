@@ -20,6 +20,11 @@ export const RegisterBodySchema = t.Object({
     code: t.String({ minLength: 1 })
 })
 
+export const InviteLookupResponseSchema = t.Object({
+    code: t.String(),
+    invited_by_username: t.String()
+})
+
 export const LoginResponseSchema = t.Object({ success: t.Boolean() })
 export const ErrorSchema = t.Object({ message: t.String() })
 export const AuthCookieSchema = t.Object({ auth: t.Optional(t.String()) })

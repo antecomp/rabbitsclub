@@ -59,6 +59,42 @@ export const actions = {
             .where(eq(schema.inviteCodes.code, code))
             .get(),
 
+    getAvailableInvite: (code: string) =>
+        db.select({
+            code: schema.inviteCodes.code,
+            invited_by_username: schema.users.username
+        })
+            .from(schema.inviteCodes)
+            .innerJoin(schema.users, eq(schema.inviteCodes.created_by, schema.users.id))
+            .where(and(
+                eq(schema.inviteCodes.code, code),
+                isNull(schema.inviteCodes.used_by)
+            ))
+            .get(),
+
+    insertUserWithInvite: (username: string, password: string, code: string) =>
+        db.transaction((tx) => {
+            const user = tx.insert(schema.users)
+                .values({ username, password })
+                .returning()
+                .get()
+
+            const invite = tx.update(schema.inviteCodes)
+                .set({ used_by: user.id })
+                .where(and(
+                    eq(schema.inviteCodes.code, code),
+                    isNull(schema.inviteCodes.used_by)
+                ))
+                .returning()
+                .get()
+
+            if (!invite) {
+                throw new Error("INVITE_CLAIM_FAILED")
+            }
+
+            return user
+        }),
+
     claimInviteCode: (code: string, userId: number) =>
         db.update(schema.inviteCodes)
             .set({ used_by: userId })
