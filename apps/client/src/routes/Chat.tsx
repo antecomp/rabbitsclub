@@ -1,7 +1,8 @@
 import { createEffect, createSignal, For, on, onCleanup, onMount, Show } from "solid-js"
 import { MESSAGE_PAGE_SIZE } from "../../../../config";
 import { api } from "../api/backend"
-import { user } from "../api/user"
+import { refetchUser, user } from "../api/user"
+import { createAuthAwareChatSocket } from "../api/chatSocket"
 import type { ChatMessage, MessageHistoryData } from "../types/message.type";
 import Message from "../components/chat/Message";
 import SystemMessage from "../components/chat/SystemMessage";
@@ -62,12 +63,12 @@ export default function Chat() {
         });
     }
 
-    let sub: ReturnType<typeof api.ws.subscribe>
-
-    onMount(() => {
-        sub = api.ws.subscribe()
-
-        sub.on("message", ({ data }) => {
+    const chatSocket = createAuthAwareChatSocket({
+        isAuthenticated: () => Boolean(user()),
+        onAuthFailure: () => {
+            void refetchUser()
+        },
+        onMessage: ({ data }) => {
             switch (data.type) {
                 case 'user':
                     setMessages(prev => [...prev, { type: "user", message: data }])
@@ -88,15 +89,13 @@ export default function Chat() {
                     setWhoIsOnline(data.users)
                     break;
             }
-        })
-
-        onCleanup(() => sub.close())
+        }
     })
 
     const send = (e: SubmitEvent) => {
         e.preventDefault()
         if (!content() || !user()) return
-        sub.send({ content: content() })
+        chatSocket.send({ content: content() })
         setContent("")
     }
 

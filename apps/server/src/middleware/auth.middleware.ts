@@ -15,7 +15,12 @@ export const authMiddleware = new Elysia({ name: "auth-middleware" })
             if (!auth?.value) return status(401, authError("unauthenticated"));
             const result = await validateAuthToken(jwt, auth.value)
             if (isAuthFailure(result)) return status(401, authError(result.reason));
-            return { user: result.user }
+            return {
+                user: result.user,
+                authSession: {
+                    exp: result.payload.exp
+                }
+            }
         }
     })
     .macro("useAdmin", {

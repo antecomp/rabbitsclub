@@ -21,7 +21,12 @@ export type AuthFailure = {
     reason: AuthErrorCode
 }
 
-export function isAuthFailure(result: { user: User } | AuthFailure): result is AuthFailure {
+export type AuthSuccess = {
+    user: User
+    payload: AuthJwtPayload
+}
+
+export function isAuthFailure(result: AuthSuccess | AuthFailure): result is AuthFailure {
     return "reason" in result
 }
 
@@ -66,7 +71,7 @@ export function revokeAllSessions(userId: number) {
     return actions.bumpTokenVersion(userId)
 }
 
-export async function validateAuthToken(jwt: JwtService, token: string): Promise<{ user: User } | AuthFailure> {
+export async function validateAuthToken(jwt: JwtService, token: string): Promise<AuthSuccess | AuthFailure> {
     const payload = await jwt.verify(token)
     if (!payload) return { reason: "unauthenticated" }
 
@@ -78,5 +83,5 @@ export async function validateAuthToken(jwt: JwtService, token: string): Promise
 
     if (payload.ver !== user.token_version) return { reason: "session_revoked" }
 
-    return { user }
+    return { user, payload }
 }

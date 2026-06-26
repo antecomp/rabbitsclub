@@ -33,7 +33,7 @@ export const chatRoutes = new Elysia()
             const { id, username } = ws.data.user;
             const current = onlineUsers.get(id);
 
-            registerChatSocket(id, ws);
+            registerChatSocket(id, ws, ws.data.authSession.exp);
             ws.subscribe(CHAT_WS_NAME);
 
             if (current) {
