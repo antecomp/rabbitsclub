@@ -1,7 +1,7 @@
 import type { Cookie } from "elysia"
 import { JWT_TOKEN_LIFESPAN } from "../config"
 import { actions } from "../db"
-import type { AuthJwtPayload, User } from "../schemas/users.schema"
+import type { AuthErrorCode, AuthJwtPayload, User } from "../schemas/users.schema"
 
 const cookieSameSite = (() => {
     const value = process.env.COOKIE_SAME_SITE
@@ -17,14 +17,16 @@ export const authCookieOptions = {
     maxAge: JWT_TOKEN_LIFESPAN
 } as const
 
-export type AuthFailureReason = "unauthenticated" | "session_expired" | "session_revoked"
-
 export type AuthFailure = {
-    reason: AuthFailureReason
+    reason: AuthErrorCode
 }
 
 export function isAuthFailure(result: { user: User } | AuthFailure): result is AuthFailure {
     return "reason" in result
+}
+
+export function authError(reason: AuthErrorCode) {
+    return { message: reason, code: reason }
 }
 
 type JwtService = {
@@ -52,7 +54,12 @@ export async function issueAuthCookie(user: User, authCookie: AuthCookie, jwt: J
 }
 
 export function clearAuthCookie(authCookie: AuthCookie) {
-    authCookie.remove()
+    authCookie.set({
+        value: "",
+        ...authCookieOptions,
+        expires: new Date(0),
+        maxAge: 0
+    })
 }
 
 export function revokeAllSessions(userId: number) {

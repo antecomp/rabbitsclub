@@ -29,6 +29,22 @@ export const InviteLookupResponseSchema = t.Object({
 
 export const LoginResponseSchema = t.Object({ success: t.Boolean() })
 export const ErrorSchema = t.Object({ message: t.String() })
+export const AuthErrorCodeSchema = t.Union([
+    t.Literal("unauthenticated"),
+    t.Literal("session_expired"),
+    t.Literal("session_revoked"),
+    t.Literal("origin_not_allowed")
+])
+export type AuthErrorCode = typeof AuthErrorCodeSchema['static']
+export const AuthErrorSchema = t.Object({
+    message: t.String(),
+    code: AuthErrorCodeSchema
+})
+export const CurrentUserSchema = t.Object({
+    id: t.Number(),
+    username: t.String(),
+    is_admin: t.Integer()
+})
 export const AuthCookieSchema = t.Object({ auth: t.Optional(t.String()) })
 export const JWTSchema = t.Object({
     id: t.Number(),

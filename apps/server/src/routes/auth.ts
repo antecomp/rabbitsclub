@@ -1,8 +1,9 @@
 import { Elysia, t } from "elysia"
 import { jwt } from "@elysiajs/jwt"
 import { actions } from "~/db"
-import { LoginBodySchema, AuthCookieSchema, LoginResponseSchema, ErrorSchema, JWTSchema, RegisterBodySchema, InviteLookupResponseSchema } from "../schemas/users.schema"
-import { clearAuthCookie, isAuthFailure, issueAuthCookie, validateAuthToken } from "../util/auth"
+import { AuthCookieSchema, AuthErrorSchema, CurrentUserSchema, ErrorSchema, InviteLookupResponseSchema, JWTSchema, LoginBodySchema, LoginResponseSchema, RegisterBodySchema } from "../schemas/users.schema"
+import { authError, clearAuthCookie, isAuthFailure, issueAuthCookie, revokeAllSessions, validateAuthToken } from "../util/auth"
+import { disconnectChatSocketsForUser } from "../util/chatSessions"
 
 export const authRoutes = new Elysia({ prefix: "/auth" })
     .use(jwt({
@@ -87,17 +88,42 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         },
         cookie: AuthCookieSchema
     })
-    .get("/me", async ({ jwt, cookie: { auth } }) => {
+    .post("/logout-all", async ({ jwt, cookie: { auth }, status }) => {
+        if (!auth?.value) return status(401, authError("unauthenticated"));
+
+        const result = await validateAuthToken(jwt, auth.value);
+        if (isAuthFailure(result)) {
+            clearAuthCookie(auth);
+            return status(401, authError(result.reason));
+        }
+
+        revokeAllSessions(result.user.id);
+        clearAuthCookie(auth);
+        disconnectChatSocketsForUser(result.user.id);
+
+        return { success: true }
+    }, {
+        response: {
+            200: LoginResponseSchema,
+            401: AuthErrorSchema
+        },
+        cookie: AuthCookieSchema
+    })
+    .get("/me", async ({ jwt, cookie: { auth }, status }) => {
         if (!auth?.value) return null;
 
         const result = await validateAuthToken(jwt, auth.value);
-        if (isAuthFailure(result)) return null;
+        if (isAuthFailure(result)) {
+            clearAuthCookie(auth);
+            return status(401, authError(result.reason));
+        }
 
         const { user } = result;
         return { id: user.id, username: user.username, is_admin: user.is_admin }
     }, {
         response: {
-            200: t.Union([t.Object({ id: t.Number(), username: t.String(), is_admin: t.Integer() }), t.Null()]),
+            200: t.Union([CurrentUserSchema, t.Null()]),
+            401: AuthErrorSchema
         },
         cookie: AuthCookieSchema
     })

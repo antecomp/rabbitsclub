@@ -28,7 +28,13 @@ export default function Settings() {
         navigate("/", { replace: true });
     }
 
-    const {preferences, setPreferences} = usePreferences();
+    const logoutAll = async () => {
+        await api.auth["logout-all"].post();
+        await refetchUser();
+        navigate("/", { replace: true })
+    }
+
+    const { preferences, setPreferences } = usePreferences();
 
     return <Container>
         <Title>Settings</Title>
@@ -36,12 +42,13 @@ export default function Settings() {
         <Divider />
         <AuthForm>
             <ToggleCon>
-                <p>CHAT LAYOUT</p><span/>
+                <p>CHAT LAYOUT</p><span />
                 <button type="button" onClick={() => setPreferences('incomingOnRight', prev => !prev)}>
                     {preferences.incomingOnRight ? '[ LEFT ]' : '[ RIGHT ]'}
                 </button>
             </ToggleCon>
             <button type="button" onClick={logout}>[ LOGOUT ]</button>
+            <button type="button" onClick={logoutAll}>[ LOGOUT EVERYWHERE ]</button>
             <button type="button" onClick={() => navigate("/")}>[ BACK ]</button>
         </AuthForm>
         <Footer>Use input device to select user option.</Footer>

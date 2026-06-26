@@ -3,6 +3,7 @@ import { actions } from "../db";
 import { MessageSchema, SentMessageSchema, SystemEvents, WSMessageSchema } from "../schemas/messages.schema";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { CHAT_WS_NAME } from "../config";
+import { registerChatSocket, unregisterChatSocket } from "../util/chatSessions";
 
 const onlineUsers = new Map<number, { username: string, count: number }>();
 const getOnlineUsers = () => Array.from(onlineUsers.values()).map(u => u.username);
@@ -32,6 +33,7 @@ export const chatRoutes = new Elysia()
             const { id, username } = ws.data.user;
             const current = onlineUsers.get(id);
 
+            registerChatSocket(id, ws);
             ws.subscribe(CHAT_WS_NAME);
 
             if (current) {
@@ -59,6 +61,7 @@ export const chatRoutes = new Elysia()
         },
         close(ws) {
             const { id, username } = ws.data.user;
+            unregisterChatSocket(id, ws);
             const current = onlineUsers.get(id);
             if (!current) return;
 
