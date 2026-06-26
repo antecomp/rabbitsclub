@@ -2,20 +2,7 @@ import { Elysia, t } from "elysia"
 import { jwt } from "@elysiajs/jwt"
 import { actions } from "~/db"
 import { LoginBodySchema, AuthCookieSchema, LoginResponseSchema, ErrorSchema, JWTSchema, RegisterBodySchema, InviteLookupResponseSchema } from "../schemas/users.schema"
-import { JWT_TOKEN_LIFESPAN } from "../config"
-
-const cookieSameSite = (() => {
-    const value = process.env.COOKIE_SAME_SITE
-    if (value === "strict" || value === "lax" || value === "none") return value
-    return "lax"
-})()
-
-const authCookieOptions = {
-    httpOnly: true,
-    secure: process.env.COOKIE_SECURE === "true",
-    sameSite: cookieSameSite,
-    maxAge: JWT_TOKEN_LIFESPAN
-} as const
+import { clearAuthCookie, isAuthFailure, issueAuthCookie, validateAuthToken } from "../util/auth"
 
 export const authRoutes = new Elysia({ prefix: "/auth" })
     .use(jwt({
@@ -59,16 +46,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         if (!user) 
             return status(500, { message: "Failed to create user" });
 
-        const token = await jwt.sign({ 
-            id: user.id, 
-            username: user.username, 
-            exp: Math.floor(Date.now() / 1000) + JWT_TOKEN_LIFESPAN,
-            is_admin: user.is_admin
-        });
-        auth.set({
-            value: token,
-            ...authCookieOptions
-        });
+        await issueAuthCookie(user, auth, jwt);
 
         return { success: true }
     }, {
@@ -88,17 +66,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         const valid = await Bun.password.verify(body.password, user.password);
         if (!valid) return status(401, {message: "invalid credentials"});
 
-        const token = await jwt.sign({ 
-            id: user.id, 
-            username: user.username, 
-            exp: Math.floor(Date.now() / 1000) + JWT_TOKEN_LIFESPAN,
-            is_admin: user.is_admin
-        });
-
-        auth.set({
-            value: token,
-            ...authCookieOptions
-        });
+        await issueAuthCookie(user, auth, jwt);
 
         return { success: true }
     }, {
@@ -111,8 +79,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         cookie: AuthCookieSchema
     })
     .post("/logout", ({ cookie: { auth } }) => {
-        // TODO: Blacklist token.
-        auth.remove();
+        clearAuthCookie(auth);
         return { success: true }
     }, {
         response: {
@@ -121,9 +88,13 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         cookie: AuthCookieSchema
     })
     .get("/me", async ({ jwt, cookie: { auth } }) => {
-        const payload = await jwt.verify(auth.value);
-        if (!payload) return null;
-        return { id: payload.id, username: payload.username, is_admin: payload.is_admin }
+        if (!auth?.value) return null;
+
+        const result = await validateAuthToken(jwt, auth.value);
+        if (isAuthFailure(result)) return null;
+
+        const { user } = result;
+        return { id: user.id, username: user.username, is_admin: user.is_admin }
     }, {
         response: {
             200: t.Union([t.Object({ id: t.Number(), username: t.String(), is_admin: t.Integer() }), t.Null()]),

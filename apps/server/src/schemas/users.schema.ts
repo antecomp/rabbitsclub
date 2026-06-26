@@ -33,5 +33,9 @@ export const AuthCookieSchema = t.Object({ auth: t.Optional(t.String()) })
 export const JWTSchema = t.Object({
     id: t.Number(),
     username: t.String(),
-    is_admin: t.Number()
+    is_admin: t.Number(),
+    ver: t.Number(),
+    iat: t.Number(),
+    exp: t.Number()
 })
+export type AuthJwtPayload = typeof JWTSchema['static']

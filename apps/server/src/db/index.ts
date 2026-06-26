@@ -40,10 +40,23 @@ export const actions = {
             .returning()
             .get(),
 
+    getUserById: (id: number) =>
+        db.select()
+            .from(schema.users)
+            .where(eq(schema.users.id, id))
+            .get(),
+
     getUserByUsername: (username: string) =>
         db.select()
             .from(schema.users)
             .where(eq(schema.users.username, username))
+            .get(),
+
+    bumpTokenVersion: (userId: number) =>
+        db.update(schema.users)
+            .set({ token_version: sql`${schema.users.token_version} + 1` })
+            .where(eq(schema.users.id, userId))
+            .returning()
             .get(),
 
     insertInviteCode: (code: string, created_by: number) =>

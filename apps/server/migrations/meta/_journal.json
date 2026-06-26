@@ -8,6 +8,13 @@
       "when": 1782178116518,
       "tag": "0000_fresh_princess_powerful",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1782437808084,
+      "tag": "0001_spicy_xorn",
+      "breakpoints": true
     }
   ]
 }

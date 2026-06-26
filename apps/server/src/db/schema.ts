@@ -12,6 +12,7 @@ export const users = sqliteTable("users", {
     username: text("username").notNull().unique(),
     password: text("password").notNull(),
     is_admin: integer("is_admin").notNull().default(0),
+    token_version: integer("token_version").notNull().default(0),
     ...timestamps
 })
 
