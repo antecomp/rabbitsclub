@@ -2,47 +2,69 @@ type ChatSocket = {
     close(code?: number, reason?: string): void
 }
 
-type RegisteredChatSocket = {
+type ChatSocketRegistration = {
     socket: ChatSocket
     expiresTimeout: ReturnType<typeof setTimeout>
 }
 
-const socketsByUser = new Map<number, Map<ChatSocket, RegisteredChatSocket>>()
+// Each user can have multiple open chat instances at once, such as separate tabs.
+// Store one registration per open socket so the lifecycle is explicit.
+const socketsByUser = new Map<number, ChatSocketRegistration[]>()
+
+function getOrCreateUserSockets(userId: number) {
+    let registrations = socketsByUser.get(userId)
+    if (!registrations) {
+        registrations = []
+        socketsByUser.set(userId, registrations)
+    }
+
+    return registrations
+}
 
 export function registerChatSocket(userId: number, socket: ChatSocket, expiresAt: number) {
-    const sockets = socketsByUser.get(userId)
+    const registrations = getOrCreateUserSockets(userId)
     const expiresInMs = Math.max(0, expiresAt * 1000 - Date.now())
-    const registered = {
+    const existing = registrations.find(entry => entry.socket === socket)
+
+    if (existing) {
+        clearTimeout(existing.expiresTimeout)
+        existing.expiresTimeout = setTimeout(() => {
+            socket.close(4002, "session_expired")
+        }, expiresInMs)
+        return
+    }
+
+    registrations.push({
         socket,
         expiresTimeout: setTimeout(() => {
             socket.close(4002, "session_expired")
         }, expiresInMs)
-    }
-
-    if (sockets) {
-        sockets.set(socket, registered)
-        return
-    }
-
-    socketsByUser.set(userId, new Map([[socket, registered]]))
+    })
 }
 
 export function unregisterChatSocket(userId: number, socket: ChatSocket) {
-    const sockets = socketsByUser.get(userId)
-    if (!sockets) return
+    const registrations = socketsByUser.get(userId)
+    if (!registrations) return
 
-    const registered = sockets.get(socket)
-    if (registered) clearTimeout(registered.expiresTimeout)
+    const index = registrations.findIndex(entry => entry.socket === socket)
+    if (index === -1) return
 
-    sockets.delete(socket)
-    if (sockets.size === 0) socketsByUser.delete(userId)
+    const registration = registrations[index]
+    if (!registration) return
+
+    clearTimeout(registration.expiresTimeout)
+    registrations.splice(index, 1)
+
+    if (registrations.length === 0) socketsByUser.delete(userId)
 }
 
 export function disconnectChatSocketsForUser(userId: number) {
-    const sockets = socketsByUser.get(userId)
-    if (!sockets) return 0
+    const registrations = socketsByUser.get(userId)
+    if (!registrations) return 0
 
-    const snapshot = Array.from(sockets.values())
+    const snapshot = [...registrations]
+    socketsByUser.delete(userId)
+
     for (const { socket, expiresTimeout } of snapshot) {
         clearTimeout(expiresTimeout)
         socket.close(4001, "session_revoked")

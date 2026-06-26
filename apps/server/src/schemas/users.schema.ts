@@ -40,6 +40,12 @@ export const AuthErrorSchema = t.Object({
     message: t.String(),
     code: AuthErrorCodeSchema
 })
+export const AuthorizationErrorCodeSchema = t.Literal("forbidden")
+export type AuthorizationErrorCode = typeof AuthorizationErrorCodeSchema['static']
+export const AuthorizationErrorSchema = t.Object({
+    message: t.String(),
+    code: AuthorizationErrorCodeSchema
+})
 export const CurrentUserSchema = t.Object({
     id: t.Number(),
     username: t.String(),

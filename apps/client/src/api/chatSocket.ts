@@ -64,17 +64,21 @@ export function createAuthAwareChatSocket(options: {
     }
 
     const handleAmbiguousClose = async () => {
-        const { data, error, status } = await api.auth.me.get()
-        if (disposed || manuallyClosed) return
+        try {
+            const { data, error, status } = await api.auth.me.get()
+            if (disposed || manuallyClosed) return
 
-        if (status === 401) {
-            options.onAuthFailure(getAuthFailureReason(error?.value))
-            return
-        }
+            if (status === 401) {
+                options.onAuthFailure(getAuthFailureReason(error?.value))
+                return
+            }
 
-        if (status === 200 && !data) {
-            options.onAuthFailure("unauthenticated")
-            return
+            if (status === 200 && !data) {
+                options.onAuthFailure("unauthenticated")
+                return
+            }
+        } catch {
+            if (disposed || manuallyClosed) return
         }
 
         scheduleReconnect()

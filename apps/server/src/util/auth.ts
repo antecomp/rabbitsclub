@@ -1,7 +1,7 @@
 import type { Cookie } from "elysia"
 import { JWT_TOKEN_LIFESPAN } from "../config"
 import { actions } from "../db"
-import type { AuthErrorCode, AuthJwtPayload, User } from "../schemas/users.schema"
+import type { AuthErrorCode, AuthJwtPayload, AuthorizationErrorCode, User } from "../schemas/users.schema"
 
 const cookieSameSite = (() => {
     const value = process.env.COOKIE_SAME_SITE
@@ -31,6 +31,10 @@ export function isAuthFailure(result: AuthSuccess | AuthFailure): result is Auth
 }
 
 export function authError(reason: AuthErrorCode) {
+    return { message: reason, code: reason }
+}
+
+export function authorizationError(reason: AuthorizationErrorCode) {
     return { message: reason, code: reason }
 }
 

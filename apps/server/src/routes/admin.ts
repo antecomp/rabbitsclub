@@ -1,7 +1,7 @@
 import Elysia, { t } from "elysia";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { actions } from "../db";
-import { ErrorSchema } from "~/schemas/users.schema";
+import { AuthorizationErrorSchema, ErrorSchema } from "~/schemas/users.schema";
 
 export const adminRoutes = new Elysia({prefix: '/admin'})
     .use(authMiddleware)
@@ -19,6 +19,7 @@ export const adminRoutes = new Elysia({prefix: '/admin'})
             code: t.String()
         }),
         response: {
+            403: AuthorizationErrorSchema,
             409: ErrorSchema,
             500: ErrorSchema
         }
