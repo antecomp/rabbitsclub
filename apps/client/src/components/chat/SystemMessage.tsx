@@ -24,6 +24,7 @@ const SystemMessageContainer = styled("div")`
     }
 `;
 
+/** Displays websocket lifecycle events as centered system messages in chat. */
 export default function SystemMessage(props: {
     message: SystemChatMessage["message"];
 }) {

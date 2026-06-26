@@ -32,6 +32,12 @@ function loadPreferences(): Preferences {
     }
 }
 
+/**
+ * Provides persisted UI preferences to the client application.
+ *
+ * Preferences are stored in localStorage whenever Solid observes a change to
+ * the preferences store.
+ */
 export function PreferencesProvider(props: ParentProps) {
     const [preferences, setPreferences] = createStore<Preferences>(loadPreferences());
 
@@ -46,6 +52,11 @@ export function PreferencesProvider(props: ParentProps) {
     );
 }
 
+/**
+ * Returns the active preferences store and setter.
+ *
+ * Must be called from a descendant of {@link PreferencesProvider}.
+ */
 export function usePreferences() {
     const context = useContext(PreferencesContext);
     if (!context) throw new Error("usePreferences must be used within PreferencesProvider");

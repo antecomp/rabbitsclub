@@ -5,6 +5,10 @@ type RemoveUrlParamOptions = {
     scroll?: boolean
 }
 
+/**
+ * Convenience wrapper around Solid Router location state for reading and
+ * removing query parameters without dropping the current path or hash.
+ */
 export function useUrlParams() {
     const location = useLocation()
     const navigate = useNavigate()

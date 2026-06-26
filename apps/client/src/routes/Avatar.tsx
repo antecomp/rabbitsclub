@@ -27,6 +27,7 @@ const directions: { x: number; y: number; rotation: number; gridColumn: number; 
     { x: 0, y: EYE_OFFSET_STEP, rotation: 90, gridColumn: 2, gridRow: 3, label: 'Move eye down' },
 ];
 
+// Directional control cluster for nudging one eye's avatar offset.
 function EyeOffsetControls(props: { setOffset: (x: number, y: number) => void; onReset: () => void }) {
     return (
         <OffsetControls aria-label="Eye position controls">
@@ -56,6 +57,7 @@ function EyeOffsetControls(props: { setOffset: (x: number, y: number) => void; o
     );
 }
 
+/** Avatar customization route for editing head, eye variants, and eye offsets. */
 export default function Avatar() {
     const navigate = useNavigate();
     const [menu, setMenu] = createSignal<AvatarMenu>('root');

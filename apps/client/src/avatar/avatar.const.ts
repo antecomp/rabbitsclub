@@ -1,6 +1,11 @@
 import { AvatarData } from "./avatar.types";
 
-// wrap in factory to prevent shallow copy / modification of same reference for offsets.
+/**
+ * Creates a fresh baseline avatar state.
+ *
+ * Offset objects are intentionally created per call so Solid stores and callers
+ * never share mutable nested references.
+ */
 export function createDefaultAvatar(): AvatarData {
     return {
         head: 0,

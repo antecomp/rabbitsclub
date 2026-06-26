@@ -48,6 +48,10 @@ export type EyeVariant = keyof typeof eyes;
 export type EyeImageEntry = HTMLImageElement | [HTMLImageElement, HTMLImageElement];
 
 export const eyeVariants = Object.keys(eyes) as EyeVariant[];
+
+/**
+ * Narrows arbitrary strings to supported eye asset keys.
+ */
 export function isEyeVariant(variant: string): variant is EyeVariant {
   return variant in eyes;
 }
@@ -56,6 +60,9 @@ export const heads = [
     head1, head2, head3, head4, head5, head6, head7
 ];
 
+/**
+ * Coerces persisted or user-provided head indexes into the available asset range.
+ */
 export function clampedHeadVariant(variant: number) {
   if(variant < 0) {
     return 0;

@@ -2,6 +2,12 @@ import { createEffect, onCleanup } from "solid-js";
 import createAvatarRenderer from "./createAvatarRenderer";
 import { AvatarData } from "./avatar.types";
 
+/**
+ * Renders avatar state into a canvas element.
+ *
+ * Rendering is queued so rapid Solid store updates collapse to the newest state
+ * without drawing stale ImageBitmaps after a later update arrives.
+ */
 export function AvatarCanvas(props: {
   state: AvatarData;
   size?: number;
@@ -12,6 +18,9 @@ export function AvatarCanvas(props: {
   let isRendering = false;
   let isDisposed = false;
 
+  /**
+   * Drains the latest pending avatar state into the visible canvas.
+   */
   async function renderQueued() {
     if (isRendering) return;
 

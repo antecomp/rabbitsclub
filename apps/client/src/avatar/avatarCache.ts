@@ -4,16 +4,22 @@ import { generateAvatarAssetURL } from "./createAvatarRenderer";
 import { clampedHeadVariant, isEyeVariant } from "./avatar.assets";
 import { createDefaultAvatar } from "./avatar.const";
 
-// Cache profile data by username
+// Cache profile data by username.
 const profileCache = new Map<string, AvatarData>()
 
-// Cache rendered URLs by avatar data key
+// Cache rendered URLs by avatar data key.
 const urlCache = new Map<string, string>()
 
-// initial load of messages send a torrent of these requests.
-// prevent generating a ton of unique uneeded blobs by capturing inflight
+// Initial message loads request many avatars at once; share in-flight work for
+// the same username to avoid duplicate network requests and object URLs.
 const inFlight = new Map<string, Promise<string>>()
 
+/**
+ * Fetches, normalizes, renders, and caches the avatar image URL for a user.
+ *
+ * Returned URLs are object URLs owned by this cache. Call
+ * {@link invalidateCachedProfile} when the user's profile avatar changes.
+ */
 export async function loadAvatarForUser(username: string): Promise<string> {
     // Return cached URL immediately if available
     if (profileCache.has(username)) {
@@ -57,6 +63,9 @@ export async function loadAvatarForUser(username: string): Promise<string> {
     return promise
 }
 
+/**
+ * Clears cached profile data and revokes any rendered object URL for a user.
+ */
 export function invalidateCachedProfile(username: string) {
     inFlight.delete(username);
     const old = profileCache.get(username)

@@ -3,6 +3,7 @@ import { AvatarData } from "./avatar.types";
 
 const SIZE = 400;
 
+/** Loads an image asset once the browser resolves its module URL. */
 function loadImage(src: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
         const img = new Image();
@@ -24,6 +25,7 @@ const eyePromises: Record<string, [Promise<HTMLImageElement>, Promise<HTMLImageE
         ])
     );
 
+/** Creates an offscreen avatar renderer with methods for drawing and exporting the current avatar image. */
 export default function createAvatarRenderer() {
     const offscreen = new OffscreenCanvas(SIZE, SIZE);
     const ctx = offscreen.getContext("2d", { willReadFrequently: true });
@@ -63,11 +65,11 @@ export default function createAvatarRenderer() {
     }
 
     async function toContentBlob(type = "image/png"): Promise<Blob> {
-        if(!ctx) throw new Error("Unable to get canvas context");
+        if (!ctx) throw new Error("Unable to get canvas context");
         const { data } = ctx.getImageData(0, 0, SIZE, SIZE);
 
         let minX = SIZE, minY = SIZE, maxX = 0, maxY = 0;
-    
+
         /*  TODO: I think we can greatly reduce average-case complexity if we break early.
             The break would need to be per scan direction (top/max, bottom/min, etc...)
             fe...
@@ -98,11 +100,21 @@ export default function createAvatarRenderer() {
         return temp.convertToBlob({ type });
     }
 
-    return { render, toImageBitmap, toBlob, toContentBlob }
+    return {
+        /** Render current avatar state to offscreen canvas. */
+        render,
+        /** Exports the current render as an ImageBitmap for fast canvas transfer. */
+        toImageBitmap,
+        /** Exports the full avatar render as a blob.  */
+        toBlob,
+        /** Exports a blob cropped to the non-transparent avatar bounds. */
+        toContentBlob
+    }
 }
 
 const renderer = createAvatarRenderer();
 
+/** Renders avatar state to a cropped object URL suitable for img tags.  */
 export async function generateAvatarAssetURL(state: AvatarData): Promise<string> {
     await renderer.render(state)
     const blob = await renderer.toContentBlob()

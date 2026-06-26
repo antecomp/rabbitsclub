@@ -31,6 +31,7 @@ const SmallDivider = styled('hr')`
     margin: 5px 0px;
 `
 
+/** Chat sidebar with online user presence, return-to-present control, and exit navigation. */
 export default function Aside(props: {
     whoIsOnline: string[]
     showReturnToPresent?: boolean

@@ -18,12 +18,13 @@ const FooterContainer = styled('footer')<{showborder: boolean}>`
     }
 `
 
-// Raised global to prevent requery on mount;
+// Raised global to prevent a health request every time the footer mounts.
 const [status] = createResource(async () => {
     const rez = (await api.health.get()).data;
     return rez?.status;
 })
 
+/** Shared footer that displays application health and optional contextual text. */
 export default function Footer(props: ParentProps) {
     return <FooterContainer showborder={!!props.children}>
         <div>
