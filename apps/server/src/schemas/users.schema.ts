@@ -2,19 +2,27 @@ import { t } from "elysia"
 import { model } from "../db/model"
 import { AvatarDataSchema } from "./profiles.schema"
 
-// These replace your manual UserSchema, InviteCode interface etc.
+/**
+ * Runtime schema for a user record backed by the users table.
+ * Extracted type: User
+ */
 export const UserSchema = t.Object(model.select.users);
 export type User = typeof UserSchema['static'];
 
+/**
+ * Runtime schema for an invite code record backed by the inviteCodes table.
+ * Extracted type: InviteCode
+ */
 export const InviteCodeSchema = t.Object(model.select.inviteCodes);
 export type InviteCode = typeof InviteCodeSchema['static'];
 
-// These stay manual since they don't map directly to table shapes
+/** Request body schema for login requests. */
 export const LoginBodySchema = t.Object({
     username: t.String({ minLength: 3 }),
     password: t.String({ minLength: 8 })
 });
 
+/** Request body schema for registration requests. */
 export const RegisterBodySchema = t.Object({
     username: t.String({ minLength: 3 }),
     password: t.String({ minLength: 8 }),
@@ -22,15 +30,22 @@ export const RegisterBodySchema = t.Object({
     avatar: t.Optional(AvatarDataSchema)
 });
 
+/** Response schema for invite code lookup results. */
 export const InviteLookupResponseSchema = t.Object({
     code: t.String(),
     invited_by_username: t.String()
 });
 
+/** Success response schema for login attempts. */
 export const LoginResponseSchema = t.Object({ success: t.Boolean() });
 
+/** Generic error payload schema.  */
 export const ErrorSchema = t.Object({ message: t.String() });
 
+/**
+ * Allowed authentication error codes.
+ * Extracted type: AuthErrorCode
+ */
 export const AuthErrorCodeSchema = t.Union([
     t.Literal("unauthenticated"),
     t.Literal("session_expired"),
@@ -39,26 +54,40 @@ export const AuthErrorCodeSchema = t.Union([
 ]);
 
 export type AuthErrorCode = typeof AuthErrorCodeSchema['static'];
+
+/** Error payload schema for authentication failures.  */
 export const AuthErrorSchema = t.Object({
     message: t.String(),
     code: AuthErrorCodeSchema
 });
 
+/**
+ * Authorization error codes.
+ * Extracted type: AuthorizationErrorCode
+ */
 export const AuthorizationErrorCodeSchema = t.Literal("forbidden");
 export type AuthorizationErrorCode = typeof AuthorizationErrorCodeSchema['static'];
+
+/** Error payload schema for authorization failures.  */
 export const AuthorizationErrorSchema = t.Object({
     message: t.String(),
     code: AuthorizationErrorCodeSchema
 });
 
+/** Current user profile payload schema.  */
 export const CurrentUserSchema = t.Object({
     id: t.Number(),
     username: t.String(),
     is_admin: t.Integer()
 });
 
+/** Cookie schema for auth session storage.  */
 export const AuthCookieSchema = t.Object({ auth: t.Optional(t.String()) });
 
+/**
+ * JWT payload schema used for authentication tokens.
+ * Extracted type: AuthJwtPayload
+ */
 export const JWTSchema = t.Object({
     id: t.Number(),
     username: t.String(),
