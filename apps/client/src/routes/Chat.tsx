@@ -1,8 +1,9 @@
 import { createEffect, createSignal, For, on, onCleanup, onMount, Show } from "solid-js"
 import { MESSAGE_PAGE_SIZE } from "../../../../config";
 import { api } from "../api/backend"
-import { refetchUser, user } from "../api/user"
+import { user } from "../api/user"
 import { createAuthAwareChatSocket } from "../api/chatSocket"
+import { notifyAuthFailure } from "../api/auth"
 import type { ChatMessage, MessageHistoryData } from "../types/message.type";
 import Message from "../components/chat/Message";
 import SystemMessage from "../components/chat/SystemMessage";
@@ -65,8 +66,8 @@ export default function Chat() {
 
     const chatSocket = createAuthAwareChatSocket({
         isAuthenticated: () => Boolean(user()),
-        onAuthFailure: () => {
-            void refetchUser()
+        onAuthFailure: (reason) => {
+            notifyAuthFailure(reason)
         },
         onMessage: ({ data }) => {
             switch (data.type) {
