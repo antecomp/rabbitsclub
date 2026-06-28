@@ -14,6 +14,13 @@ import Avatar from "@/routes/Avatar"
 import AdminIndex from "./routes/admin/AdminIndex"
 import AdminInvites from "./routes/admin/AdminInvites"
 import Invite from "./routes/Invite"
+import { onAuthFailure } from "./api/auth"
+import { refetchUser } from "./api/user"
+
+onAuthFailure(() => {
+    console.log("caught auth failure, booting...");
+    void refetchUser();
+})
 
 render(
     () => (
