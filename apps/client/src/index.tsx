@@ -16,6 +16,8 @@ import AdminInvites from "./routes/admin/AdminInvites"
 import Invite from "./routes/Invite"
 import { onAuthFailure } from "./api/auth"
 import { refetchUser } from "./api/user"
+import AuthGuard from "./components/AuthGuard"
+import LoggedOut from "./routes/LoggedOut"
 
 onAuthFailure(() => {
     console.log("caught auth failure, booting...");
@@ -26,6 +28,7 @@ render(
     () => (
         <PreferencesProvider>
             <Router>
+                {/* <AuthGuard/> */}
                 <Route path="/" component={() => (
                     <Landing />
                 )} />
@@ -54,6 +57,9 @@ render(
                 <Route path="/avatar" component={() => (
                     <Avatar />
                 )} />
+                <Route path="/logged-out" component={() => (
+                    <GuestRoute><LoggedOut/></GuestRoute>
+                )}/>
             </Router>
         </PreferencesProvider>
     ),
