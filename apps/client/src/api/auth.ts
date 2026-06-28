@@ -12,3 +12,9 @@ export function onAuthFailure(handler: AuthFailureHandler) {
 export function notifyAuthFailure(code: AuthErrorCode) {
     for(const handler of authFailureHandlers) handler(code);
 }
+
+// TODO: Move this somewhere cleaner later.
+export const AUTH_FAILURE_EXCLUDED_PATHS = new Set([
+  "/auth/login",
+  "/auth/register"
+])
