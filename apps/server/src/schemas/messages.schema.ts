@@ -1,10 +1,14 @@
 import { t } from "elysia"
 import { model } from "../db/model"
 
+/**
+ * Runtime schema for a persisted chat message backed by the messages table.
+ * Extracted type: Message
+ */
 export const MessageSchema = t.Object(model.select.messages)
 export type Message = typeof MessageSchema['static']
 
-// These stay manual
+/** Client-to-server schema for a newly sent message body. */
 export const SentMessageSchema = t.Object({ content: t.String() })
 
 export enum SystemEvents {
@@ -12,6 +16,7 @@ export enum SystemEvents {
     USER_LEFT = "user_left"
 }
 
+/** WebSocket broadcast payload for system events such as join/leave notifications. */
 export const WSBroadcastMessageSchema = t.Object({
     type: t.Literal("system"),
     event: t.Union([
@@ -21,13 +26,16 @@ export const WSBroadcastMessageSchema = t.Object({
     content: t.Optional(t.String())
 });
 
+/** WebSocket broadcast payload listing currently online users. */
 export const WSBroadcastOnlineSchema = t.Object({
     type: t.Literal("online"),
-    // Might change this to ids or something else in the future 
-    // when we want to get proper display info
     users: t.Array(t.String())
 })
 
+/**
+ * Union schema for all supported WebSocket message payloads.
+ * Extracted type: WSMessageType
+ */
 export const WSMessageSchema = t.Union([
     WSBroadcastMessageSchema,
     WSBroadcastOnlineSchema,
