@@ -3,6 +3,11 @@ import type { App } from "~/index"
 import { AuthErrorCode } from "~/schemas/users.schema";
 import { AUTH_FAILURE_EXCLUDED_PATHS, notifyAuthFailure } from "./auth";
 
+/**
+ * Extracts the pathname from a fetch request input.
+ * @param input - The fetch RequestInfo or URL object
+ * @returns The pathname string from the request
+ */
 function getRequestPath(input: RequestInfo | URL) {
     if (typeof input === "string") {
         return new URL(input, window.location.origin).pathname
@@ -15,6 +20,11 @@ function getRequestPath(input: RequestInfo | URL) {
     return new URL(input.url).pathname
 }
 
+/**
+ * Custom fetch implementation that handles authentication failures.
+ * Intercepts 401 responses and notifies the auth system, allowing for logout or token refresh.
+ * Includes credentials in requests and preserves response cloning for Eden consumption.
+ */
 const authAwareFetcher: typeof fetch = Object.assign(
     async (...args: Parameters<typeof fetch>) => {
         const path = getRequestPath(args[0])
@@ -36,7 +46,12 @@ const authAwareFetcher: typeof fetch = Object.assign(
     { preconnect: fetch.preconnect }
 )
 
-/** Type-safe Eden Treaty client for the backend API. */
+/**
+ * Type-safe Eden Treaty client for the backend API.
+ * Provides strongly-typed endpoints and methods for communicating with the server.
+ * Automatically handles authentication failures by notifying the auth system.
+ * @see {@link authAwareFetcher} for authentication error handling details
+ */
 export const api: Treaty.Create<App> = treaty<App>(import.meta.env.VITE_API_URL!, {
     fetch: {
         credentials: "include"

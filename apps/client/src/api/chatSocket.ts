@@ -5,17 +5,28 @@ type ChatSubscription = ReturnType<typeof api.ws.subscribe>
 type ChatMessageHandler = Parameters<ChatSubscription["subscribe"]>[0]
 type ChatSendPayload = Parameters<ChatSubscription["send"]>[0]
 
-// consider pulling type from BE
+/**
+ * Represents reasons for chat authentication failures.
+ * @todo Consider pulling this type definition from the backend
+ */
 export type ChatAuthFailureReason = "unauthenticated" | "session_expired" | "session_revoked"
 
+/** Set of authentication-related close reasons to identify auth failures. */
 const AUTH_CLOSE_REASONS = new Set<ChatAuthFailureReason>([
     "unauthenticated",
     "session_expired",
     "session_revoked"
 ])
 
+/** Delay in milliseconds before attempting to reconnect after an unexpected close. */
 const RECONNECT_DELAY_MS = 1000
 
+/**
+ * Extracts an authentication failure reason from a WebSocket close event.
+ * Checks both the close event reason string and close code for auth-related failures.
+ * @param {CloseEvent} event - The WebSocket close event
+ * @returns {ChatAuthFailureReason | null} The authentication failure reason, or null if not auth-related
+ */
 function getAuthCloseReason(event: CloseEvent): ChatAuthFailureReason | null {
     if (AUTH_CLOSE_REASONS.has(event.reason as ChatAuthFailureReason)) {
         return event.reason as ChatAuthFailureReason
@@ -27,6 +38,12 @@ function getAuthCloseReason(event: CloseEvent): ChatAuthFailureReason | null {
     return null
 }
 
+/**
+ * Extracts an authentication failure reason from an arbitrary value.
+ * Attempts to parse the value as an object with a code property.
+ * @param {unknown} value - The value to parse for an auth failure reason
+ * @returns {ChatAuthFailureReason} The authentication failure reason, defaults to "unauthenticated"
+ */
 function getAuthFailureReason(value: unknown): ChatAuthFailureReason {
     if (
         value
@@ -40,6 +57,18 @@ function getAuthFailureReason(value: unknown): ChatAuthFailureReason {
     return "unauthenticated"
 }
 
+/**
+ * Creates an authentication-aware WebSocket chat connection that automatically manages reconnection.
+ * Monitors authentication state and closes the socket when the user logs out.
+ * Handles various authentication failure scenarios and triggers callbacks appropriately.
+ * @param {Object} options - Configuration options
+ * @param {Accessor<boolean>} options.isAuthenticated - Reactive accessor for authentication state
+ * @param {ChatMessageHandler} options.onMessage - Callback fired when a message is received
+ * @param {Function} options.onAuthFailure - Callback fired when authentication fails, receives failure reason
+ * @returns {Object} Chat socket interface
+ * @returns {Function} returns.send - Sends a message payload through the socket
+ * @returns {Function} returns.close - Manually closes the socket connection
+ */
 export function createAuthAwareChatSocket(options: {
     isAuthenticated: Accessor<boolean>
     onMessage: ChatMessageHandler
@@ -65,7 +94,9 @@ export function createAuthAwareChatSocket(options: {
 
     const handleAmbiguousClose = async () => {
         try {
-            const { data, error, status } = await api.auth.me.get()
+            // Is this already going to capture general auth errors?
+            const { data, error, status } = await api.auth.me.get();
+            
             if (disposed || manuallyClosed) return
 
             if (status === 401) {
