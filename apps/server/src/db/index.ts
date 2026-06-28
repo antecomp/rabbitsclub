@@ -5,7 +5,7 @@ import { join } from "path"
 import { and, desc, eq, isNull, lt, sql } from "drizzle-orm"
 import * as schema from "./schema"
 import type { AvatarData } from "../schemas/profiles.schema"
-import { MESSAGE_PAGE_SIZE } from "../../../../config"
+import { MESSAGE_PAGE_SIZE } from "#config"
 import parseAvatarData from "~/util/parseAvatarData"
 
 const dbPath = process.env.DB_PATH ?? join(import.meta.dir, "../../chat.db")

@@ -2,7 +2,8 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./apps/client/src/*"],
-      "~/*": ["./apps/server/src/*"]
+      "~/*": ["./apps/server/src/*"],
+      "#config": ["./config.ts"]
     }
   }
 }

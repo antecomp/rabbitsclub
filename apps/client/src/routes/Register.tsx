@@ -4,6 +4,7 @@ import { api } from "../api/backend"
 import { refetchUser } from "../api/user"
 import { AuthForm } from "../styled/shared.styles"
 import { AvatarData } from "@/avatar/avatar.types"
+import { MIN_PASSWORD_LENGTH, MIN_USERNAME_LENGTH } from "#config"
 
 type RegisterProps = {
     inviteCode?: string
@@ -16,12 +17,30 @@ export default function Register(props: RegisterProps) {
     const [password, setPassword] = createSignal("")
     const [error, setError] = createSignal("");
 
+    const validateCredentials = () => {
+        if (username().length < MIN_USERNAME_LENGTH) {
+            return `Username must be at least ${MIN_USERNAME_LENGTH} characters.`
+        }
+
+        if (password().length < MIN_PASSWORD_LENGTH) {
+            return `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`
+        }
+
+        return ""
+    }
+
     const submit = async (e: SubmitEvent) => {
         e.preventDefault()
         setError("")
 
         if (!props.inviteCode) {
             setError("You need a valid invitation link to join.")
+            return
+        }
+
+        const validationError = validateCredentials()
+        if (validationError) {
+            setError(validationError)
             return
         }
 
@@ -57,12 +76,16 @@ export default function Register(props: RegisterProps) {
                         value={username()}
                         onInput={e => setUsername(e.target.value)}
                         placeholder="Username"
+                        minlength={MIN_USERNAME_LENGTH}
+                        required
                     />
                     <input
                         type="password"
                         value={password()}
                         onInput={e => setPassword(e.target.value)}
                         placeholder="Password"
+                        minlength={MIN_PASSWORD_LENGTH}
+                        required
                     />
                     <button type="submit">[ REGISTER ]</button>
                     <button type="button" onClick={() => navigate("/")}>[ BACK ]</button>

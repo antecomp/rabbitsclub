@@ -1,16 +1,17 @@
 import { t } from "elysia"
 import { AvatarDataSchema } from "./profiles.schema"
+import { MIN_PASSWORD_LENGTH, MIN_USERNAME_LENGTH } from "#config";
 
 /** Request body schema for login requests. */
 export const LoginBodySchema = t.Object({
-    username: t.String({ minLength: 3 }),
-    password: t.String({ minLength: 8 })
+    username: t.String({ minLength: MIN_USERNAME_LENGTH }),
+    password: t.String({ minLength: MIN_PASSWORD_LENGTH })
 });
 
 /** Request body schema for registration requests. */
 export const RegisterBodySchema = t.Object({
-    username: t.String({ minLength: 3 }),
-    password: t.String({ minLength: 8 }),
+    username: t.String({ minLength: MIN_USERNAME_LENGTH }),
+    password: t.String({ minLength: MIN_PASSWORD_LENGTH }),
     code: t.String({ minLength: 1 }),
     avatar: t.Optional(AvatarDataSchema)
 });

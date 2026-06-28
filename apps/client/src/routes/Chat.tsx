@@ -1,5 +1,5 @@
 import { createEffect, createSignal, For, on, onCleanup, onMount, Show } from "solid-js"
-import { MESSAGE_PAGE_SIZE } from "../../../../config";
+import { MESSAGE_PAGE_SIZE } from "#config";
 import { api } from "../api/backend"
 import { user } from "../api/user"
 import { createAuthAwareChatSocket } from "../api/chatSocket"

@@ -7,7 +7,8 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
-      "~": fileURLToPath(new URL("../server/src", import.meta.url))
+      "~": fileURLToPath(new URL("../server/src", import.meta.url)),
+      "#config": fileURLToPath(new URL("../../config.ts", import.meta.url))
     }
   },
   appType: 'spa'
