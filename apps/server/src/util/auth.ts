@@ -17,6 +17,15 @@ export const authCookieOptions = {
     maxAge: JWT_TOKEN_LIFESPAN
 } as const
 
+const enforceOriginCheck = process.env.AUTH_ENFORCE_ORIGIN_CHECK !== "false"
+
+const allowedOrigins = new Set(
+    (process.env.AUTH_ALLOWED_ORIGINS ?? process.env.CLIENT_ORIGIN ?? "")
+        .split(",")
+        .map(origin => origin.trim())
+        .filter(Boolean)
+)
+
 export type AuthFailure = {
     reason: AuthErrorCode
 }
@@ -36,6 +45,15 @@ export function authError(reason: AuthErrorCode) {
 
 export function authorizationError(reason: AuthorizationErrorCode) {
     return { message: reason, code: reason }
+}
+
+export function isOriginAllowed(request: Request) {
+    if (!enforceOriginCheck) return true
+
+    const origin = request.headers.get("origin")
+    if (!origin) return false
+
+    return allowedOrigins.has(origin)
 }
 
 type JwtService = {

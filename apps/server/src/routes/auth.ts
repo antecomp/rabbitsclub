@@ -2,7 +2,7 @@ import { Elysia, t } from "elysia"
 import { jwt } from "@elysiajs/jwt"
 import { actions } from "~/db"
 import { AuthCookieSchema, AuthErrorSchema, CurrentUserSchema, ErrorSchema, InviteLookupResponseSchema, JWTSchema, LoginBodySchema, LoginResponseSchema, RegisterBodySchema } from "../schemas/users.schema"
-import { authError, clearAuthCookie, isAuthFailure, issueAuthCookie, revokeAllSessions, validateAuthToken } from "../util/auth"
+import { authError, clearAuthCookie, isAuthFailure, isOriginAllowed, issueAuthCookie, revokeAllSessions, validateAuthToken } from "../util/auth"
 import { disconnectChatSocketsForUser } from "../util/chatSessions"
 
 export const authRoutes = new Elysia({ prefix: "/auth" })
@@ -24,7 +24,9 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
             404: ErrorSchema
         }
     })
-    .post("/register", async ({ jwt, body, cookie: { auth }, status }) => {
+    .post("/register", async ({ request, jwt, body, cookie: { auth }, status }) => {
+        if (!isOriginAllowed(request)) return status(403, authError("origin_not_allowed"));
+
         const invite = actions.getInviteCode(body.code);
         if (!invite || invite.used_by !== null) 
             return status(403, { message: "Invalid or already used invite code" });
@@ -54,13 +56,15 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         body: RegisterBodySchema,
         response: {
             200: LoginResponseSchema,
-            403: ErrorSchema,
+            403: t.Union([ErrorSchema, AuthErrorSchema]),
             409: ErrorSchema,
             500: ErrorSchema
         },
         cookie: AuthCookieSchema
     })
-    .post("/login", async ({ jwt, body, cookie: { auth }, status }) => {
+    .post("/login", async ({ request, jwt, body, cookie: { auth }, status }) => {
+        if (!isOriginAllowed(request)) return status(403, authError("origin_not_allowed"));
+
         const user = actions.getUserByUsername(body.username);
         if (!user) return status(401, {message: "invalid credentials"});
 
@@ -75,20 +79,25 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         response: {
             200: LoginResponseSchema,
             401: ErrorSchema,
+            403: AuthErrorSchema,
             422: ErrorSchema
         },
         cookie: AuthCookieSchema
     })
-    .post("/logout", ({ cookie: { auth } }) => {
+    .post("/logout", ({ request, cookie: { auth }, status }) => {
+        if (!isOriginAllowed(request)) return status(403, authError("origin_not_allowed"));
+
         clearAuthCookie(auth);
         return { success: true }
     }, {
         response: {
-            200: LoginResponseSchema
+            200: LoginResponseSchema,
+            403: AuthErrorSchema
         },
         cookie: AuthCookieSchema
     })
-    .post("/logout-all", async ({ jwt, cookie: { auth }, status }) => {
+    .post("/logout-all", async ({ request, jwt, cookie: { auth }, status }) => {
+        if (!isOriginAllowed(request)) return status(403, authError("origin_not_allowed"));
         if (!auth?.value) return status(401, authError("unauthenticated"));
 
         const result = await validateAuthToken(jwt, auth.value);
@@ -105,7 +114,8 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
     }, {
         response: {
             200: LoginResponseSchema,
-            401: AuthErrorSchema
+            401: AuthErrorSchema,
+            403: AuthErrorSchema
         },
         cookie: AuthCookieSchema
     })

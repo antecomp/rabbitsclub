@@ -1,7 +1,7 @@
 import Elysia from "elysia"
 import { jwt } from "@elysiajs/jwt"
 import { AuthCookieSchema, JWTSchema } from "../schemas/users.schema"
-import { authError, authorizationError, clearAuthCookie, isAuthFailure, validateAuthToken } from "../util/auth"
+import { authError, authorizationError, clearAuthCookie, isAuthFailure, isOriginAllowed, validateAuthToken } from "../util/auth"
 
 export const authMiddleware = new Elysia({ name: "auth-middleware" })
     .use(jwt({
@@ -11,7 +11,8 @@ export const authMiddleware = new Elysia({ name: "auth-middleware" })
     }))
     .macro("useAuth", {
         cookie: AuthCookieSchema,
-        async resolve({ jwt, cookie: { auth }, status }) {
+        async resolve({ request, jwt, cookie: { auth }, status }) {
+            if (!isOriginAllowed(request)) return status(403, authError("origin_not_allowed"));
             if (!auth?.value) return status(401, authError("unauthenticated"));
             const result = await validateAuthToken(jwt, auth.value)
             if (isAuthFailure(result)) {
