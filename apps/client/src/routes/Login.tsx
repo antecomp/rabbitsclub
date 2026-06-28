@@ -4,7 +4,12 @@ import { api } from "../api/backend"
 import { refetchUser } from "../api/user"
 import Footer from "../components/Footer"
 import { Container, Title, Subtitle, Divider, AuthForm } from "../styled/shared.styles"
-import { MIN_PASSWORD_LENGTH, MIN_USERNAME_LENGTH } from "#config"
+import {
+    MAX_PASSWORD_LENGTH,
+    MAX_USERNAME_LENGTH,
+    MIN_PASSWORD_LENGTH,
+    MIN_USERNAME_LENGTH
+} from "#config"
 
 export default function Login() {
     const navigate = useNavigate()
@@ -17,8 +22,16 @@ export default function Login() {
             return `Username must be at least ${MIN_USERNAME_LENGTH} characters.`
         }
 
+        if (username().length > MAX_USERNAME_LENGTH) {
+            return `Username must be at most ${MAX_USERNAME_LENGTH} characters.`
+        }
+
         if (password().length < MIN_PASSWORD_LENGTH) {
             return `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`
+        }
+
+        if (password().length > MAX_PASSWORD_LENGTH) {
+            return `Password must be at most ${MAX_PASSWORD_LENGTH} characters.`
         }
 
         return ""
@@ -58,6 +71,7 @@ export default function Login() {
                     onInput={e => setUsername(e.target.value)}
                     placeholder="Username"
                     minlength={MIN_USERNAME_LENGTH}
+                    maxlength={MAX_USERNAME_LENGTH}
                     required
                 />
                 <input
@@ -66,6 +80,7 @@ export default function Login() {
                     onInput={e => setPassword(e.target.value)}
                     placeholder="Password"
                     minlength={MIN_PASSWORD_LENGTH}
+                    maxlength={MAX_PASSWORD_LENGTH}
                     required
                 />
                 <button type="submit">[ LOGIN ]</button>
