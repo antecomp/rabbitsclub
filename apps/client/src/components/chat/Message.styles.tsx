@@ -94,7 +94,7 @@ const bodySideCss = (side: Side) => {
         return `
             grid-column: 1;
             justify-self: end;
-            text-align: right;
+            text-align: left; /* consistenly left looks better */
             border-image-slice: 10 10 6 5;
             border-image-width: 10px 10px 6px 5px;
             border-width: 10px 10px 6px 5px;

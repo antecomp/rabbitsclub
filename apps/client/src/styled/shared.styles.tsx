@@ -40,6 +40,14 @@ export const Divider = styled("hr")<{color?: string}>`
     border-color: ${props => props.color ?? "black"};
     border-style: solid;
     border-width: 1px;
+    width: 100%;
+`
+
+export const ThinDivider = styled('hr')<{color?: string}>`
+    background: ${props => props.color ?? "black"};
+    border: none;
+    height: 1px;
+    width: 100%;
 `
 
 export const AuthForm = styled('form')`

@@ -1,5 +1,5 @@
 import { api } from "../api/backend";
-import { AuthForm, Container, Divider, Subtitle, Title } from "../styled/shared.styles";
+import { AuthForm, Container, Divider, Subtitle, ThinDivider, Title } from "../styled/shared.styles";
 import Footer from "../components/Footer";
 import { useNavigate } from "@solidjs/router";
 import { refetchUser } from "../api/user";
@@ -47,8 +47,10 @@ export default function Settings() {
                     {preferences.incomingOnRight ? '[ LEFT ]' : '[ RIGHT ]'}
                 </button>
             </ToggleCon>
+            <ThinDivider color="gray"/>
             <button type="button" onClick={logout}>[ LOGOUT ]</button>
             <button type="button" onClick={logoutAll}>[ LOGOUT EVERYWHERE ]</button>
+            <ThinDivider color="gray"/>
             <button type="button" onClick={() => navigate("/")}>[ BACK ]</button>
         </AuthForm>
         <Footer>Use input device to select user option.</Footer>
