@@ -1,5 +1,6 @@
 import { Accessor, createEffect, onCleanup } from "solid-js"
 import { api } from "./backend"
+import type { AuthErrorCode } from "~/schemas/users.schema"
 
 type ChatSubscription = ReturnType<typeof api.ws.subscribe>
 type ChatMessageHandler = Parameters<ChatSubscription["subscribe"]>[0]
@@ -7,12 +8,11 @@ type ChatSendPayload = Parameters<ChatSubscription["send"]>[0]
 
 /**
  * Represents reasons for chat authentication failures.
- * @todo Consider pulling this type definition from the backend
  */
-export type ChatAuthFailureReason = "unauthenticated" | "session_expired" | "session_revoked"
+export type ChatAuthErrorCode = Exclude<AuthErrorCode, 'origin_not_allowed'>;
 
 /** Set of authentication-related close reasons to identify auth failures. */
-const AUTH_CLOSE_REASONS = new Set<ChatAuthFailureReason>([
+const AUTH_CLOSE_REASONS = new Set<ChatAuthErrorCode>([
     "unauthenticated",
     "session_expired",
     "session_revoked"
@@ -25,36 +25,17 @@ const RECONNECT_DELAY_MS = 1000
  * Extracts an authentication failure reason from a WebSocket close event.
  * Checks both the close event reason string and close code for auth-related failures.
  * @param {CloseEvent} event - The WebSocket close event
- * @returns {ChatAuthFailureReason | null} The authentication failure reason, or null if not auth-related
+ * @returns {ChatAuthErrorCode | null} The authentication failure reason, or null if not auth-related
  */
-function getAuthCloseReason(event: CloseEvent): ChatAuthFailureReason | null {
-    if (AUTH_CLOSE_REASONS.has(event.reason as ChatAuthFailureReason)) {
-        return event.reason as ChatAuthFailureReason
+function getAuthCloseReason(event: CloseEvent): ChatAuthErrorCode | null {
+    if (AUTH_CLOSE_REASONS.has(event.reason as ChatAuthErrorCode)) {
+        return event.reason as ChatAuthErrorCode
     }
 
     if (event.code === 4001) return "session_revoked"
     if (event.code === 4002) return "session_expired"
 
     return null
-}
-
-/**
- * Extracts an authentication failure reason from an arbitrary value.
- * Attempts to parse the value as an object with a code property.
- * @param {unknown} value - The value to parse for an auth failure reason
- * @returns {ChatAuthFailureReason} The authentication failure reason, defaults to "unauthenticated"
- */
-function getAuthFailureReason(value: unknown): ChatAuthFailureReason {
-    if (
-        value
-        && typeof value === "object"
-        && "code" in value
-        && AUTH_CLOSE_REASONS.has(value.code as ChatAuthFailureReason)
-    ) {
-        return value.code as ChatAuthFailureReason
-    }
-
-    return "unauthenticated"
 }
 
 /**
@@ -72,7 +53,7 @@ function getAuthFailureReason(value: unknown): ChatAuthFailureReason {
 export function createAuthAwareChatSocket(options: {
     isAuthenticated: Accessor<boolean>
     onMessage: ChatMessageHandler
-    onAuthFailure: (reason: ChatAuthFailureReason) => void
+    onAuthFailure: (reason: ChatAuthErrorCode) => void
 }) {
     let socket: ChatSubscription | undefined
     let reconnectTimeout: ReturnType<typeof setTimeout> | undefined
@@ -93,25 +74,16 @@ export function createAuthAwareChatSocket(options: {
     }
 
     const handleAmbiguousClose = async () => {
+        if (disposed || manuallyClosed) return
+
         try {
-            // Is this already going to capture general auth errors?
-            const { data, error, status } = await api.auth.me.get();
-            
-            if (disposed || manuallyClosed) return
-
-            if (status === 401) {
-                options.onAuthFailure(getAuthFailureReason(error?.value))
-                return
-            }
-
-            if (status === 200 && !data) {
-                options.onAuthFailure("unauthenticated")
-                return
-            }
+            // 401 triggers global onAuthFailure automatically
+            await api.auth.me.get()
         } catch {
             if (disposed || manuallyClosed) return
         }
 
+        if (disposed || manuallyClosed) return
         scheduleReconnect()
     }
 
