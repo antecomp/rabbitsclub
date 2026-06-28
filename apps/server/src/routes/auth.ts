@@ -2,7 +2,7 @@ import { Elysia, t } from "elysia"
 import { jwt } from "@elysiajs/jwt"
 import { actions } from "~/db"
 import { ErrorSchema } from "../schemas/generic.schema"
-import { AuthCookieSchema, AuthErrorSchema, CurrentUserSchema, InviteLookupResponseSchema, JWTSchema, LoginBodySchema, LoginResponseSchema, RegisterBodySchema } from "../schemas/users.schema"
+import { AuthCookieSchema, AuthErrorSchema, CurrentUserSchema, InviteLookupResponseSchema, JWTSchema, LoginBodySchema, LoginResponseSchema, RegisterBodySchema } from "../schemas/auth.schema"
 import { authError, clearAuthCookie, isAuthFailure, isOriginAllowed, issueAuthCookie, revokeAllSessions, validateAuthToken } from "../util/auth"
 import { disconnectChatSocketsForUser } from "../util/chatSessions"
 

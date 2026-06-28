@@ -1,4 +1,4 @@
-import { AuthErrorCode } from "~/schemas/users.schema";
+import type { AuthErrorCode } from "~/schemas/auth.schema";
 
 type AuthFailureHandler = (code: AuthErrorCode) => void;
 

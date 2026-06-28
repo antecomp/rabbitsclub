@@ -1,6 +1,6 @@
 import { Accessor, createEffect, onCleanup } from "solid-js"
 import { api } from "./backend"
-import type { AuthErrorCode } from "~/schemas/users.schema"
+import type { AuthErrorCode } from "~/schemas/auth.schema"
 
 type ChatSubscription = ReturnType<typeof api.ws.subscribe>
 type ChatMessageHandler = Parameters<ChatSubscription["subscribe"]>[0]

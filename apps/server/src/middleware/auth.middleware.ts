@@ -1,6 +1,6 @@
 import Elysia from "elysia"
 import { jwt } from "@elysiajs/jwt"
-import { AuthCookieSchema, JWTSchema } from "../schemas/users.schema"
+import { AuthCookieSchema, JWTSchema } from "../schemas/auth.schema"
 import { authError, authorizationError, clearAuthCookie, isAuthFailure, isOriginAllowed, validateAuthToken } from "../util/auth"
 
 export const authMiddleware = new Elysia({ name: "auth-middleware" })

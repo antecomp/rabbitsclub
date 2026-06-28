@@ -1,6 +1,6 @@
 import { AuthForm, Container, Divider, Subtitle, Title } from "@/styled/shared.styles";
 import { Navigate, useLocation, useNavigate } from "@solidjs/router";
-import { AuthErrorCode } from "~/schemas/users.schema";
+import type { AuthErrorCode } from "~/schemas/auth.schema";
 
 const AUTH_ERROR_DESCRIPTIONS: Readonly<Record<AuthErrorCode, string>> = {
     origin_not_allowed:

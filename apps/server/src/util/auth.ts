@@ -1,7 +1,8 @@
 import type { Cookie } from "elysia"
 import { JWT_TOKEN_LIFESPAN } from "../config"
 import { actions } from "../db"
-import type { AuthErrorCode, AuthJwtPayload, AuthorizationErrorCode, User } from "../schemas/users.schema"
+import type { AuthErrorCode, AuthJwtPayload, AuthorizationErrorCode } from "../schemas/auth.schema"
+import type { User } from "../schemas/users.schema"
 
 const cookieSameSite = (() => {
     const value = process.env.COOKIE_SAME_SITE

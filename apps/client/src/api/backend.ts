@@ -1,6 +1,6 @@
 import { treaty, type Treaty } from "@elysiajs/eden"
 import type { App } from "~/index"
-import { AuthErrorCode } from "~/schemas/users.schema";
+import type { AuthErrorCode } from "~/schemas/auth.schema";
 import { AUTH_FAILURE_EXCLUDED_PATHS, notifyAuthFailure } from "./auth";
 
 /**
