@@ -1,5 +1,5 @@
 import { render } from "solid-js/web"
-import { Route, Router } from "@solidjs/router"
+import { Route, Router, type RouteSectionProps } from "@solidjs/router"
 import Login from "./routes/Login"
 import Register from "./routes/Register"
 import Chat from "./routes/Chat"
@@ -14,21 +14,22 @@ import Avatar from "@/routes/Avatar"
 import AdminIndex from "./routes/admin/AdminIndex"
 import AdminInvites from "./routes/admin/AdminInvites"
 import Invite from "./routes/Invite"
-import { onAuthFailure } from "./api/auth"
-import { refetchUser } from "./api/user"
 import AuthGuard from "./components/AuthGuard"
 import LoggedOut from "./routes/LoggedOut"
 
-onAuthFailure(() => {
-    console.log("caught auth failure, booting...");
-    void refetchUser();
-})
+function AppRoot(props: RouteSectionProps) {
+    return (
+        <>
+            <AuthGuard />
+            {props.children}
+        </>
+    )
+}
 
 render(
     () => (
         <PreferencesProvider>
-            <Router>
-                {/* <AuthGuard/> */}
+            <Router root={AppRoot}>
                 <Route path="/" component={() => (
                     <Landing />
                 )} />
@@ -57,9 +58,7 @@ render(
                 <Route path="/avatar" component={() => (
                     <Avatar />
                 )} />
-                <Route path="/logged-out" component={() => (
-                    <GuestRoute><LoggedOut/></GuestRoute>
-                )}/>
+                <Route path="/logged-out" component={LoggedOut}/>
             </Router>
         </PreferencesProvider>
     ),

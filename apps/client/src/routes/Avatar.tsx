@@ -79,7 +79,8 @@ export default function Avatar() {
     }
 
     const save = async () => {
-        await api.profile.avatar.put({ ...avatar })
+        const { error } = await api.profile.avatar.put({ ...avatar });
+        if(error) return;
         const username = user()?.username;
         if (username) invalidateCachedProfile(username);
         navigate("/");
