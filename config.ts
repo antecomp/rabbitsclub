@@ -10,3 +10,6 @@ export const MIN_PASSWORD_LENGTH = 6;
 
 /** Required Username Length */
 export const MIN_USERNAME_LENGTH = 2;
+
+/** Maximum Length (chars) of a chat message */
+export const MAX_MESSAGE_LENGTH = 250;

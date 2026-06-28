@@ -57,8 +57,9 @@ export const SendInput = styled(`input`)`
 
 export const SendForm = styled(`form`)`
     display: flex;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     margin-top: 10px;
+    position: relative;
 `;
 
 export const SendButton = styled(`button`)`
@@ -88,3 +89,11 @@ export const LoadMoreButton = styled('a')`
         color: gray;
     }
 `;
+
+export const FormTooltip = styled('p')`
+    position: absolute;
+    font-size: 12px;
+    color: gray;
+    bottom: 0;
+    transform: translateY(150%);
+`

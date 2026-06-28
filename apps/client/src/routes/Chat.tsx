@@ -1,5 +1,5 @@
 import { createEffect, createSignal, For, on, onCleanup, onMount, Show } from "solid-js"
-import { MESSAGE_PAGE_SIZE } from "#config";
+import { MAX_MESSAGE_LENGTH, MESSAGE_PAGE_SIZE } from "#config";
 import { api } from "../api/backend"
 import { user } from "../api/user"
 import { createAuthAwareChatSocket } from "../api/chatSocket"
@@ -14,7 +14,7 @@ import ping from '../assets/sfx/ping.mp3';
 import enter from '../assets/sfx/enter.mp3'
 import leave from '../assets/sfx/leave.mp3'
 import Aside from "../components/chat/Aside";
-import { ChatBody, ChatContainer, LoadMoreButton, Messages, SendButton, SendForm, SendInput } from "./Chat.styles";
+import { ChatBody, ChatContainer, FormTooltip, LoadMoreButton, Messages, SendButton, SendForm, SendInput } from "./Chat.styles";
 
 const AUTO_SCROLL_THRESHOLD = 300;
 const toUserChatMessage = (message: MessageHistoryData[number]): ChatMessage => ({
@@ -23,7 +23,7 @@ const toUserChatMessage = (message: MessageHistoryData[number]): ChatMessage => 
 });
 
 export default function Chat() {
-    const [content, setContent] = createSignal("");
+    const [inputText, setInputText] = createSignal("");
     const [whoisOnline, setWhoIsOnline] = createSignal<string[]>([]);
     let messagesEl: HTMLDivElement | undefined;
     let sendInputEl: HTMLInputElement | undefined;
@@ -95,9 +95,10 @@ export default function Chat() {
 
     const send = (e: SubmitEvent) => {
         e.preventDefault()
-        if (!content() || !user()) return
-        chatSocket.send({ content: content() })
-        setContent("")
+        if (!inputText() || !user()) return;
+        if(inputText().length > MAX_MESSAGE_LENGTH) return;
+        chatSocket.send({ content: inputText() })
+        setInputText("")
     }
 
     const isEditableElement = (target: EventTarget | null) => {
@@ -124,10 +125,10 @@ export default function Chat() {
 
             e.preventDefault();
             sendInputEl.focus();
-            const start = sendInputEl.selectionStart ?? content().length;
+            const start = sendInputEl.selectionStart ?? inputText().length;
             const end = sendInputEl.selectionEnd ?? start;
-            const nextContent = `${content().slice(0, start)}${e.key}${content().slice(end)}`;
-            setContent(nextContent);
+            const nextContent = `${inputText().slice(0, start)}${e.key}${inputText().slice(end)}`;
+            setInputText(nextContent);
 
             queueMicrotask(() => {
                 const caretPosition = start + e.key.length;
@@ -169,7 +170,14 @@ export default function Chat() {
 
     createEffect(on(messages, () => {
         if (autoScrollMessages()) scrollToPresent();
-    }))
+    }));
+
+    // Dervive from state instead of having imperative setters!
+    const formTooltip = () => {
+        if (inputText().length >= MAX_MESSAGE_LENGTH * 0.80) {
+            return `( ${inputText().length} / ${MAX_MESSAGE_LENGTH} )`
+        }
+    }
 
     return (
         <ChatContainer>
@@ -205,12 +213,14 @@ export default function Chat() {
             <SendForm onsubmit={send}>
                 <SendInput
                     ref={sendInputEl}
-                    value={content()}
-                    onInput={e => setContent(e.target.value)}
+                    value={inputText()}
+                    onInput={e => setInputText(e.target.value)}
                     placeholder="Message"
                     tabindex="1"
+                    maxlength={MAX_MESSAGE_LENGTH}
                 />
                 <SendButton type="submit" tabindex="2">SEND</SendButton>
+                <FormTooltip>{formTooltip()}</FormTooltip>
             </SendForm>
             <Footer>
                 Type messages and press [SEND] or RETURN to transmit. <br />

@@ -1,5 +1,6 @@
 import { t } from "elysia"
 import { model } from "../db/model"
+import { MAX_MESSAGE_LENGTH } from "#config"
 
 /**
  * Runtime schema for a persisted chat message backed by the messages table.
@@ -9,7 +10,7 @@ export const MessageSchema = t.Object(model.select.messages)
 export type Message = typeof MessageSchema['static']
 
 /** Client-to-server schema for a newly sent message body. */
-export const SentMessageSchema = t.Object({ content: t.String() })
+export const SentMessageSchema = t.Object({ content: t.String({maxLength: MAX_MESSAGE_LENGTH}) })
 
 export enum SystemEvents {
     USER_JOINED = "user_joined",
