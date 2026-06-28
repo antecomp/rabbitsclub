@@ -39,9 +39,6 @@ export const InviteLookupResponseSchema = t.Object({
 /** Success response schema for login attempts. */
 export const LoginResponseSchema = t.Object({ success: t.Boolean() });
 
-/** Generic error payload schema.  */
-export const ErrorSchema = t.Object({ message: t.String() });
-
 /**
  * Allowed authentication error codes.
  * Extracted type: AuthErrorCode

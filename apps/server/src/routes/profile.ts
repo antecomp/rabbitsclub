@@ -3,7 +3,7 @@ import { authMiddleware } from "../middleware/auth.middleware"
 import { AvatarDataSchema } from "../schemas/profiles.schema"
 import { actions } from "../db"
 import { t } from "elysia"
-import { ErrorSchema } from "../schemas/users.schema"
+import { ErrorSchema } from "../schemas/generic.schema"
 
 export const profileRoutes = new Elysia({ prefix: "/profile" })
     .use(authMiddleware)

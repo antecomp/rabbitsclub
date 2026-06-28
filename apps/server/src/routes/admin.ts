@@ -1,7 +1,8 @@
 import Elysia, { t } from "elysia";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { actions } from "../db";
-import { AuthorizationErrorSchema, ErrorSchema } from "~/schemas/users.schema";
+import { ErrorSchema } from "~/schemas/generic.schema";
+import { AuthorizationErrorSchema } from "~/schemas/users.schema";
 
 export const adminRoutes = new Elysia({prefix: '/admin'})
     .use(authMiddleware)
