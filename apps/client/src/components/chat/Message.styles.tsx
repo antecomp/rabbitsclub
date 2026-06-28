@@ -152,6 +152,8 @@ export const MessageBody = styled(MessageBodyBase)<MessageBodyProps>`
     border-image-source: ${({ variant, side }) => `url(${bubbleAsset(variant, side)})`};
     border-style: solid;
     padding-bottom: 8px;
+    /* keeps the message bubbles between the pfps */
+    max-width: calc(100% - ${PFP_SIZE} - ${PFP_GAP});
     ${dateInfoHoverCss}
 `;
 
