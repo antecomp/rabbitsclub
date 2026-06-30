@@ -15,6 +15,20 @@
       "when": 1782437808084,
       "tag": "0001_spicy_xorn",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1782787875298,
+      "tag": "0002_wandering_lilith",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1782788847632,
+      "tag": "0003_common_ben_parker",
+      "breakpoints": true
     }
   ]
 }

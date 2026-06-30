@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core"
+import { sqliteTable, text, integer, type AnySQLiteColumn } from "drizzle-orm/sqlite-core"
 import { sql } from "drizzle-orm"
 
 
@@ -13,13 +13,26 @@ export const users = sqliteTable("users", {
     password: text("password").notNull(),
     is_admin: integer("is_admin").notNull().default(0),
     token_version: integer("token_version").notNull().default(0),
+
+    is_banned:     integer("is_banned").notNull().default(0),
+    banned_reason: text("banned_reason"),
+    banned_at:     text("banned_at"),
+    banned_by:     integer("banned_by").references((): AnySQLiteColumn => users.id),
     ...timestamps
 })
 
 export const messages = sqliteTable("messages", {
     id:       integer("id").primaryKey({ autoIncrement: true }),
-    username: text("username").notNull(),
+    username: text("username").notNull(), // todo remove this, lookup username by id instead.
     content:  text("content").notNull(),
+
+    deleted_at:     text("deleted_at"),
+    deleted_by:     integer("deleted_by").references(() => users.id),
+    deleted_reason: text("deleted_reason"),
+
+    admin_note:      text("admin_note"),
+    admin_note_by:   integer("admin_note_by").references(() => users.id),
+    admin_note_at:   text("admin_note_at"),
     ...timestamps
 })
 
@@ -36,4 +49,13 @@ export const profiles = sqliteTable("profiles", {
     avatar:     text("avatar"),
     updated_at: text("updated_at").notNull()
         .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`)
+})
+
+export const userPermissions = sqliteTable("user_permissions", {
+    user_id:             integer("user_id").primaryKey().references(() => users.id),
+    can_ban_users:       integer("can_ban_users").notNull().default(0),
+    can_delete_messages: integer("can_delete_messages").notNull().default(0),
+    // can_edit_messages:   integer("can_edit_messages").notNull().default(0),
+    can_leave_notes:     integer("can_leave_notes").notNull().default(0),
+    can_manage_invites:  integer("can_manage_invites").notNull().default(0),
 })
