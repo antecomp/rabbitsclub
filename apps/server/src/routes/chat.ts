@@ -8,17 +8,45 @@ import { MAX_MESSAGE_LENGTH } from "#config";
 
 const onlineUsers = new Map<number, { username: string, count: number }>();
 const getOnlineUsers = () => Array.from(onlineUsers.values()).map(u => u.username);
+const PublicMessageSchema = t.Object({
+    id: t.Number(),
+    username: t.String(),
+    content: t.String(),
+    deleted: t.Boolean(),
+    deleted_reason: t.Union([t.String(), t.Null()]),
+    created_at: t.String()
+});
+
+const publicMessage = ({
+    deleted_at,
+    deleted_by,
+    admin_note,
+    admin_note_by,
+    admin_note_at,
+    deleted_reason,
+    content,
+    ...message
+}: typeof MessageSchema.static) => {
+    const deleted = deleted_at !== null;
+
+    return {
+        ...message,
+        content: deleted ? "" : content,
+        deleted,
+        deleted_reason: deleted ? deleted_reason : null
+    };
+};
 
 export const chatRoutes = new Elysia()
     .use(authMiddleware)
     .get("/messages", ({query}) => actions.getRecent(
         query.before ? Number(query.before) : undefined,
         query.limit ? Number(query.limit) : undefined
-    ), {
+    ).map(publicMessage), {
         // Invokes auth middlware.
         useAuth: true,
         response: {
-            200: t.Array(MessageSchema),
+            200: t.Array(PublicMessageSchema),
         },
         query: t.Object({
             before: t.Optional(t.String()),

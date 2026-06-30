@@ -25,3 +25,17 @@ export const adminRoutes = new Elysia({prefix: '/admin'})
             500: ErrorSchema
         }
     })
+    .delete("/messages/:id", ({ params, user, body, status }) => {
+        const deleted = actions.deleteMessage(Number(params.id), user.id, body?.reason)
+        if (!deleted) return status(404, { message: "Message not found" })
+
+        // todo: broadcast message deletion to ws session somehow.
+        return { success: true }
+    }, {
+        usePermission: 'can_delete_messages',
+        body: t.Optional(t.Object({ reason: t.Optional(t.String()) })),
+        response: {
+            200: t.Object({ success: t.Boolean() }),
+            404: ErrorSchema
+        }
+    })

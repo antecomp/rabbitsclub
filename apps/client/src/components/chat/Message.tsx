@@ -11,13 +11,11 @@ import {
     MessageContent,
     UsernameTag
 } from "./Message.styles";
+import { UserChatMessage } from '@/types/message.type';
 
 export default function Message(props: {
-    username: string,
-    content: string,
-    created_at: string,
     isOwn?: boolean
-}) {
+} & UserChatMessage['message']) {
     const { preferences } = usePreferences();
     const createdAt = new Date(props.created_at);
     const [now, setNow] = createSignal(Date.now());
@@ -38,6 +36,11 @@ export default function Message(props: {
         setAvatarSrc(url);
     })
 
+    //@ts-ignore I dont fucking care anymore.
+    const imTiredBoss = () => props.deleted!
+        ? <>[ DELETED : {props.deleted_reason} ]</>
+        : <> {props.content} </>
+
     return (
         <Show
             when={props.isOwn}
@@ -52,7 +55,7 @@ export default function Message(props: {
                             <UsernameTag side="left">{props.username}</UsernameTag>
                             <MessageBody side="left" variant="incoming">
                                 <TimestampContainer align="right"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
-                                <MessageContent>{props.content}</MessageContent>
+                                <MessageContent>{imTiredBoss()}</MessageContent>
                             </MessageBody>
                         </MessageContainer>
                     )}
@@ -64,7 +67,7 @@ export default function Message(props: {
                         <UsernameTag side="right">{props.username}</UsernameTag>
                         <MessageBody side="right" variant="incoming">
                             <TimestampContainer align="left"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
-                            <MessageContent>{props.content}</MessageContent>
+                            <MessageContent>{imTiredBoss()}</MessageContent>
                         </MessageBody>
                     </MessageContainer>
                 </Show>
@@ -76,7 +79,7 @@ export default function Message(props: {
                     <MessageContainer side="right">
                         <MessageBody side="right" variant="outgoing">
                             <TimestampContainer align="left"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
-                            <MessageContent>{props.content}</MessageContent>
+                            <MessageContent>{imTiredBoss()}</MessageContent>
                         </MessageBody>
                         <MessagePfpContainer side="right">
                             <img src={avatarSrc()} />
@@ -87,7 +90,7 @@ export default function Message(props: {
                 <MessageContainer side="left">
                     <MessageBody side="left" variant="outgoing">
                         <TimestampContainer align="right"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
-                        <MessageContent>{props.content}</MessageContent>
+                        <MessageContent>{imTiredBoss()}</MessageContent>
                     </MessageBody>
                     <MessagePfpContainer side="left">
                         <img src={avatarSrc()} />

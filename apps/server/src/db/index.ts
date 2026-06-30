@@ -18,6 +18,8 @@ export const db = drizzle(sqlite, { schema })
 // Auto-apply pending migrations on startup
 migrate(db, { migrationsFolder: migrationsPath });
 
+
+// TODO: Break this into multiple actions/* files and glob this together.
 export const actions = {
     insertMessage: (username: string, content: string) =>
         db.insert(schema.messages)
@@ -150,7 +152,77 @@ export const actions = {
                 }
             })
             .returning()
-            .get()
+            .get(),
+
+    // Permissions
+    getUserPermissions: (user_id: number) =>
+        db.select()
+            .from(schema.userPermissions)
+            .where(eq(schema.userPermissions.user_id, user_id))
+            .get(),
+
+    upsertUserPermissions: (user_id: number, permissions: Partial<{
+        can_ban_users: number
+        can_delete_messages: number
+        can_leave_notes: number
+        can_manage_invites: number
+    }>) =>
+        db.insert(schema.userPermissions)
+            .values({ user_id, ...permissions })
+            .onConflictDoUpdate({
+                target: schema.userPermissions.user_id,
+                set: permissions
+            })
+            .returning()
+            .get(),
+
+    // Banning
+    banUser: (userId: number, bannedBy: number, reason?: string) =>
+        db.update(schema.users)
+            .set({
+                is_banned: 1,
+                banned_reason: reason ?? null,
+                banned_by: bannedBy,
+                banned_at: sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`
+            })
+            .where(eq(schema.users.id, userId))
+            .returning()
+            .get(),
+
+    unbanUser: (userId: number) =>
+        db.update(schema.users)
+            .set({
+                is_banned: 0,
+                banned_reason: null,
+                banned_by: null,
+                banned_at: null
+            })
+            .where(eq(schema.users.id, userId))
+            .returning()
+            .get(),
+
+    // Message moderation
+    deleteMessage: (messageId: number, deletedBy: number, reason?: string) =>
+        db.update(schema.messages)
+            .set({
+                deleted_at: sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+                deleted_by: deletedBy,
+                deleted_reason: reason ?? null
+            })
+            .where(eq(schema.messages.id, messageId))
+            .returning()
+            .get(),
+
+    addAdminNote: (messageId: number, notedBy: number, note: string) =>
+        db.update(schema.messages)
+            .set({
+                admin_note: note,
+                admin_note_by: notedBy,
+                admin_note_at: sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`
+            })
+            .where(eq(schema.messages.id, messageId))
+            .returning()
+            .get(),
 }
 
 if (process.env.SEED_ADMIN === "true") {
