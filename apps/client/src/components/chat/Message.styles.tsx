@@ -194,3 +194,7 @@ export const UsernameTag = styled(UsernameTagBase)<UsernameTagProps>`
 export const MessageContent = styled("div")`
     user-select: text;
 `;
+
+export const DeletedMessageNote = styled('span')`
+    color: red;
+`

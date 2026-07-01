@@ -24,6 +24,7 @@ export const ClientMessageSchema = t.Object({
 });
 export type ClientMessage = typeof ClientMessageSchema['static'];
 
+/** Extract/Parse Relevant Message Database Fields Into Public-Facing Message Schema */
 export function toClientMessage(message: DbMessage): ClientMessage {
     const is_deleted = message.deleted_at !== null;
 

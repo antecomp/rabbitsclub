@@ -9,7 +9,8 @@ import {
     MessagePfpContainer,
     TimestampContainer,
     MessageContent,
-    UsernameTag
+    UsernameTag,
+    DeletedMessageNote
 } from "./Message.styles";
 import { UserChatMessage } from '@/types/message.type';
 
@@ -51,7 +52,7 @@ export default function Message(props: {
     const variant = (): Variant => isIncoming() ? 'incoming' : 'outgoing';
 
     const messageContent = () => props.is_deleted
-        ? <>[ DELETED : {props.deleted_reason} ]</>
+        ? <DeletedMessageNote>[ DELETED : {props.deleted_reason} ]</DeletedMessageNote>
         : <> {props.content} </>
 
     return (
