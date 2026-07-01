@@ -13,6 +13,9 @@ import {
 } from "./Message.styles";
 import { UserChatMessage } from '@/types/message.type';
 
+type Side = 'left' | 'right';
+type Variant = 'incoming' | 'outgoing';
+
 export default function Message(props: {
     isOwn?: boolean
 } & UserChatMessage['message']) {
@@ -36,67 +39,37 @@ export default function Message(props: {
         setAvatarSrc(url);
     })
 
-    //@ts-ignore I dont fucking care anymore.
-    const imTiredBoss = () => props.deleted!
+    const isIncoming = () => !props.isOwn;
+    const side = (): Side => {
+        const isRight = isIncoming()
+            ? preferences.incomingOnRight
+            : !preferences.incomingOnRight;
+
+        return isRight ? 'right' : 'left';
+    };
+    const timestampAlign = () => side() === 'right' ? 'left' : 'right';
+    const variant = (): Variant => isIncoming() ? 'incoming' : 'outgoing';
+
+    const isDeleted = () => 'deleted' in props ? props.deleted : props.deleted_at !== null;
+    const messageContent = () => isDeleted()
         ? <>[ DELETED : {props.deleted_reason} ]</>
         : <> {props.content} </>
 
     return (
-        <Show
-            when={props.isOwn}
-            fallback={(
-                <Show
-                    when={preferences.incomingOnRight}
-                    fallback={(
-                        <MessageContainer side="left" withUsername>
-                            <MessagePfpContainer side="left" raised>
-                                <img src={avatarSrc()} />
-                            </MessagePfpContainer>
-                            <UsernameTag side="left">{props.username}</UsernameTag>
-                            <MessageBody side="left" variant="incoming">
-                                <TimestampContainer align="right"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
-                                <MessageContent>{imTiredBoss()}</MessageContent>
-                            </MessageBody>
-                        </MessageContainer>
-                    )}
-                >
-                    <MessageContainer side="right" withUsername>
-                        <MessagePfpContainer side="right" raised>
-                            <img src={avatarSrc()} />
-                        </MessagePfpContainer>
-                        <UsernameTag side="right">{props.username}</UsernameTag>
-                        <MessageBody side="right" variant="incoming">
-                            <TimestampContainer align="left"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
-                            <MessageContent>{imTiredBoss()}</MessageContent>
-                        </MessageBody>
-                    </MessageContainer>
-                </Show>
-            )}
-        >
-            <Show
-                when={preferences.incomingOnRight}
-                fallback={(
-                    <MessageContainer side="right">
-                        <MessageBody side="right" variant="outgoing">
-                            <TimestampContainer align="left"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
-                            <MessageContent>{imTiredBoss()}</MessageContent>
-                        </MessageBody>
-                        <MessagePfpContainer side="right">
-                            <img src={avatarSrc()} />
-                        </MessagePfpContainer>
-                    </MessageContainer>
-                )}
-            >
-                <MessageContainer side="left">
-                    <MessageBody side="left" variant="outgoing">
-                        <TimestampContainer align="right"><span class="dateinfo">{niceDate()}</span><span class="dateinfo">{fullDate}</span></TimestampContainer>
-                        <MessageContent>{imTiredBoss()}</MessageContent>
-                    </MessageBody>
-                    <MessagePfpContainer side="left">
-                        <img src={avatarSrc()} />
-                    </MessagePfpContainer>
-                </MessageContainer>
+        <MessageContainer side={side()} withUsername={isIncoming()}>
+            <MessagePfpContainer side={side()} raised={isIncoming()}>
+                <img src={avatarSrc()} />
+            </MessagePfpContainer>
+            <Show when={isIncoming()}>
+                <UsernameTag side={side()}>{props.username}</UsernameTag>
             </Show>
-        </Show>
+            <MessageBody side={side()} variant={variant()}>
+                <TimestampContainer align={timestampAlign()}>
+                    <span class="dateinfo">{niceDate()}</span>
+                    <span class="dateinfo">{fullDate}</span>
+                </TimestampContainer>
+                <MessageContent>{messageContent()}</MessageContent>
+            </MessageBody>
+        </MessageContainer>
     )
 }
