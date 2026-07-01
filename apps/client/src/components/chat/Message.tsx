@@ -18,7 +18,7 @@ type Variant = 'incoming' | 'outgoing';
 
 export default function Message(props: {
     isOwn?: boolean
-} & UserChatMessage['message']) {
+} & UserChatMessage) {
     const { preferences } = usePreferences();
     const createdAt = new Date(props.created_at);
     const [now, setNow] = createSignal(Date.now());
@@ -50,8 +50,7 @@ export default function Message(props: {
     const timestampAlign = () => side() === 'right' ? 'left' : 'right';
     const variant = (): Variant => isIncoming() ? 'incoming' : 'outgoing';
 
-    const isDeleted = () => 'deleted' in props ? props.deleted : props.deleted_at !== null;
-    const messageContent = () => isDeleted()
+    const messageContent = () => props.is_deleted
         ? <>[ DELETED : {props.deleted_reason} ]</>
         : <> {props.content} </>
 

@@ -6,11 +6,37 @@ import { MAX_MESSAGE_LENGTH } from "#config"
  * Runtime schema for a persisted chat message backed by the messages table.
  * Extracted type: Message
  */
-export const MessageSchema = t.Object(model.select.messages)
-export type Message = typeof MessageSchema['static']
+export const DbMessageSchema = t.Object(model.select.messages)
+export type DbMessage = typeof DbMessageSchema['static']
 
 /** Client-to-server schema for a newly sent message body. */
 export const SentMessageSchema = t.Object({ content: t.String({maxLength: MAX_MESSAGE_LENGTH}) })
+
+/** Message form as sent to the client */
+export const ClientMessageSchema = t.Object({
+    type: t.Literal('user'),
+    id: t.Number(),
+    username: t.String(),
+    content: t.String(),
+    is_deleted: t.Boolean(),
+    deleted_reason: t.Union([t.String(), t.Null()]),
+    created_at: t.String()
+});
+export type ClientMessage = typeof ClientMessageSchema['static'];
+
+export function toClientMessage(message: DbMessage): ClientMessage {
+    const is_deleted = message.deleted_at !== null;
+
+    return {
+        type: 'user',
+        id: message.id,
+        username: message.username,
+        content: is_deleted ? "" : message.content,
+        is_deleted,
+        deleted_reason: is_deleted ? message.deleted_reason : null,
+        created_at: message.created_at
+    }
+}
 
 export enum SystemEvents {
     USER_JOINED = "user_joined",
@@ -40,9 +66,6 @@ export const WSBroadcastOnlineSchema = t.Object({
 export const WSMessageSchema = t.Union([
     WSBroadcastMessageSchema,
     WSBroadcastOnlineSchema,
-    t.Intersect([
-        MessageSchema, 
-        t.Object({ type: t.Literal("user") })
-    ])
+    ClientMessageSchema
 ]);
 export type WSMessageType = typeof WSMessageSchema['static'];

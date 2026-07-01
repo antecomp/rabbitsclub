@@ -26,7 +26,7 @@ const SystemMessageContainer = styled("div")`
 
 /** Displays websocket lifecycle events as centered system messages in chat. */
 export default function SystemMessage(props: {
-    message: SystemChatMessage["message"];
+    message: SystemChatMessage;
 }) {
     const event = props.message.event;
     const content = props.message.content;
@@ -34,7 +34,7 @@ export default function SystemMessage(props: {
     const eventToMessage = ({
         user_joined: `${content} has joined`,
         user_left: `${content} has left`
-    } satisfies Record<SystemChatMessage['message']['event'], string>)[event]
+    } satisfies Record<SystemChatMessage['event'], string>)[event]
 
     return (
         <SystemMessageContainer>

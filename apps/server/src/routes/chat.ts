@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { actions } from "../db";
-import { MessageSchema, SentMessageSchema, SystemEvents, WSMessageSchema } from "../schemas/messages.schema";
+import { ClientMessageSchema, SentMessageSchema, SystemEvents, toClientMessage, WSMessageSchema } from "../schemas/messages.schema";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { CHAT_WS_NAME } from "../config";
 import { registerChatSocket, unregisterChatSocket } from "../util/chatSessions";
@@ -8,45 +8,18 @@ import { MAX_MESSAGE_LENGTH } from "#config";
 
 const onlineUsers = new Map<number, { username: string, count: number }>();
 const getOnlineUsers = () => Array.from(onlineUsers.values()).map(u => u.username);
-const PublicMessageSchema = t.Object({
-    id: t.Number(),
-    username: t.String(),
-    content: t.String(),
-    deleted: t.Boolean(),
-    deleted_reason: t.Union([t.String(), t.Null()]),
-    created_at: t.String()
-});
 
-const publicMessage = ({
-    deleted_at,
-    deleted_by,
-    admin_note,
-    admin_note_by,
-    admin_note_at,
-    deleted_reason,
-    content,
-    ...message
-}: typeof MessageSchema.static) => {
-    const deleted = deleted_at !== null;
-
-    return {
-        ...message,
-        content: deleted ? "" : content,
-        deleted,
-        deleted_reason: deleted ? deleted_reason : null
-    };
-};
 
 export const chatRoutes = new Elysia()
     .use(authMiddleware)
-    .get("/messages", ({query}) => actions.getRecent(
+    .get("/messages", ({ query }) => actions.getRecent(
         query.before ? Number(query.before) : undefined,
         query.limit ? Number(query.limit) : undefined
-    ).map(publicMessage), {
+    ).map(toClientMessage), {
         // Invokes auth middlware.
         useAuth: true,
         response: {
-            200: t.Array(PublicMessageSchema),
+            200: t.Array(ClientMessageSchema),
         },
         query: t.Object({
             before: t.Optional(t.String()),
@@ -79,16 +52,19 @@ export const chatRoutes = new Elysia()
         },
         message(ws, message) {
             // silently fail for now.
-            if(message.content.length > MAX_MESSAGE_LENGTH) return;
+            if (message.content.length > MAX_MESSAGE_LENGTH) return;
             const msgContent = message.content.trim();
-            if(!msgContent) return;
+            if (!msgContent) return;
             const saved = actions.insertMessage(ws.data.user.username, msgContent);
             if (!saved) {
                 console.error("Unable to post message to DB", message);
                 return;
             }
-            ws.publish(CHAT_WS_NAME, { ...saved, type: 'user' }); // broadcasts to everyone but the sender
-            ws.send({ ...saved, type: 'user' }); // echos back to sender.
+
+            const clientMessage = toClientMessage(saved);
+
+            ws.publish(CHAT_WS_NAME, clientMessage); // broadcasts to everyone but the sender
+            ws.send(clientMessage); // echos back to sender.
         },
         close(ws) {
             const { id, username } = ws.data.user;

@@ -4,7 +4,7 @@ import { api } from "../api/backend"
 import { user } from "../api/user"
 import { createAuthAwareChatSocket } from "../api/chatSocket"
 import { notifyAuthFailure } from "../api/auth"
-import type { ChatMessage, MessageHistoryData } from "../types/message.type";
+import type { ChatMessage } from "../types/message.type";
 import Message from "../components/chat/Message";
 import SystemMessage from "../components/chat/SystemMessage";
 import Footer from "../components/Footer";
@@ -17,10 +17,6 @@ import Aside from "../components/chat/Aside";
 import { ChatBody, ChatContainer, FormTooltip, LoadMoreButton, Messages, SendButton, SendForm, SendInput } from "./Chat.styles";
 
 const AUTO_SCROLL_THRESHOLD = 300;
-const toUserChatMessage = (message: MessageHistoryData[number]): ChatMessage => ({
-    type: "user",
-    message
-});
 
 export default function Chat() {
     const [inputText, setInputText] = createSignal("");
@@ -36,8 +32,8 @@ export default function Chat() {
         if (data) {
             const historyIds = new Set(data.map(msg => msg.id));
             setMessages(prev => [
-                ...data.map(toUserChatMessage),
-                ...prev.filter(msg => msg.type === "system" || !historyIds.has(msg.message.id))
+                ...data,
+                ...prev.filter(msg => msg.type === "system" || !historyIds.has(msg.id))
             ]);
             setHasMoreMessages(data.length === MESSAGE_PAGE_SIZE);
         }
@@ -52,10 +48,10 @@ export default function Chat() {
         const previousScrollTop = messagesEl?.scrollTop ?? 0;
 
         const { data } = await api.messages.get({
-            query: { before: String(oldest.message.id), limit: String(MESSAGE_PAGE_SIZE) }
+            query: { before: String(oldest.id), limit: String(MESSAGE_PAGE_SIZE) }
         });
         if (!data) return;
-        setMessages(prev => [...data.map(toUserChatMessage), ...prev])
+        setMessages(prev => [...data, ...prev])
         setHasMoreMessages(data.length === MESSAGE_PAGE_SIZE)
 
         queueMicrotask(() => {
@@ -72,11 +68,11 @@ export default function Chat() {
         onMessage: ({ data }) => {
             switch (data.type) {
                 case 'user':
-                    setMessages(prev => [...prev, { type: "user", message: data }])
+                    setMessages(prev => [...prev, data]);
                     if (!document.hasFocus() || !autoScrollMessages()) void playSoundOnce(ping);
                     break;
                 case 'system':
-                    setMessages(prev => [...prev, { type: "system", message: data }]);
+                    setMessages(prev => [...prev, data]);
                     switch (data.event) {
                         case 'user_joined':
                             playSoundOnce(enter);
@@ -96,7 +92,7 @@ export default function Chat() {
     const send = (e: SubmitEvent) => {
         e.preventDefault()
         if (!inputText() || !user()) return;
-        if(inputText().length > MAX_MESSAGE_LENGTH) return;
+        if (inputText().length > MAX_MESSAGE_LENGTH) return;
         chatSocket.send({ content: inputText() })
         setInputText("")
     }
@@ -193,11 +189,11 @@ export default function Chat() {
                     <For each={messages()}>
                         {msg => (
                             msg.type === "system"
-                                ? <SystemMessage message={msg.message} />
+                                ? <SystemMessage message={msg} />
                                 : (
                                     <Message
-                                        {...msg.message}
-                                        isOwn={msg.message.username === user()?.username}
+                                        {...msg}
+                                        isOwn={msg.username === user()?.username}
                                     />
                                 )
                         )}
