@@ -1,5 +1,8 @@
+import type { WSMessageType } from "~/schemas/messages.schema"
+
 type ChatSocket = {
-    close(code?: number, reason?: string): void
+    send(message: WSMessageType): void;
+    close(code?: number, reason?: string): void;
 }
 
 type ChatSocketRegistration = {
@@ -71,4 +74,14 @@ export function disconnectChatSocketsForUser(userId: number) {
     }
 
     return snapshot.length
+}
+
+// This can be used to broadcast message modifications (delete/note/edit).
+// client can see used id and react accordingly.
+export function broadcastChatMessage(message: WSMessageType) {
+    for (const registrations of socketsByUser.values()) {
+        for (const { socket } of registrations) {
+            socket.send(message)
+        }
+    }
 }

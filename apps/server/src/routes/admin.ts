@@ -3,6 +3,8 @@ import { authMiddleware } from "../middleware/auth.middleware";
 import { actions } from "../db";
 import { ErrorSchema } from "~/schemas/generic.schema";
 import { AuthorizationErrorSchema } from "~/schemas/auth.schema";
+import { broadcastChatMessage } from "~/util/chatSessions";
+import { toClientMessage } from "~/schemas/messages.schema";
 
 export const adminRoutes = new Elysia({prefix: '/admin'})
     .use(authMiddleware)
@@ -29,7 +31,7 @@ export const adminRoutes = new Elysia({prefix: '/admin'})
         const deleted = actions.deleteMessage(Number(params.id), user.id, body?.reason)
         if (!deleted) return status(404, { message: "Message not found" })
 
-        // todo: broadcast message deletion to ws session somehow.
+        broadcastChatMessage(toClientMessage(deleted));
         return { success: true }
     }, {
         usePermission: 'can_delete_messages',

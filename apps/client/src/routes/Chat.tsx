@@ -4,7 +4,7 @@ import { api } from "../api/backend"
 import { user } from "../api/user"
 import { createAuthAwareChatSocket } from "../api/chatSocket"
 import { notifyAuthFailure } from "../api/auth"
-import type { ChatMessage } from "../types/message.type";
+import type { ChatMessage, UserChatMessage } from "../types/message.type";
 import Message from "../components/chat/Message";
 import SystemMessage from "../components/chat/SystemMessage";
 import Footer from "../components/Footer";
@@ -27,6 +27,28 @@ export default function Chat() {
     const [messages, setMessages] = createSignal<ChatMessage[]>([]);
     const [hasMoreMessages, setHasMoreMessages] = createSignal(true);
     const [autoScrollMessages, setAutoScrollMessages] = createSignal(true);
+
+    const upsertUserMessage = (message: UserChatMessage) => {
+        let inserted = false;
+
+        setMessages(prev => {
+            const existingIndex = prev.findIndex(
+                msg => msg.type === "user" && msg.id === message.id
+            );
+
+            if (existingIndex === -1) {
+                inserted = true;
+                return [...prev, message];
+            }
+
+            const next = [...prev];
+            next[existingIndex] = message;
+            return next;
+        });
+
+        return inserted;
+    }
+
     onMount(async () => {
         const { data } = await api.messages.get({ query: { limit: String(MESSAGE_PAGE_SIZE) } });
         if (data) {
@@ -68,8 +90,9 @@ export default function Chat() {
         onMessage: ({ data }) => {
             switch (data.type) {
                 case 'user':
-                    setMessages(prev => [...prev, data]);
-                    if (!document.hasFocus() || !autoScrollMessages()) void playSoundOnce(ping);
+                    if (upsertUserMessage(data) && (!document.hasFocus() || !autoScrollMessages())) {
+                        void playSoundOnce(ping);
+                    }
                     break;
                 case 'system':
                     setMessages(prev => [...prev, data]);
