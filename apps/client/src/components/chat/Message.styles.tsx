@@ -198,3 +198,15 @@ export const MessageContent = styled("div")`
 export const DeletedMessageNote = styled('span')`
     color: red;
 `
+
+export const ModerationActions = styled('div')`
+    grid-column: 1 / -1;
+
+    input {
+        font-family: 'main';
+        background: none;
+        border: none;
+        border-bottom: 1px solid gray;
+                outline: none;
+    }
+`

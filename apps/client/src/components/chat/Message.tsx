@@ -10,9 +10,13 @@ import {
     TimestampContainer,
     MessageContent,
     UsernameTag,
-    DeletedMessageNote
+    DeletedMessageNote,
+    ModerationActions
 } from "./Message.styles";
 import { UserChatMessage } from '@/types/message.type';
+import { user } from '@/api/user';
+import { api } from '@/api/backend';
+import { MAX_MESSAGE_LENGTH } from '#config';
 
 type Side = 'left' | 'right';
 type Variant = 'incoming' | 'outgoing';
@@ -23,6 +27,12 @@ export default function Message(props: {
     const { preferences } = usePreferences();
     const createdAt = new Date(props.created_at);
     const [now, setNow] = createSignal(Date.now());
+
+    const [moderating, setModerating] = createSignal(false);
+    const [reason, setReason] = createSignal("");
+
+    // TODO change this to permissions check! (needs BE update)
+    const openModerationMenu = () => user()?.is_admin && setModerating(true);
 
     const interval = setInterval(() => setNow(Date.now()), 30000);
     onCleanup(() => clearInterval(interval));
@@ -57,7 +67,8 @@ export default function Message(props: {
 
     return (
         <MessageContainer side={side()} withUsername={isIncoming()}>
-            <MessagePfpContainer side={side()} raised={isIncoming()}>
+            {/* TODO PROPER MESSAGE ACTIONS TOOLTIP TO REPLACE THIS WITH */}
+            <MessagePfpContainer side={side()} raised={isIncoming()} onClick={openModerationMenu}>
                 <img src={avatarSrc()} />
             </MessagePfpContainer>
             <Show when={isIncoming()}>
@@ -70,6 +81,16 @@ export default function Message(props: {
                 </TimestampContainer>
                 <MessageContent>{messageContent()}</MessageContent>
             </MessageBody>
+            <Show when={moderating()}>
+                {/* TODO MAKE THIS ITS OWN COMPONENT THAT TAKES IN NEEDED INFO */}
+                <ModerationActions>
+                    &gt; message moderation...
+                    <br />
+                    <input type="text" value={reason()} onInput={e => setReason(e.target.value)} maxlength={MAX_MESSAGE_LENGTH}/>
+                    <button onClick={() => api.admin.messages({id: props.id}).delete({reason: reason()})}>[ DELETE MESSAGE ]</button>
+                    <button onClick={() => setModerating(false)}>[ CLOSE ]</button>
+                </ModerationActions>
+            </Show>
         </MessageContainer>
     )
 }

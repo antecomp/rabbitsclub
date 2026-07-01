@@ -5,6 +5,7 @@ import { ErrorSchema } from "~/schemas/generic.schema";
 import { AuthorizationErrorSchema } from "~/schemas/auth.schema";
 import { broadcastChatMessage } from "~/util/chatSessions";
 import { toClientMessage } from "~/schemas/messages.schema";
+import { MAX_MESSAGE_LENGTH } from "#config";
 
 export const adminRoutes = new Elysia({prefix: '/admin'})
     .use(authMiddleware)
@@ -27,6 +28,7 @@ export const adminRoutes = new Elysia({prefix: '/admin'})
             500: ErrorSchema
         }
     })
+    // todo: move this to a new moderation path
     .delete("/messages/:id", ({ params, user, body, status }) => {
         const deleted = actions.deleteMessage(Number(params.id), user.id, body?.reason)
         if (!deleted) return status(404, { message: "Message not found" })
@@ -35,7 +37,7 @@ export const adminRoutes = new Elysia({prefix: '/admin'})
         return { success: true }
     }, {
         usePermission: 'can_delete_messages',
-        body: t.Optional(t.Object({ reason: t.Optional(t.String()) })),
+        body: t.Optional(t.Object({ reason: t.Optional(t.String({maxLength: MAX_MESSAGE_LENGTH})) })),
         response: {
             200: t.Object({ success: t.Boolean() }),
             404: ErrorSchema
