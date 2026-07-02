@@ -87,7 +87,7 @@ export default function Message(props: {
                     &gt; message moderation...
                     <br />
                     <input type="text" value={reason()} onInput={e => setReason(e.target.value)} maxlength={MAX_MESSAGE_LENGTH}/>
-                    <button onClick={() => api.admin.messages({id: props.id}).delete({reason: reason()})}>[ DELETE MESSAGE ]</button>
+                    <button onClick={() => api.moderation.messages({id: props.id}).delete({reason: reason()})}>[ DELETE MESSAGE ]</button>
                     <button onClick={() => setModerating(false)}>[ CLOSE ]</button>
                 </ModerationActions>
             </Show>
