@@ -14,9 +14,9 @@ import {
     ModerationActions
 } from "./Message.styles";
 import { UserChatMessage } from '@/types/message.type';
-import { user } from '@/api/user';
 import { api } from '@/api/backend';
 import { MAX_MESSAGE_LENGTH } from '#config';
+import { permissions } from '@/api/permissions';
 
 type Side = 'left' | 'right';
 type Variant = 'incoming' | 'outgoing';
@@ -32,7 +32,12 @@ export default function Message(props: {
     const [reason, setReason] = createSignal("");
 
     // TODO change this to permissions check! (needs BE update)
-    const openModerationMenu = () => user()?.is_admin && setModerating(true);
+    const openModerationMenu = () => {
+        const perms = permissions();
+        if (!perms) return;
+        if (perms.can_leave_notes || perms.can_delete_messages) 
+            setModerating(true);
+    }
 
     const interval = setInterval(() => setNow(Date.now()), 30000);
     onCleanup(() => clearInterval(interval));
@@ -86,7 +91,7 @@ export default function Message(props: {
                 <ModerationActions>
                     &gt; message moderation...
                     <br />
-                    <input type="text" value={reason()} onInput={e => setReason(e.target.value)} maxlength={MAX_MESSAGE_LENGTH}/>
+                    <input type="text" value={reason()} onInput={e => setReason(e.target.value)} maxlength={MAX_MESSAGE_LENGTH}/> <br/>
                     <button onClick={() => api.moderation.messages({id: props.id}).delete({reason: reason()})}>[ DELETE MESSAGE ]</button>
                     <button onClick={() => setModerating(false)}>[ CLOSE ]</button>
                 </ModerationActions>

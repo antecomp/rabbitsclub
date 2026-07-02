@@ -5,6 +5,7 @@ import { toClientMessage } from "~/schemas/messages.schema";
 import { MAX_MESSAGE_LENGTH } from "#config";
 import { ErrorSchema } from "~/schemas/generic.schema";
 import { actions } from "~/db/actions";
+import { UserPermissionsSchema } from "~/schemas/moderation.schema";
 
 export const moderationRoutes = new Elysia({ prefix: '/moderation' })
     .use(authMiddleware)
@@ -21,12 +22,7 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
     }, {
         useAuth: true,
         response: {
-            200: t.Object({
-                can_ban_users: t.Boolean(),
-                can_delete_messages: t.Boolean(),
-                can_leave_notes: t.Boolean(),
-                can_manage_invites: t.Boolean(),
-            })
+            200: UserPermissionsSchema
         }
     })
     .delete("/messages/:id", ({ params, user, body, status }) => {
