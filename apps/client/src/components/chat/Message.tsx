@@ -11,7 +11,8 @@ import {
     MessageContent,
     UsernameTag,
     DeletedMessageNote,
-    ModerationActions
+    ModerationActions,
+    MessageContextMenu
 } from "./Message.styles";
 import { UserChatMessage } from '@/types/message.type';
 import { api } from '@/api/backend';
@@ -32,10 +33,11 @@ export default function Message(props: {
     const [reason, setReason] = createSignal("");
 
     // TODO change this to permissions check! (needs BE update)
-    const openModerationMenu = () => {
+    const toggleModerationMenu = () => {
+        if (moderating()) {setModerating(false); return}
         const perms = permissions();
         if (!perms) return;
-        if (perms.can_leave_notes || perms.can_delete_messages) 
+        if (perms.can_leave_notes || perms.can_delete_messages)
             setModerating(true);
     }
 
@@ -72,8 +74,7 @@ export default function Message(props: {
 
     return (
         <MessageContainer side={side()} withUsername={isIncoming()}>
-            {/* TODO PROPER MESSAGE ACTIONS TOOLTIP TO REPLACE THIS WITH */}
-            <MessagePfpContainer side={side()} raised={isIncoming()} onClick={openModerationMenu}>
+            <MessagePfpContainer side={side()} raised={isIncoming()}>
                 <img src={avatarSrc()} />
             </MessagePfpContainer>
             <Show when={isIncoming()}>
@@ -85,14 +86,18 @@ export default function Message(props: {
                     <span class="dateinfo">{fullDate}</span>
                 </TimestampContainer>
                 <MessageContent>{messageContent()}</MessageContent>
+                <MessageContextMenu side={side()}>
+                    <a onClick={toggleModerationMenu}>[ MOD ]</a> <br />
+                    <a onClick={toggleModerationMenu}>[ EDIT ]</a>
+                </MessageContextMenu>
             </MessageBody>
             <Show when={moderating()}>
                 {/* TODO MAKE THIS ITS OWN COMPONENT THAT TAKES IN NEEDED INFO */}
                 <ModerationActions>
                     &gt; message moderation...
                     <br />
-                    <input type="text" value={reason()} onInput={e => setReason(e.target.value)} maxlength={MAX_MESSAGE_LENGTH}/> <br/>
-                    <button onClick={() => api.moderation.messages({id: props.id}).delete({reason: reason()})}>[ DELETE MESSAGE ]</button>
+                    <input type="text" value={reason()} onInput={e => setReason(e.target.value)} maxlength={MAX_MESSAGE_LENGTH} /> <br />
+                    <button onClick={() => api.moderation.messages({ id: props.id }).delete({ reason: reason() })}>[ DELETE MESSAGE ]</button>
                     <button onClick={() => setModerating(false)}>[ CLOSE ]</button>
                 </ModerationActions>
             </Show>

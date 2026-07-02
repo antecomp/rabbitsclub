@@ -18,10 +18,11 @@ export const PFP_GAP = '5px';
 
 type Side = 'left' | 'right';
 type Variant = 'incoming' | 'outgoing';
+type SideProps = { side: Side; };
 type MessageContainerProps = JSX.HTMLAttributes<HTMLDivElement> & { side: Side; withUsername?: boolean; };
 type MessagePfpContainerProps = JSX.HTMLAttributes<HTMLDivElement> & { side: Side; raised?: boolean; };
 type MessageBodyProps = JSX.HTMLAttributes<HTMLDivElement> & { side: Side; variant: Variant; };
-type UsernameTagProps = JSX.HTMLAttributes<HTMLDivElement> & { side: Side; };
+type UsernameTagProps = JSX.HTMLAttributes<HTMLDivElement> & SideProps;
 
 const MessageContainerBase = (props: MessageContainerProps) => {
     const [, divProps] = splitProps(props, ["side", "withUsername"]);
@@ -113,17 +114,7 @@ const bodySideCss = (side: Side) => {
     `;
 };
 
-export const MessageContainer = styled(MessageContainerBase)<MessageContainerProps>`
-    display: grid;
-    ${({ side }) => sideCss(side)}
-    margin: ${MESSAGE_MARGINS};
-    margin-top: ${({ withUsername }) => withUsername ? `calc(${USERNAME_SIZE} + ${MESSAGE_MARGINS})` : MESSAGE_MARGINS};
-    position: relative;
-    gap: ${PFP_GAP};
-    ${dateInfoHoverCss}
-`;
-
-export const MessagePfpContainer = styled(MessagePfpContainerBase)<MessagePfpContainerProps>`
+export const MessagePfpContainer = styled(MessagePfpContainerBase) <MessagePfpContainerProps>`
     ${({ side }) => pfpSideCss(side)}
     grid-row: 1;
 
@@ -138,7 +129,7 @@ export const MessagePfpContainer = styled(MessagePfpContainerBase)<MessagePfpCon
     }
 `;
 
-export const MessageBody = styled(MessageBodyBase)<MessageBodyProps>`
+export const MessageBody = styled(MessageBodyBase) <MessageBodyProps>`
     ${({ side }) => bodySideCss(side)}
     grid-row: 1;
     width: fit-content;
@@ -155,6 +146,7 @@ export const MessageBody = styled(MessageBodyBase)<MessageBodyProps>`
     padding-bottom: 8px;
     /* keeps the message bubbles between the pfps */
     max-width: calc(100% - ${PFP_SIZE} - ${PFP_GAP});
+    position: relative;
 `;
 
 export const TimestampContainer = styled("div") <{ align: 'right' | 'left'; }> `
@@ -164,7 +156,7 @@ export const TimestampContainer = styled("div") <{ align: 'right' | 'left'; }> `
     transform: translate(2px, -4px);
 `;
 
-export const UsernameTag = styled(UsernameTagBase)<UsernameTagProps>`
+export const UsernameTag = styled(UsernameTagBase) <UsernameTagProps>`
     position: absolute;
     ${({ side }) => side === 'right' ? `right: calc(${PFP_SIZE} + ${PFP_GAP});` : `left: calc(${PFP_SIZE} + ${PFP_GAP});`}
     top: -1px;
@@ -199,7 +191,7 @@ export const DeletedMessageNote = styled('span')`
     color: red;
 `
 
-// todo change this to just be on message side
+// todo change this to just be on message side (push the left/right by PFP_SIZE + GAP)
 export const ModerationActions = styled('div')`
     grid-column: 1 / -1;
 
@@ -212,6 +204,40 @@ export const ModerationActions = styled('div')`
     }
 `
 
-export const ContextMenu = styled('div')`
+export const MessageContextMenu = styled('div') <SideProps>`
     position: absolute;
+    padding: 2px;
+    font-size: 12px;
+    button { font-size: 12px; }
+    top: -10px;
+    ${({ side }) => side === 'right'
+        ? `left: -10px; text-align: right;`
+        : `right: -10px; text-align: left;`
+    }
+
+    transform: ${({ side }) => side === 'right' ? 'translateX(-100%)' : 'translateX(100%)'};
+
+    a {
+        cursor: pointer;
+    }
+
+    a:hover {
+        color: gray;
+    }
+
+    visibility: hidden;
 `
+
+export const MessageContainer = styled(MessageContainerBase) <MessageContainerProps>`
+    display: grid;
+    ${({ side }) => sideCss(side)}
+    margin: ${MESSAGE_MARGINS};
+    margin-top: ${({ withUsername }) => withUsername ? `calc(${USERNAME_SIZE} + ${MESSAGE_MARGINS})` : MESSAGE_MARGINS};
+    position: relative;
+    gap: ${PFP_GAP};
+    ${dateInfoHoverCss}
+
+    &:hover ${MessageContextMenu.class} {
+        visibility: visible;
+    }
+`;
