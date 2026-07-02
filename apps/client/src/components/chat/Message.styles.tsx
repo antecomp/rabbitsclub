@@ -120,6 +120,7 @@ export const MessageContainer = styled(MessageContainerBase)<MessageContainerPro
     margin-top: ${({ withUsername }) => withUsername ? `calc(${USERNAME_SIZE} + ${MESSAGE_MARGINS})` : MESSAGE_MARGINS};
     position: relative;
     gap: ${PFP_GAP};
+    ${dateInfoHoverCss}
 `;
 
 export const MessagePfpContainer = styled(MessagePfpContainerBase)<MessagePfpContainerProps>`
@@ -154,7 +155,6 @@ export const MessageBody = styled(MessageBodyBase)<MessageBodyProps>`
     padding-bottom: 8px;
     /* keeps the message bubbles between the pfps */
     max-width: calc(100% - ${PFP_SIZE} - ${PFP_GAP});
-    ${dateInfoHoverCss}
 `;
 
 export const TimestampContainer = styled("div") <{ align: 'right' | 'left'; }> `
@@ -199,6 +199,7 @@ export const DeletedMessageNote = styled('span')`
     color: red;
 `
 
+// todo change this to just be on message side
 export const ModerationActions = styled('div')`
     grid-column: 1 / -1;
 
@@ -209,4 +210,8 @@ export const ModerationActions = styled('div')`
         border-bottom: 1px solid gray;
                 outline: none;
     }
+`
+
+export const ContextMenu = styled('div')`
+    position: absolute;
 `

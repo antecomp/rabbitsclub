@@ -4,7 +4,7 @@ import { PFP_SIZE } from "./Message.styles";
 
 const SystemMessageContainer = styled("div")`
     margin: 15px auto;
-    max-width: min(420px, calc(100% - ${PFP_SIZE}));
+    max-width: calc(100% - ${PFP_SIZE});
     box-sizing: border-box;
     color: #5b5b5b;
     text-align: center;
