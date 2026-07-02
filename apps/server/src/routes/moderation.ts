@@ -4,7 +4,7 @@ import { broadcastChatMessage } from "~/util/chatSessions";
 import { toClientMessage } from "~/schemas/messages.schema";
 import { MAX_MESSAGE_LENGTH } from "#config";
 import { ErrorSchema } from "~/schemas/generic.schema";
-import { actions } from "~/db";
+import { actions } from "~/db/actions";
 
 export const moderationRoutes = new Elysia({ prefix: '/moderation' })
     .use(authMiddleware)

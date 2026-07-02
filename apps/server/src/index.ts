@@ -3,7 +3,7 @@ import { cors } from "@elysiajs/cors"
 import { chatRoutes } from "./routes/chat"
 import { authRoutes } from "./routes/auth"
 import { adminRoutes } from "./routes/admin"
-import { actions } from "./db"
+import { actions } from "./db/actions"
 import { profileRoutes } from "./routes/profile"
 import { moderationRoutes } from "./routes/moderation"
 

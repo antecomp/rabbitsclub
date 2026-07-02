@@ -1,6 +1,6 @@
 import type { Cookie } from "elysia"
 import { JWT_TOKEN_LIFESPAN } from "../config"
-import { actions } from "../db"
+import { actions } from "~/db/actions"
 import type { AuthErrorCode, AuthJwtPayload, AuthorizationErrorCode } from "../schemas/auth.schema"
 import type { User } from "../schemas/users.schema"
 

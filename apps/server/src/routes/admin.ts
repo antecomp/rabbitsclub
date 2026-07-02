@@ -1,6 +1,6 @@
 import Elysia, { t } from "elysia";
 import { authMiddleware } from "../middleware/auth.middleware";
-import { actions } from "../db";
+import { actions } from "~/db/actions";
 import { ErrorSchema } from "~/schemas/generic.schema";
 import { AuthorizationErrorSchema } from "~/schemas/auth.schema";
 

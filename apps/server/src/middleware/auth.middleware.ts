@@ -2,7 +2,7 @@ import Elysia, { type Context } from "elysia"
 import { jwt } from "@elysiajs/jwt"
 import { AuthCookieSchema, JWTSchema } from "../schemas/auth.schema"
 import { authError, authorizationError, clearAuthCookie, isAuthFailure, isOriginAllowed, validateAuthToken } from "../util/auth"
-import { actions } from "~/db"
+import { actions } from "~/db/actions"
 import type { User } from "../schemas/users.schema"
 
 // TODO: make this less cancerous

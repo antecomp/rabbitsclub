@@ -1,7 +1,7 @@
 import Elysia from "elysia"
 import { authMiddleware } from "../middleware/auth.middleware"
 import { AvatarDataSchema } from "../schemas/profiles.schema"
-import { actions } from "../db"
+import { actions } from "~/db/actions"
 import { t } from "elysia"
 import { ErrorSchema } from "../schemas/generic.schema"
 

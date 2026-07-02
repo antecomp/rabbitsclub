@@ -1,5 +1,5 @@
 import { Elysia, t } from "elysia";
-import { actions } from "../db";
+import { actions } from "~/db/actions";
 import { ClientMessageSchema, SentMessageSchema, SystemEvents, toClientMessage, WSMessageSchema } from "../schemas/messages.schema";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { CHAT_WS_NAME } from "../config";
