@@ -73,7 +73,7 @@ export default function Message(props: MessageProps) {
                 <MessageContent>{messageContent()}</MessageContent>
                 <MessageMenus.ContextMenu/>
             </MessageBody>
-                {MessageMenus.ExpandedMenu({...props, side: side()})}
+                <MessageMenus.ExpandedMenu />
         </MessageContainer>
     )
 }
