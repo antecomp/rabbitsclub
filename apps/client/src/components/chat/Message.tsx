@@ -10,36 +10,19 @@ import {
     TimestampContainer,
     MessageContent,
     UsernameTag,
-    DeletedMessageNote,
-    ModerationActions,
-    MessageContextMenu
-} from "./Message.styles";
+    DeletedMessageNote} from "./Message.styles";
 import { UserChatMessage } from '@/types/message.type';
-import { api } from '@/api/backend';
-import { MAX_MESSAGE_LENGTH } from '#config';
-import { permissions } from '@/api/permissions';
+import createMessageContextMenu from './MessageContextMenu';
 
-type Side = 'left' | 'right';
+export type Side = 'left' | 'right';
 type Variant = 'incoming' | 'outgoing';
 
-export default function Message(props: {
-    isOwn?: boolean
-} & UserChatMessage) {
+export type MessageProps = UserChatMessage & {isOwn: boolean}
+
+export default function Message(props: MessageProps) {
     const { preferences } = usePreferences();
     const createdAt = new Date(props.created_at);
     const [now, setNow] = createSignal(Date.now());
-
-    const [moderating, setModerating] = createSignal(false);
-    const [reason, setReason] = createSignal("");
-
-    // TODO change this to permissions check! (needs BE update)
-    const toggleModerationMenu = () => {
-        if (moderating()) {setModerating(false); return}
-        const perms = permissions();
-        if (!perms) return;
-        if (perms.can_leave_notes || perms.can_delete_messages)
-            setModerating(true);
-    }
 
     const interval = setInterval(() => setNow(Date.now()), 30000);
     onCleanup(() => clearInterval(interval));
@@ -72,6 +55,8 @@ export default function Message(props: {
         ? <DeletedMessageNote>[ DELETED : {props.deleted_reason} ]</DeletedMessageNote>
         : <> {props.content} </>
 
+    const MessageMenus = createMessageContextMenu({...props, side: side()});
+
     return (
         <MessageContainer side={side()} withUsername={isIncoming()}>
             <MessagePfpContainer side={side()} raised={isIncoming()}>
@@ -86,21 +71,9 @@ export default function Message(props: {
                     <span class="dateinfo">{fullDate}</span>
                 </TimestampContainer>
                 <MessageContent>{messageContent()}</MessageContent>
-                <MessageContextMenu side={side()}>
-                    <a onClick={toggleModerationMenu}>[ MOD ]</a> <br />
-                    <a onClick={toggleModerationMenu}>[ EDIT ]</a>
-                </MessageContextMenu>
+                <MessageMenus.ContextMenu/>
             </MessageBody>
-            <Show when={moderating()}>
-                {/* TODO MAKE THIS ITS OWN COMPONENT THAT TAKES IN NEEDED INFO */}
-                <ModerationActions>
-                    &gt; message moderation...
-                    <br />
-                    <input type="text" value={reason()} onInput={e => setReason(e.target.value)} maxlength={MAX_MESSAGE_LENGTH} /> <br />
-                    <button onClick={() => api.moderation.messages({ id: props.id }).delete({ reason: reason() })}>[ DELETE MESSAGE ]</button>
-                    <button onClick={() => setModerating(false)}>[ CLOSE ]</button>
-                </ModerationActions>
-            </Show>
+                {MessageMenus.ExpandedMenu({...props, side: side()})}
         </MessageContainer>
     )
 }

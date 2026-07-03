@@ -191,8 +191,7 @@ export const DeletedMessageNote = styled('span')`
     color: red;
 `
 
-// todo change this to just be on message side (push the left/right by PFP_SIZE + GAP)
-export const ModerationActions = styled('div')`
+export const MessageExpandedMenu = styled('div')`
     grid-column: 1 / -1;
 
     input {
