@@ -3,6 +3,109 @@
 
 bun workspace with a Solid/Vite client and an Elysia API server.
 
+## Development
+
+Install dependencies from the repository root:
+
+```bash
+bun install
+```
+
+Create local environment files from the committed templates:
+
+```bash
+cp apps/client/.template.env apps/client/.env
+cp apps/server/.template.env apps/server/.env
+```
+
+The default development ports are:
+
+- Client: `http://localhost:5173`
+- Server: `http://localhost:3000`
+
+Run both workspaces in watch mode:
+
+```bash
+bun run dev
+```
+
+Or run them separately:
+
+```bash
+bun run dev:server
+bun run dev:client
+```
+
+The server auto-applies pending migrations on startup. Unless `DB_PATH` is set, the development SQLite database is created at `apps/server/chat.db`.
+
+### Development Environment
+
+`apps/client/.env`:
+
+```bash
+VITE_API_URL=http://localhost:3000
+```
+
+`apps/server/.env`:
+
+```bash
+PORT=3000
+CLIENT_ORIGIN=http://localhost:5173
+AUTH_ALLOWED_ORIGINS=http://localhost:5173
+AUTH_ENFORCE_ORIGIN_CHECK=true
+JWT_SECRET=your-long-random-secret-here
+COOKIE_SECURE=false
+COOKIE_SAME_SITE=lax
+SEED_ADMIN=false
+INITIAL_ADMIN_USERNAME=R46617
+INITIAL_ADMIN_PASSWORD=12345678
+```
+
+Use a long random `JWT_SECRET` for local development too:
+
+```bash
+openssl rand -base64 48
+```
+
+Set `SEED_ADMIN=true` only when you need to create or reset the initial admin account. The server requires `INITIAL_ADMIN_USERNAME` and `INITIAL_ADMIN_PASSWORD` when seeding is enabled, and it upserts that user as an admin on startup.
+
+Optional server environment variables:
+
+- `DB_PATH`: override the SQLite database file path.
+- `MIGRATIONS_PATH`: override the migrations directory path.
+
+### Commands
+
+Root workspace commands:
+
+| Command | Description |
+| --- | --- |
+| `bun run dev` | Run every workspace's `dev` script. |
+| `bun run dev:server` | Run the server dev watcher. |
+| `bun run dev:client` | Run the client Vite dev server. |
+| `bun run build` | Build every workspace. |
+| `bun run build:server` | Typecheck and build the server. |
+| `bun run build:client` | Typecheck and build the client. |
+
+Client commands from `apps/client`:
+
+| Command | Description |
+| --- | --- |
+| `bun run dev` | Start the Vite dev server. |
+| `bun run build` | Run `tsc -b` and build the Vite app. |
+| `bun run preview` | Serve the built client locally with Vite preview. |
+
+Server commands from `apps/server`:
+
+| Command | Description |
+| --- | --- |
+| `bun run dev` | Start the Elysia API with Bun watch mode. |
+| `bun run typecheck` | Run TypeScript without emitting files. |
+| `bun run build` | Typecheck and bundle `src/index.ts` to `dist`. |
+| `bun run db:generate` | Generate Drizzle migrations from schema changes. |
+| `bun run db:migrate` | Apply Drizzle migrations using `drizzle.config.ts`. |
+| `bun run db:studio` | Open Drizzle Studio for the configured SQLite database. |
+
 ## Production Environment
 
 Production deploys should use a root `.prod.env` file. Copy the committed example and replace the placeholder values:
