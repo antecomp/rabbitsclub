@@ -1,7 +1,7 @@
 # RABBITS.CLUB
 <img src="apps/client/src/assets/misc/brand.svg" alt="logo" width="400"/>
 
-bun workspace with a Solid/Vite client and an Elysia API server.
+RABBITS.CLUB is a chat SPA monorepo built with Bun workspaces. It includes a Solid/Vite frontend and an Elysia API server backed by SQLite.
 
 ## Development
 
@@ -105,6 +105,10 @@ Server commands from `apps/server`:
 | `bun run db:generate` | Generate Drizzle migrations from schema changes. |
 | `bun run db:migrate` | Apply Drizzle migrations using `drizzle.config.ts`. |
 | `bun run db:studio` | Open Drizzle Studio for the configured SQLite database. |
+
+
+---
+
 
 ## Production Environment
 
