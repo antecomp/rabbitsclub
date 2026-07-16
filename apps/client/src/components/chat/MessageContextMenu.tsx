@@ -8,7 +8,13 @@ import { Dynamic } from "solid-js/web";
 
 type MessageMenuProps = MessageProps & { side: Side }
 
-const SLOP = {
+type MenuItem = {
+    name: string,
+    condition: (props: MessageMenuProps) => boolean
+    component: Component<MessageMenuProps>
+}
+
+const MENUS = {
     mod: {
         name: "MOD",
         condition: () => {
@@ -30,13 +36,9 @@ const SLOP = {
         condition: (props) => !props.is_deleted,
         component: () => <MessageExpandedMenu>This is a test!</MessageExpandedMenu>
     }
-} as const satisfies Record<string, {
-    name: string,
-    condition: (props: MessageMenuProps) => boolean
-    component: Component<MessageMenuProps>
-}>
+} as const satisfies Record<string, MenuItem>
 
-type MenuChoice = keyof typeof SLOP
+type MenuChoice = keyof typeof MENUS
 
 export default function createMessageContextMenu(props: MessageMenuProps) {
     const [currentlyOpenedMenu, setOpenMenu] = createSignal<MenuChoice | null>(null);
@@ -44,7 +46,7 @@ export default function createMessageContextMenu(props: MessageMenuProps) {
     const ContextMenu = () => (
         <MessageContextMenu side={props.side}>
             <For each={
-                Object.entries(SLOP).filter(([, { condition }]) => condition(props)) as [MenuChoice, typeof SLOP[MenuChoice]][]
+                Object.entries(MENUS).filter(([, { condition }]) => condition(props)) as [MenuChoice, typeof MENUS[MenuChoice]][]
             }>
                 {([optionKey, option]) =>
                     // todo change to styled comp?
@@ -62,7 +64,7 @@ export default function createMessageContextMenu(props: MessageMenuProps) {
     const ExpandedMenu = () => (
         <Show when={currentlyOpenedMenu()}>
             <Dynamic
-                component={SLOP[currentlyOpenedMenu()!].component}
+                component={MENUS[currentlyOpenedMenu()!].component}
                 {...props}
             />
         </Show>
