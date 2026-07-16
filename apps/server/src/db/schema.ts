@@ -22,9 +22,10 @@ export const users = sqliteTable("users", {
 })
 
 export const messages = sqliteTable("messages", {
-    id:       integer("id").primaryKey({ autoIncrement: true }),
-    username: text("username").notNull(), // todo remove this, lookup username by id instead.
-    content:  text("content").notNull(),
+    id:             integer("id").primaryKey({ autoIncrement: true }),
+    content:        text("content").notNull(),
+
+    user_id:        integer("user_id").notNull().references(() => users.id),
 
     deleted_at:     text("deleted_at"),
     deleted_by:     integer("deleted_by").references(() => users.id),

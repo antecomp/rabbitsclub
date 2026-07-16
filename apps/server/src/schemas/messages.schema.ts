@@ -1,6 +1,7 @@
 import { t } from "elysia"
 import { model } from "../db/model"
 import { MAX_MESSAGE_LENGTH } from "#config"
+import { actions } from "~/db/actions"
 
 /**
  * Runtime schema for a persisted chat message backed by the messages table.
@@ -28,10 +29,13 @@ export type ClientMessage = typeof ClientMessageSchema['static'];
 export function toClientMessage(message: DbMessage): ClientMessage {
     const is_deleted = message.deleted_at !== null;
 
+    const sender = actions.getUserById(message.user_id);
+    const username = sender?.username ?? "ERR";
+
     return {
         type: 'user',
         id: message.id,
-        username: message.username,
+        username,
         content: is_deleted ? "" : message.content,
         is_deleted,
         deleted_reason: is_deleted ? message.deleted_reason : null,
