@@ -6,11 +6,13 @@ import { adminRoutes } from "./routes/admin"
 import { actions } from "./db/actions"
 import { profileRoutes } from "./routes/profile"
 import { moderationRoutes } from "./routes/moderation"
+import { messageRoutes } from "./routes/messages"
 
 const app = new Elysia()
     .use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }))
     .use(authRoutes)
     .use(chatRoutes)
+    .use(messageRoutes)
     .use(adminRoutes)
     .use(moderationRoutes)
     .use(profileRoutes)

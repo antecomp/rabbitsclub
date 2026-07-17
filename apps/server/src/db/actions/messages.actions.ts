@@ -20,12 +20,13 @@ export default {
             .reverse(),
 
     // Message moderation
-    deleteMessage: (messageId: number, deletedBy: number, reason?: string) => 
+    deleteMessage: (messageId: number, deletedBy: number, kind: "user" | "moderator", reason?: string) => 
         db.update(schema.messages)
             .set({
                 deleted_at: sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
                 deleted_by: deletedBy,
-                deleted_reason: reason ?? null
+                deleted_reason: reason ?? null,
+                deleted_kind: kind
             })
             .where(eq(schema.messages.id, messageId))
             .returning()
@@ -41,4 +42,8 @@ export default {
             .where(eq(schema.messages.id, messageId))
             .returning()
             .get(),
+    getMessageByID: (messageId: number) => db.select()
+        .from(schema.messages)
+        .where(eq(schema.messages.id, messageId))
+        .get(),
 }

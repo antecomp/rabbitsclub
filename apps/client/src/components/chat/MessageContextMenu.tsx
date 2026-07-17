@@ -11,7 +11,7 @@ type MessageMenuProps = MessageProps & { side: Side }
 type MenuItem = {
     name: string,
     condition: (props: MessageMenuProps) => boolean
-    component: Component<MessageMenuProps>
+    component: Component<MessageMenuProps & { closeSelf: () => void }>
 }
 
 const MENUS = {
@@ -35,6 +35,19 @@ const MENUS = {
         name: "TEST",
         condition: (props) => !props.is_deleted,
         component: () => <MessageExpandedMenu>This is a test!</MessageExpandedMenu>
+    },
+    delete: {
+        name: "DEL",
+        condition: props => props.isOwn,
+        component: (props) => {
+            // pull this into higher scope to prevent func closure copy for every message
+            const del = () => { api.messages({ id: props.id }).delete(); props.closeSelf() }
+            return <MessageExpandedMenu>
+                &gt; confirm delete...
+                <button onClick={del}>[ DELETE ]</button>
+                <button onClick={props.closeSelf}>[ NEVERMIND ]</button>
+            </MessageExpandedMenu>
+        }
     }
 } as const satisfies Record<string, MenuItem>
 
@@ -66,6 +79,7 @@ export default function createMessageContextMenu(props: MessageMenuProps) {
             <Dynamic
                 component={MENUS[currentlyOpenedMenu()!].component}
                 {...props}
+                closeSelf={() => setOpenMenu(null)}
             />
         </Show>
     )
