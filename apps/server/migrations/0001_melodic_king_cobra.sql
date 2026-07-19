@@ -1,1 +1,0 @@
-ALTER TABLE `messages` ADD `deleted_kind` text;

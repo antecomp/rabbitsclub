@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "d7f2ec86-40d9-4a0a-ab33-8dcfa6cc6f8a",
+  "id": "d06eb453-6d9d-4d09-bef5-bcf62e2c76ab",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "invite_codes": {
@@ -130,22 +130,29 @@
           "notNull": false,
           "autoincrement": false
         },
-        "admin_note": {
-          "name": "admin_note",
+        "deleted_kind": {
+          "name": "deleted_kind",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "admin_note_by": {
-          "name": "admin_note_by",
+        "moderation_note": {
+          "name": "moderation_note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "moderation_note_author": {
+          "name": "moderation_note_author",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "admin_note_at": {
-          "name": "admin_note_at",
+        "moderation_note_at": {
+          "name": "moderation_note_at",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -188,12 +195,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "messages_admin_note_by_users_id_fk": {
-          "name": "messages_admin_note_by_users_id_fk",
+        "messages_moderation_note_author_users_id_fk": {
+          "name": "messages_moderation_note_author_users_id_fk",
           "tableFrom": "messages",
           "tableTo": "users",
           "columnsFrom": [
-            "admin_note_by"
+            "moderation_note_author"
           ],
           "columnsTo": [
             "id"

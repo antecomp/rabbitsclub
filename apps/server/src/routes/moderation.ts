@@ -39,3 +39,22 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
             404: ErrorSchema
         }
     })
+    .patch("/messages/:id", ({ params, user, body, status }) => {
+        const targetId = Number(params.id);
+        if (!targetId) return status(400, { message: 'invalid target message' });
+        const updated = actions.setModerationNote(targetId, user.id, body.note ?? null);
+        if (!updated) return status(404, { message: "Message not found" });
+
+        broadcastChatMessage(toClientMessage(updated));
+        return { success: true };
+    }, {
+        usePermission: 'can_leave_notes',
+        body: t.Object({
+            note: t.Optional(t.String({ maxLength: MAX_MESSAGE_LENGTH }))
+        }),
+        response: {
+            200: RequestResultSchema,
+            404: ErrorSchema,
+            400: ErrorSchema,
+        }
+    })

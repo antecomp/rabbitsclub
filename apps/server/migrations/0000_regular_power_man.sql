@@ -16,13 +16,14 @@ CREATE TABLE `messages` (
 	`deleted_at` text,
 	`deleted_by` integer,
 	`deleted_reason` text,
-	`admin_note` text,
-	`admin_note_by` integer,
-	`admin_note_at` text,
+	`deleted_kind` text,
+	`moderation_note` text,
+	`moderation_note_author` integer,
+	`moderation_note_at` text,
 	`created_at` text DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')) NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`deleted_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`admin_note_by`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`moderation_note_author`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `profiles` (

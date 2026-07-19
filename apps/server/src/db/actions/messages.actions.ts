@@ -32,12 +32,12 @@ export default {
             .returning()
             .get(),
 
-    addAdminNote: (messageId: number, notedBy: number, note: string) => 
+    setModerationNote: (messageId: number, notedBy: number, note: string | null) => 
         db.update(schema.messages)
             .set({
-                admin_note: note,
-                admin_note_by: notedBy,
-                admin_note_at: sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`
+                moderation_note: note,
+                moderation_note_author: notedBy,
+                moderation_note_at: sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`
             })
             .where(eq(schema.messages.id, messageId))
             .returning()
