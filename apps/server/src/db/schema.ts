@@ -32,6 +32,8 @@ export const messages = sqliteTable("messages", {
     deleted_reason: text("deleted_reason"),
     deleted_kind:   text("deleted_kind", { enum: ['user', 'moderator'] }),
 
+    edited_at:      text("edited_at"),
+
     moderation_note:          text("moderation_note"),
     moderation_note_author:   integer("moderation_note_author").references(() => users.id),
     moderation_note_at:       text("moderation_note_at"),

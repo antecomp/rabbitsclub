@@ -46,4 +46,13 @@ export default {
         .from(schema.messages)
         .where(eq(schema.messages.id, messageId))
         .get(),
+    editMessage: (messageId: number, content: string) =>
+        db.update(schema.messages)
+            .set({
+                content,
+                edited_at: sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+            })
+            .where(eq(schema.messages.id, messageId))
+            .returning()
+            .get()
 }

@@ -1,3 +1,4 @@
+import { MAX_MESSAGE_LENGTH } from "#config";
 import Elysia, { t } from "elysia";
 import { actions } from "~/db/actions";
 import { authMiddleware } from "~/middleware/auth.middleware";
@@ -31,14 +32,14 @@ export const messageRoutes = new Elysia()
         const targetMessage = actions.getMessageByID(targetMessageID);
 
         if (!targetMessage) return status(404, { message: "Message not found" });
-        if (targetMessage.user_id !== requester.id) return status(403, {message: "User does not own message"});
+        if (targetMessage.user_id !== requester.id) return status(403, { message: "User does not own message" });
         if (targetMessage.deleted_at) return status(409, { message: "Message already deleted" });
 
         const deleted = actions.deleteMessage(targetMessageID, requester.id, 'user');
-        if(!deleted) return status(500, {message: "Unable to delete message"});
+        if (!deleted) return status(500, { message: "Unable to delete message" });
 
         broadcastChatMessage(toClientMessage(deleted));
-        return {success: true};
+        return { success: true };
 
     }, {
         useAuth: true,
@@ -48,6 +49,40 @@ export const messageRoutes = new Elysia()
             403: ErrorSchema,
             404: ErrorSchema,
             409: ErrorSchema,
+            500: ErrorSchema
+        }
+    })
+    .patch("/messages/:id", ({ params, user: requester, body, status }) => {
+        const targetMessageID = Number(params.id);
+
+        // NaN and 0 invalid.
+        if (!targetMessageID) return status(400, { message: "Malformed/Invalid Message ID" });
+
+        const targetMessage = actions.getMessageByID(targetMessageID);
+
+        if (!targetMessage) return status(404, { message: "Message not found" });
+        if (targetMessage.user_id !== requester.id) return status(403, { message: "User does not own message" });
+        if (targetMessage.deleted_at) return status(403, { message: "cannot edit a deleted message" })
+
+        const msgContent = body.content.trim();
+        if (!msgContent) return status(400, { message: "New content cannot be empty" });
+
+        const updated = actions.editMessage(targetMessageID, msgContent);
+        if (!updated) return status(500, { message: "unable to edit message" });
+
+        broadcastChatMessage(toClientMessage(updated));
+        return { success: true };
+
+    }, {
+        useAuth: true,
+        body: t.Object({
+            content: t.String({ maxLength: MAX_MESSAGE_LENGTH })
+        }),
+        response: {
+            200: RequestResultSchema,
+            400: ErrorSchema,
+            403: ErrorSchema,
+            404: ErrorSchema,
             500: ErrorSchema
         }
     })
