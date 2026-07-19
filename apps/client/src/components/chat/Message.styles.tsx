@@ -156,6 +156,14 @@ export const TimestampContainer = styled("div") <{ align: 'right' | 'left'; }> `
     transform: translate(2px, -4px);
 `;
 
+export const EditedMessageNote = styled("div") <{align: 'right' | 'left'}>`
+    font-size: ${DATE_SIZE};
+    text-align: ${props => props.align};
+    font-style: italic;
+    color: gray;
+    transform: translateY(4px);
+`
+
 export const UsernameTag = styled(UsernameTagBase) <UsernameTagProps>`
     position: absolute;
     ${({ side }) => side === 'right' ? `right: calc(${PFP_SIZE} + ${PFP_GAP});` : `left: calc(${PFP_SIZE} + ${PFP_GAP});`}

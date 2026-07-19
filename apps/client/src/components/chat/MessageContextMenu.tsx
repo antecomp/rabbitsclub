@@ -32,21 +32,31 @@ const MENUS = {
             </MessageExpandedMenu>
         }
     },
-    test: {
-        name: "TEST",
-        condition: (props) => !props.is_deleted,
-        component: () => <MessageExpandedMenu>This is a test!</MessageExpandedMenu>
-    },
     delete: {
         name: "DEL",
-        condition: props => props.isOwn,
+        condition: props => props.isOwn && !props.is_deleted,
         component: (props) => {
             // pull this into higher scope to prevent func closure copy for every message
             const del = () => { api.messages({ id: props.id }).delete(); props.closeSelf() }
             return <MessageExpandedMenu>
-                &gt; confirm delete...
+                &gt; confirm delete... <br />
                 <button onClick={del}>[ DELETE ]</button>
-                <button onClick={props.closeSelf}>[ NEVERMIND ]</button>
+                <button onClick={props.closeSelf}>[ CANCEL ]</button>
+            </MessageExpandedMenu>
+        }
+    },
+    edit: {
+        name: "EDT",
+        condition: props => props.isOwn && !props.is_deleted,
+        component: (props) => {
+            const [newContent, setNewContent] = createSignal("");
+            return <MessageExpandedMenu>
+                {/* todo: change this to a form so enter press will send the edit out */}
+                &gt; edit message...
+                <br />
+                <input type="text" value={newContent()} onInput={e => setNewContent(e.target.value)} maxlength={MAX_MESSAGE_LENGTH} /> <br />
+                <button onClick={() => api.messages({ id: props.id }).patch({ content: newContent() })}>[ EDIT MESSAGE ]</button>
+                <button onClick={props.closeSelf}>[ CANCEL ]</button>
             </MessageExpandedMenu>
         }
     }

@@ -11,7 +11,8 @@ import {
     MessageContent,
     UsernameTag,
     DeletedMessageNote,
-    MessageModerationNote
+    MessageModerationNote,
+    EditedMessageNote
 } from "./Message.styles";
 import { UserChatMessage } from '@/types/message.type';
 import createMessageContextMenu from './MessageContextMenu';
@@ -78,6 +79,11 @@ export default function Message(props: MessageProps) {
                     </MessageModerationNote>
                 </Show>
                 <MessageContent>{messageContent()}</MessageContent>
+                <Show when={props.edited}>
+                    <EditedMessageNote align={side()}>
+                        (edited)
+                    </EditedMessageNote>
+                </Show>
                 <MessageMenus.ContextMenu />
             </MessageBody>
             <MessageMenus.ExpandedMenu />
