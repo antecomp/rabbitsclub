@@ -10,14 +10,16 @@ import {
     TimestampContainer,
     MessageContent,
     UsernameTag,
-    DeletedMessageNote} from "./Message.styles";
+    DeletedMessageNote,
+    MessageModerationNote
+} from "./Message.styles";
 import { UserChatMessage } from '@/types/message.type';
 import createMessageContextMenu from './MessageContextMenu';
 
 export type Side = 'left' | 'right';
 type Variant = 'incoming' | 'outgoing';
 
-export type MessageProps = UserChatMessage & {isOwn: boolean}
+export type MessageProps = UserChatMessage & { isOwn: boolean }
 
 export default function Message(props: MessageProps) {
     const { preferences } = usePreferences();
@@ -55,7 +57,7 @@ export default function Message(props: MessageProps) {
         ? <DeletedMessageNote>[ DELETED : {props.deleted_reason} ]</DeletedMessageNote>
         : <> {props.content} </>
 
-    const MessageMenus = createMessageContextMenu({...props, side: side()});
+    const MessageMenus = createMessageContextMenu({ ...props, side: side() });
 
     return (
         <MessageContainer side={side()} withUsername={isIncoming()}>
@@ -70,10 +72,15 @@ export default function Message(props: MessageProps) {
                     <span class="dateinfo">{niceDate()}</span>
                     <span class="dateinfo">{fullDate}</span>
                 </TimestampContainer>
+                <Show when={props.moderation_note}>
+                    <MessageModerationNote>
+                        [ {props.moderation_note} ]
+                    </MessageModerationNote>
+                </Show>
                 <MessageContent>{messageContent()}</MessageContent>
-                <MessageMenus.ContextMenu/>
+                <MessageMenus.ContextMenu />
             </MessageBody>
-                <MessageMenus.ExpandedMenu />
+            <MessageMenus.ExpandedMenu />
         </MessageContainer>
     )
 }

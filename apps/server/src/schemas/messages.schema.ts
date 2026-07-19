@@ -21,7 +21,8 @@ export const ClientMessageSchema = t.Object({
     content: t.String(),
     is_deleted: t.Boolean(),
     deleted_reason: t.Union([t.String(), t.Null()]),
-    created_at: t.String()
+    created_at: t.String(),
+    moderation_note: t.Union([t.String(), t.Null()])
 });
 export type ClientMessage = typeof ClientMessageSchema['static'];
 
@@ -39,7 +40,8 @@ export function toClientMessage(message: DbMessage): ClientMessage {
         content: is_deleted ? "" : message.content,
         is_deleted,
         deleted_reason: is_deleted ? message.deleted_reason : null,
-        created_at: message.created_at
+        created_at: message.created_at,
+        moderation_note: message.moderation_note
     }
 }
 

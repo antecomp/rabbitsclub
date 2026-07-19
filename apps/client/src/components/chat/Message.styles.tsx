@@ -187,6 +187,10 @@ export const MessageContent = styled("div")`
     user-select: text;
 `;
 
+export const MessageModerationNote = styled("span")`
+    color: orangered;
+`
+
 export const DeletedMessageNote = styled('span')`
     color: red;
 `

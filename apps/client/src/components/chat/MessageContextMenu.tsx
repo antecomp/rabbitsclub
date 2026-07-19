@@ -28,6 +28,7 @@ const MENUS = {
                 <br />
                 <input type="text" value={reason()} onInput={e => setReason(e.target.value)} maxlength={MAX_MESSAGE_LENGTH} /> <br />
                 <button onClick={() => api.moderation.messages({ id: props.id }).delete({ reason: reason() })}>[ DELETE MESSAGE ]</button>
+                <button onClick={() => api.moderation.messages({ id: props.id }).patch({ note: reason() })}>[ LEAVE NOTE ]</button>
             </MessageExpandedMenu>
         }
     },
