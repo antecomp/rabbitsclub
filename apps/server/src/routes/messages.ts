@@ -62,13 +62,13 @@ export const messageRoutes = new Elysia()
 
         if (!targetMessage) return status(404, { message: "Message not found" });
         if (targetMessage.user_id !== requester.id) return status(403, { message: "User does not own message" });
-        if (targetMessage.deleted_at) return status(403, { message: "cannot edit a deleted message" })
+        if (targetMessage.deleted_at) return status(409, { message: "Message already deleted" });
 
         const msgContent = body.content.trim();
         if (!msgContent) return status(400, { message: "New content cannot be empty" });
 
-        const updated = actions.editMessage(targetMessageID, msgContent);
-        if (!updated) return status(500, { message: "unable to edit message" });
+        const updated = actions.editOwnMessage(targetMessageID, requester.id, msgContent);
+        if (!updated) return status(409, { message: "Message already deleted" });
 
         broadcastChatMessage(toClientMessage(updated));
         return { success: true };
@@ -83,6 +83,7 @@ export const messageRoutes = new Elysia()
             400: ErrorSchema,
             403: ErrorSchema,
             404: ErrorSchema,
+            409: ErrorSchema,
             500: ErrorSchema
         }
     })

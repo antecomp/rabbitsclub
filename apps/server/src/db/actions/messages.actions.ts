@@ -1,5 +1,5 @@
 import { db } from "..";
-import { lt, desc, eq, sql } from "drizzle-orm";
+import { lt, desc, eq, sql, and, isNull } from "drizzle-orm";
 import * as schema from "../schema"
 import { MESSAGE_PAGE_SIZE } from "#config";
 
@@ -46,13 +46,17 @@ export default {
         .from(schema.messages)
         .where(eq(schema.messages.id, messageId))
         .get(),
-    editMessage: (messageId: number, content: string) =>
+    editOwnMessage: (messageId: number, userId: number, content: string) =>
         db.update(schema.messages)
             .set({
                 content,
                 edited_at: sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
             })
-            .where(eq(schema.messages.id, messageId))
+            .where(and(
+                eq(schema.messages.id, messageId),
+                eq(schema.messages.user_id, userId),
+                isNull(schema.messages.deleted_at)
+            ))
             .returning()
             .get()
 }
