@@ -153,7 +153,7 @@ export default function Avatar() {
     const menuDescription = () => ({
         ears: 'Select ear variation by clicking preview buttons.',
         leftEye: 'Select eye variation by clicking preview buttons. Transform it using the control buttons.',
-        rightEye: 'Select eye variation by clicking preview buttons. Transform turn it using the control buttons.',
+        rightEye: 'Select eye variation by clicking preview buttons. Transform it using the control buttons.',
         root: 'Select options on the right to customize rabbit.'
     } satisfies Record<AvatarMenu, string>)[menu()]
 
