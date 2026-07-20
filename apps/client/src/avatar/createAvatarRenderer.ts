@@ -2,6 +2,7 @@ import { eyes, EyeVariant, heads } from "./avatar.assets";
 import { AvatarData } from "./avatar.types";
 
 const SIZE = 400;
+const DEG_TO_RAD = Math.PI / 180;
 
 /** Loads an image asset once the browser resolves its module URL. */
 function loadImage(src: string): Promise<HTMLImageElement> {
@@ -24,6 +25,20 @@ const eyePromises: Record<string, [Promise<HTMLImageElement>, Promise<HTMLImageE
                 : [loadImage(src), loadImage(src)],
         ])
     );
+
+function drawRotatedImage(
+    ctx: OffscreenCanvasRenderingContext2D,
+    image: HTMLImageElement,
+    centerX: number,
+    centerY: number,
+    rotationDegrees: number
+) {
+    ctx.save();
+    ctx.translate(centerX, centerY);
+    ctx.rotate(rotationDegrees * DEG_TO_RAD);
+    ctx.drawImage(image, -image.width / 2, -image.height / 2);
+    ctx.restore();
+}
 
 /** Creates an offscreen avatar renderer with methods for drawing and exporting the current avatar image. */
 export default function createAvatarRenderer() {
@@ -51,8 +66,8 @@ export default function createAvatarRenderer() {
         const rightX = (SIZE / 2) + rightBase.x + state.rightEyeOffset.x;
         const rightY = (SIZE / 2) + rightBase.y + state.rightEyeOffset.y;
 
-        ctx.drawImage(leftImg, leftX - leftImg.width / 2, leftY - leftImg.height / 2);
-        ctx.drawImage(rightImg, rightX - rightImg.width / 2, rightY - rightImg.height / 2);
+        drawRotatedImage(ctx, leftImg, leftX, leftY, state.leftEyeRotation);
+        drawRotatedImage(ctx, rightImg, rightX, rightY, state.rightEyeRotation);
 
     }
 
