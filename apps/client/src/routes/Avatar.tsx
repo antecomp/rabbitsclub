@@ -14,11 +14,14 @@ import { AvatarContainer, BackButton, Menu, MenuButton, MenuTitle, MiniDivider, 
 
 import arrow from '../assets/ui/dir.png';
 import center from '../assets/ui/center.png';
+import turn from '../assets/ui/turn.png';
+
 import { createRandomAvatar } from "@/avatar/createRandomAvatar";
 
 type AvatarMenu = 'root' | 'ears' | 'leftEye' | 'rightEye';
 
 const EYE_OFFSET_STEP = 4;
+const EYE_ROTATION_STEP = 5;
 
 const directions: { x: number; y: number; rotation: number; gridColumn: number; gridRow: number; label: string }[] = [
     { x: 0, y: -EYE_OFFSET_STEP, rotation: -90, gridColumn: 2, gridRow: 1, label: 'Move eye up' },
@@ -27,10 +30,32 @@ const directions: { x: number; y: number; rotation: number; gridColumn: number; 
     { x: 0, y: EYE_OFFSET_STEP, rotation: 90, gridColumn: 2, gridRow: 3, label: 'Move eye down' },
 ];
 
-// Directional control cluster for nudging one eye's avatar offset.
-function EyeOffsetControls(props: { setOffset: (x: number, y: number) => void; onReset: () => void }) {
+const rotations: { delta: number; gridColumn: number; label: string; mirrored?: boolean }[] = [
+    { delta: -EYE_ROTATION_STEP, gridColumn: 1, label: 'Turn eye counterclockwise', mirrored: true },
+    { delta: EYE_ROTATION_STEP, gridColumn: 3, label: 'Turn eye clockwise' },
+];
+
+// Directional control cluster for nudging one eye's avatar offset and rotation.
+function EyeOffsetControls(props: {
+    setOffset: (x: number, y: number) => void;
+    setRotation: (delta: number) => void;
+    onReset: () => void;
+}) {
     return (
-        <OffsetControls aria-label="Eye position controls">
+        <OffsetControls aria-label="Eye transform controls">
+            <For each={rotations}>
+                {({ delta, gridColumn, label, mirrored }) => (
+                    <OffsetButton
+                        type="button"
+                        aria-label={label}
+                        title={label}
+                        onClick={() => props.setRotation(delta)}
+                        style={{ 'grid-column': gridColumn, 'grid-row': 1 }}
+                    >
+                        <img src={turn} alt="" style={mirrored ? { transform: 'scaleX(-1)' } : undefined} />
+                    </OffsetButton>
+                )}
+            </For>
             <For each={directions}>
                 {({ x, y, rotation, gridColumn, gridRow, label }) => (
                     <OffsetButton
@@ -46,8 +71,8 @@ function EyeOffsetControls(props: { setOffset: (x: number, y: number) => void; o
             </For>
             <OffsetButton
                 type="button"
-                aria-label="Reset eye position"
-                title={"Reset eye position"}
+                aria-label="Reset eye transform"
+                title={"Reset eye transform"}
                 onClick={props.onReset}
                 style={{ 'grid-column': 2, 'grid-row': 2 }}
             >
@@ -74,8 +99,16 @@ export default function Avatar() {
         setAvatar(side, 'y', v => v + y);
     }
 
-    const resetEye = (side: 'leftEyeOffset' | 'rightEyeOffset') => {
-        setAvatar(side, { x: 0, y: 0 });
+    const rotateEye = (side: 'leftEyeRotation' | 'rightEyeRotation', delta: number) => {
+        setAvatar(side, v => v + delta);
+    }
+
+    const resetEye = (
+        offsetSide: 'leftEyeOffset' | 'rightEyeOffset',
+        rotationSide: 'leftEyeRotation' | 'rightEyeRotation'
+    ) => {
+        setAvatar(offsetSide, { x: 0, y: 0 });
+        setAvatar(rotationSide, 0);
     }
 
     const save = async () => {
@@ -119,8 +152,8 @@ export default function Avatar() {
 
     const menuDescription = () => ({
         ears: 'Select ear variation by clicking preview buttons.',
-        leftEye: 'Select eye variation by clicking preview buttons. Shift eye position using arrow buttons.',
-        rightEye: 'Select eye variation by clicking preview buttons. Shift eye position using arrow buttons.',
+        leftEye: 'Select eye variation by clicking preview buttons. Shift eye position and turn it using the control buttons.',
+        rightEye: 'Select eye variation by clicking preview buttons. Shift eye position and turn it using the control buttons.',
         root: 'Select options on the right to customize rabbit.'
     } satisfies Record<AvatarMenu, string>)[menu()]
 
@@ -172,7 +205,8 @@ export default function Avatar() {
                             </MenuTitle>
                             <EyeOffsetControls
                                 setOffset={(x, y) => moveEye('leftEyeOffset', x, y)}
-                                onReset={() => resetEye('leftEyeOffset')}
+                                setRotation={delta => rotateEye('leftEyeRotation', delta)}
+                                onReset={() => resetEye('leftEyeOffset', 'leftEyeRotation')}
                             />
                             <ThumbnailGrid>
                                 <For each={eyeVariants}>
@@ -197,7 +231,8 @@ export default function Avatar() {
                             </MenuTitle>
                             <EyeOffsetControls
                                 setOffset={(x, y) => moveEye('rightEyeOffset', x, y)}
-                                onReset={() => resetEye('rightEyeOffset')}
+                                setRotation={delta => rotateEye('rightEyeRotation', delta)}
+                                onReset={() => resetEye('rightEyeOffset', 'rightEyeRotation')}
                             />
                             <ThumbnailGrid>
                                 <For each={eyeVariants}>
