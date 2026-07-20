@@ -1,4 +1,4 @@
-import { eyes, heads } from "./avatar.assets";
+import { accessories, eyes, heads } from "./avatar.assets";
 import { AvatarData } from "./avatar.types";
 
 const SIZE = 400;
@@ -23,6 +23,14 @@ const eyePromises: Record<string, [Promise<HTMLImageElement>, Promise<HTMLImageE
             Array.isArray(src)
                 ? [loadImage(src[0]), loadImage(src[1])]
                 : [loadImage(src), loadImage(src)],
+        ])
+    );
+
+const accessoryPromises: Record<string, Promise<HTMLImageElement>> =
+    Object.fromEntries(
+        Object.entries(accessories).map(([key, { src }]) => [
+            key,
+            loadImage(src),
         ])
     );
 
@@ -68,6 +76,16 @@ export default function createAvatarRenderer() {
 
         drawRotatedImage(ctx, leftImg, leftX, leftY, state.leftEye.rotation);
         drawRotatedImage(ctx, rightImg, rightX, rightY, state.rightEye.rotation);
+
+        // accessories ---
+        for (const accessory of [state.accessory1, state.accessory2]) {
+            if (accessory.variant === null) continue;
+
+            const image = await accessoryPromises[accessory.variant];
+            const x = (SIZE / 2) + accessory.offset.x;
+            const y = (SIZE / 2) + accessory.offset.y;
+            drawRotatedImage(ctx, image, x, y, accessory.rotation);
+        }
 
     }
 

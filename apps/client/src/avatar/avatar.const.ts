@@ -36,7 +36,7 @@ export function createEyeSlot(variant: EyeVariant = "bead"): EyeSlot {
 export function createAccessorySlot(variant: AccessoryVariant | null = null): AccessorySlot {
     return {
         variant,
-        offset: createOffset(),
+        offset: createOffset(0, 50),
         rotation: 0
     };
 }
