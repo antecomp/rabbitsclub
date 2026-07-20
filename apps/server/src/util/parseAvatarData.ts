@@ -5,6 +5,9 @@ export default function parseAvatarData(value: string | null): AvatarData | null
 
     try {
         const avatar = JSON.parse(value) as Partial<AvatarData>
+        const leftEyeRotation = typeof avatar.leftEyeRotation === "number" ? avatar.leftEyeRotation : 0
+        const rightEyeRotation = typeof avatar.rightEyeRotation === "number" ? avatar.rightEyeRotation : 0
+
         if (
             typeof avatar.head !== "number" ||
             typeof avatar.leftEye !== "string" ||
@@ -17,7 +20,11 @@ export default function parseAvatarData(value: string | null): AvatarData | null
             return null
         }
 
-        return avatar as AvatarData
+        return {
+            ...avatar,
+            leftEyeRotation,
+            rightEyeRotation
+        } as AvatarData
     } catch {
         return null
     }

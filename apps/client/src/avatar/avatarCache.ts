@@ -41,7 +41,9 @@ export async function loadAvatarForUser(username: string): Promise<string> {
                     leftEye: isEyeVariant(data.leftEye) ? data.leftEye : defaultAvatar.leftEye,
                     rightEye: isEyeVariant(data.rightEye) ? data.rightEye : defaultAvatar.rightEye,
                     leftEyeOffset: data.leftEyeOffset ? { ...data.leftEyeOffset } : defaultAvatar.leftEyeOffset,
-                    rightEyeOffset: data.rightEyeOffset ? { ...data.rightEyeOffset } : defaultAvatar.rightEyeOffset
+                    rightEyeOffset: data.rightEyeOffset ? { ...data.rightEyeOffset } : defaultAvatar.rightEyeOffset,
+                    leftEyeRotation: typeof data.leftEyeRotation === "number" ? data.leftEyeRotation : defaultAvatar.leftEyeRotation,
+                    rightEyeRotation: typeof data.rightEyeRotation === "number" ? data.rightEyeRotation : defaultAvatar.rightEyeRotation
                 }
                 profileCache.set(username, avatar);
             }

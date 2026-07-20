@@ -12,6 +12,8 @@ export function createDefaultAvatar(): AvatarData {
         leftEye: 'bead',
         rightEye: 'bead',
         leftEyeOffset: { x: 0, y: 0 },
-        rightEyeOffset: { x: 0, y: 0 }
+        rightEyeOffset: { x: 0, y: 0 },
+        leftEyeRotation: 0,
+        rightEyeRotation: 0
     };
 }

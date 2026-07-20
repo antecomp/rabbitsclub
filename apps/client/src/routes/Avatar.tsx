@@ -110,6 +110,8 @@ export default function Avatar() {
                 rightEye: isEyeVariant(profile.rightEye) ? profile.rightEye : defaultAvatar.rightEye,
                 leftEyeOffset: profile.leftEyeOffset ? { ...profile.leftEyeOffset } : defaultAvatar.leftEyeOffset,
                 rightEyeOffset: profile.rightEyeOffset ? { ...profile.rightEyeOffset } : defaultAvatar.rightEyeOffset,
+                leftEyeRotation: typeof profile.leftEyeRotation === "number" ? profile.leftEyeRotation : defaultAvatar.leftEyeRotation,
+                rightEyeRotation: typeof profile.rightEyeRotation === "number" ? profile.rightEyeRotation : defaultAvatar.rightEyeRotation,
                 head: clampedHeadVariant(profile.head)
             });
         })();

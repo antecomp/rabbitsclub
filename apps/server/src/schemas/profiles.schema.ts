@@ -15,7 +15,9 @@ export const AvatarDataSchema = t.Object({
     leftEye: t.String(),
     rightEye: t.String(),
     leftEyeOffset: EyeOffsetSchema,
-    rightEyeOffset: EyeOffsetSchema
+    rightEyeOffset: EyeOffsetSchema,
+    leftEyeRotation: t.Number(),
+    rightEyeRotation: t.Number()
 });
 
 export type AvatarData = typeof AvatarDataSchema['static'];
