@@ -30,6 +30,8 @@ import Sunglasses from '../assets/avatars/accessories/sunglasses.png';
 import TopHat from '../assets/avatars/accessories/tophat.png';
 
 const DEFAULT_EYE_OFFSET = { x: 80, y: 100 };
+const DEFAULT_FACE_ACCESSORY_OFFSET = { x: 0, y: 100 };
+const DEFAULT_TOPHAT_OFFSET = { x: 0, y: -40 };
 
 
 export const eyes = {
@@ -49,11 +51,11 @@ export const eyes = {
 } satisfies Record<string, { src: string | [string, string]; defaultOffset: { x: number; y: number } }>;
 
 export const accessories = {
-  bow: { src: Bow },
-  glasses: { src: Glasses },
-  sunglasses: { src: Sunglasses },
-  tophat: { src: TopHat },
-} satisfies Record<string, { src: string }>;
+  bow: { src: Bow, defaultOffset: {x: 0, y: 0} },
+  glasses: { src: Glasses, defaultOffset: DEFAULT_FACE_ACCESSORY_OFFSET },
+  sunglasses: { src: Sunglasses, defaultOffset: DEFAULT_FACE_ACCESSORY_OFFSET },
+  tophat: { src: TopHat, defaultOffset: DEFAULT_TOPHAT_OFFSET },
+} satisfies Record<string, { src: string; defaultOffset: { x: number; y: number } }>;
 
 export type EyeVariant = keyof typeof eyes;
 export type AccessoryVariant = keyof typeof accessories;

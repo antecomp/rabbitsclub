@@ -82,8 +82,9 @@ export default function createAvatarRenderer() {
             if (accessory.variant === null) continue;
 
             const image = await accessoryPromises[accessory.variant];
-            const x = (SIZE / 2) + accessory.offset.x;
-            const y = (SIZE / 2) + accessory.offset.y;
+            const baseOffset = accessories[accessory.variant].defaultOffset;
+            const x = (SIZE / 2) + baseOffset.x + accessory.offset.x;
+            const y = (SIZE / 2) + baseOffset.y + accessory.offset.y;
             drawRotatedImage(ctx, image, x, y, accessory.rotation);
         }
 
