@@ -8,7 +8,7 @@ import { createStore } from "solid-js/store";
 import { api } from "../api/backend";
 import { user } from "../api/user";
 import { invalidateCachedProfile } from "../avatar/avatarCache";
-import { createDefaultAvatar, normalizeAvatarData } from "@/avatar/avatar.const";
+import { cloneAvatarData, createDefaultAvatar, toAvatarData } from "@/avatar/avatar.const";
 import { AvatarData } from "@/avatar/avatar.types";
 import { AvatarContainer, BackButton, Menu, MenuButton, MenuTitle, MiniDivider, OffsetButton, OffsetControls, Split, ThumbnailButton, ThumbnailGrid } from "./Avatar.styles";
 
@@ -132,7 +132,9 @@ export default function Avatar() {
             const profile = (await api.profile({ username }).get()).data;
             if (loadedUsername !== username || !profile) return;
 
-            setAvatar(normalizeAvatarData(profile));
+            const avatarData = toAvatarData(profile);
+            if (!avatarData) return;
+            setAvatar(cloneAvatarData(avatarData));
         })();
     });
 

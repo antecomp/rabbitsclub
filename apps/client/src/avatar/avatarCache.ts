@@ -1,7 +1,7 @@
 import { AvatarData } from "./avatar.types";
 import { api } from "../api/backend";
 import { generateAvatarAssetURL } from "./createAvatarRenderer";
-import { normalizeAvatarData } from "./avatar.const";
+import { createDefaultAvatar, toAvatarData } from "./avatar.const";
 
 // Cache profile data by username.
 const profileCache = new Map<string, AvatarData>()
@@ -32,9 +32,9 @@ export async function loadAvatarForUser(username: string): Promise<string> {
         if (!profileCache.has(username)) {
             const { data } = await api.profile({ username }).get()
             if (!data) {
-                profileCache.set(username, normalizeAvatarData(null));
+                profileCache.set(username, createDefaultAvatar());
             } else {
-                profileCache.set(username, normalizeAvatarData(data));
+                profileCache.set(username, toAvatarData(data) ?? createDefaultAvatar());
             }
         }
 

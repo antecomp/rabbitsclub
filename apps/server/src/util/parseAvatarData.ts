@@ -32,22 +32,14 @@ function parseEyeSlot(value: unknown): EyeSlot | null {
     }
 }
 
-function createDefaultAccessorySlot(): AccessorySlot {
-    return {
-        variant: null,
-        offset: { x: 0, y: 0 },
-        rotation: 0
-    }
-}
-
-function parseAccessorySlot(value: unknown): AccessorySlot {
-    if (typeof value !== "object" || value === null) return createDefaultAccessorySlot()
+function parseAccessorySlot(value: unknown): AccessorySlot | null {
+    if (typeof value !== "object" || value === null) return null
 
     const record = value as Record<string, unknown>
     const offset = parseOffset(record.offset)
     const variant = record.variant
     if (!offset || (variant !== null && typeof variant !== "string") || typeof record.rotation !== "number") {
-        return createDefaultAccessorySlot()
+        return null
     }
 
     return {
@@ -64,15 +56,17 @@ export default function parseAvatarData(value: string | null): AvatarData | null
         const avatar = JSON.parse(value) as Record<string, unknown>
         const leftEye = parseEyeSlot(avatar.leftEye)
         const rightEye = parseEyeSlot(avatar.rightEye)
+        const accessory1 = parseAccessorySlot(avatar.accessory1)
+        const accessory2 = parseAccessorySlot(avatar.accessory2)
 
-        if (typeof avatar.head !== "number" || !leftEye || !rightEye) return null
+        if (typeof avatar.head !== "number" || !leftEye || !rightEye || !accessory1 || !accessory2) return null
 
         return {
             head: avatar.head,
             leftEye,
             rightEye,
-            accessory1: parseAccessorySlot(avatar.accessory1),
-            accessory2: parseAccessorySlot(avatar.accessory2)
+            accessory1,
+            accessory2
         }
     } catch {
         return null
