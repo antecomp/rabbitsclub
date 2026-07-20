@@ -8,12 +8,20 @@ import pickRandom from "@/util/pickRandom";
 
 /** Creates a valid randomized avatar state using the available asset variants. */
 export function createRandomAvatar(): Readonly<AvatarData> {
+    const avatar = createDefaultAvatar();
+
     return {
-        ...createDefaultAvatar(),
+        ...avatar,
         head: clampedHeadVariant(getRandomInt(heads.length)),
-        leftEye: pickRandom(eyeVariants),
-        rightEye: pickRandom(eyeVariants),
-        // rightEyeOffset: {x: getRandomInt(EYE_OFFSET_RANGE), y: getRandomInt(EYE_OFFSET_RANGE)},
-        // leftEyeOffset: {x: getRandomInt(EYE_OFFSET_RANGE), y: getRandomInt(EYE_OFFSET_RANGE)}
+        leftEye: {
+            ...avatar.leftEye,
+            variant: pickRandom(eyeVariants)
+        },
+        rightEye: {
+            ...avatar.rightEye,
+            variant: pickRandom(eyeVariants)
+        },
+        // rightEye: { ...avatar.rightEye, variant: pickRandom(eyeVariants), offset: {x: getRandomInt(EYE_OFFSET_RANGE), y: getRandomInt(EYE_OFFSET_RANGE)} },
+        // leftEye: { ...avatar.leftEye, variant: pickRandom(eyeVariants), offset: {x: getRandomInt(EYE_OFFSET_RANGE), y: getRandomInt(EYE_OFFSET_RANGE)} }
     };
 }

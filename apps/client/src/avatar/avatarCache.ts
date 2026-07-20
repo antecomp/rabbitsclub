@@ -1,8 +1,7 @@
 import { AvatarData } from "./avatar.types";
 import { api } from "../api/backend";
 import { generateAvatarAssetURL } from "./createAvatarRenderer";
-import { clampedHeadVariant, isEyeVariant } from "./avatar.assets";
-import { createDefaultAvatar } from "./avatar.const";
+import { normalizeAvatarData } from "./avatar.const";
 
 // Cache profile data by username.
 const profileCache = new Map<string, AvatarData>()
@@ -32,20 +31,10 @@ export async function loadAvatarForUser(username: string): Promise<string> {
     const promise = (async () => {
         if (!profileCache.has(username)) {
             const { data } = await api.profile({ username }).get()
-            const defaultAvatar = createDefaultAvatar();
             if (!data) {
-                profileCache.set(username, defaultAvatar);
+                profileCache.set(username, normalizeAvatarData(null));
             } else {
-                const avatar: AvatarData = {
-                    head: clampedHeadVariant(data.head),
-                    leftEye: isEyeVariant(data.leftEye) ? data.leftEye : defaultAvatar.leftEye,
-                    rightEye: isEyeVariant(data.rightEye) ? data.rightEye : defaultAvatar.rightEye,
-                    leftEyeOffset: data.leftEyeOffset ? { ...data.leftEyeOffset } : defaultAvatar.leftEyeOffset,
-                    rightEyeOffset: data.rightEyeOffset ? { ...data.rightEyeOffset } : defaultAvatar.rightEyeOffset,
-                    leftEyeRotation: typeof data.leftEyeRotation === "number" ? data.leftEyeRotation : defaultAvatar.leftEyeRotation,
-                    rightEyeRotation: typeof data.rightEyeRotation === "number" ? data.rightEyeRotation : defaultAvatar.rightEyeRotation
-                }
-                profileCache.set(username, avatar);
+                profileCache.set(username, normalizeAvatarData(data));
             }
         }
 

@@ -1,4 +1,4 @@
-import { eyes, EyeVariant, heads } from "./avatar.assets";
+import { eyes, heads } from "./avatar.assets";
 import { AvatarData } from "./avatar.types";
 
 const SIZE = 400;
@@ -55,19 +55,19 @@ export default function createAvatarRenderer() {
         ctx?.drawImage(head, 0, 0, SIZE, SIZE);
 
         // eyes ---
-        const leftImg = await eyePromises[state.leftEye][0];
-        const rightImg = await eyePromises[state.rightEye][1];
+        const leftImg = await eyePromises[state.leftEye.variant][0];
+        const rightImg = await eyePromises[state.rightEye.variant][1];
 
-        const leftBase = eyes[state.leftEye as EyeVariant].defaultOffset;
-        const rightBase = eyes[state.rightEye as EyeVariant].defaultOffset;
+        const leftBase = eyes[state.leftEye.variant].defaultOffset;
+        const rightBase = eyes[state.rightEye.variant].defaultOffset;
 
-        const leftX = (SIZE / 2) + (-leftBase.x) + state.leftEyeOffset.x;
-        const leftY = (SIZE / 2) + leftBase.y + state.leftEyeOffset.y;
-        const rightX = (SIZE / 2) + rightBase.x + state.rightEyeOffset.x;
-        const rightY = (SIZE / 2) + rightBase.y + state.rightEyeOffset.y;
+        const leftX = (SIZE / 2) + (-leftBase.x) + state.leftEye.offset.x;
+        const leftY = (SIZE / 2) + leftBase.y + state.leftEye.offset.y;
+        const rightX = (SIZE / 2) + rightBase.x + state.rightEye.offset.x;
+        const rightY = (SIZE / 2) + rightBase.y + state.rightEye.offset.y;
 
-        drawRotatedImage(ctx, leftImg, leftX, leftY, state.leftEyeRotation);
-        drawRotatedImage(ctx, rightImg, rightX, rightY, state.rightEyeRotation);
+        drawRotatedImage(ctx, leftImg, leftX, leftY, state.leftEye.rotation);
+        drawRotatedImage(ctx, rightImg, rightX, rightY, state.rightEye.rotation);
 
     }
 
