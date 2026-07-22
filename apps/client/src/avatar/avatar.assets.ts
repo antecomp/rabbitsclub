@@ -24,10 +24,16 @@ import CurlLeft from '../assets/avatars/eyes/curl left.png';
 import CurlRight from '../assets/avatars/eyes/curl right.png';
 import ClenchLeft from '@/assets/avatars/eyes/clench left.png';
 import ClenchRight from '@/assets/avatars/eyes/clench right.png';
+
 import Bow from '../assets/avatars/accessories/bow.png';
 import Glasses from '../assets/avatars/accessories/glasses.png';
 import Sunglasses from '../assets/avatars/accessories/sunglasses.png';
 import TopHat from '../assets/avatars/accessories/tophat.png';
+import Cigarette from '@/assets/avatars/accessories/cigarette.png';
+import Headband from '@/assets/avatars/accessories/headband.png';
+import Headphones from '@/assets/avatars/accessories/headphones.png';
+import Wizard from '@/assets/avatars/accessories/wizard.png';
+
 
 const DEFAULT_EYE_OFFSET = { x: 80, y: 100 };
 const DEFAULT_FACE_ACCESSORY_OFFSET = { x: 0, y: 100 };
@@ -51,10 +57,14 @@ export const eyes = {
 } satisfies Record<string, { src: string | [string, string]; defaultOffset: { x: number; y: number } }>;
 
 export const accessories = {
-  bow: { src: Bow, defaultOffset: {x: 0, y: 0} },
+  bow: { src: Bow, defaultOffset: { x: 0, y: 0 } },
   glasses: { src: Glasses, defaultOffset: DEFAULT_FACE_ACCESSORY_OFFSET },
   sunglasses: { src: Sunglasses, defaultOffset: DEFAULT_FACE_ACCESSORY_OFFSET },
   tophat: { src: TopHat, defaultOffset: DEFAULT_TOPHAT_OFFSET },
+  cigarette: { src: Cigarette, defaultOffset: { x: 60, y: 150 } },
+  headband: { src: Headband, defaultOffset: {x: 0, y: 40} },
+  headphones: { src: Headphones, defaultOffset: { x: 0, y: 45 } },
+  wizard: { src: Wizard, defaultOffset: {x: 0, y: -50} }
 } satisfies Record<string, { src: string; defaultOffset: { x: number; y: number } }>;
 
 export type EyeVariant = keyof typeof eyes;
