@@ -35,7 +35,7 @@ import Headphones from '@/assets/avatars/accessories/headphones.png';
 import Wizard from '@/assets/avatars/accessories/wizard.png';
 
 
-const DEFAULT_EYE_OFFSET = { x: 80, y: 75 };
+const DEFAULT_EYE_OFFSET = { x: 75, y: 75 };
 const DEFAULT_FACE_ACCESSORY_OFFSET = { x: 0, y: 75 };
 const DEFAULT_TOPHAT_OFFSET = { x: 0, y: -65 };
 
