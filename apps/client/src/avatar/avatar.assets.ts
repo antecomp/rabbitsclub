@@ -35,9 +35,9 @@ import Headphones from '@/assets/avatars/accessories/headphones.png';
 import Wizard from '@/assets/avatars/accessories/wizard.png';
 
 
-const DEFAULT_EYE_OFFSET = { x: 80, y: 100 };
-const DEFAULT_FACE_ACCESSORY_OFFSET = { x: 0, y: 100 };
-const DEFAULT_TOPHAT_OFFSET = { x: 0, y: -40 };
+const DEFAULT_EYE_OFFSET = { x: 80, y: 75 };
+const DEFAULT_FACE_ACCESSORY_OFFSET = { x: 0, y: 75 };
+const DEFAULT_TOPHAT_OFFSET = { x: 0, y: -65 };
 
 
 export const eyes = {
@@ -61,10 +61,10 @@ export const accessories = {
   glasses: { src: Glasses, defaultOffset: DEFAULT_FACE_ACCESSORY_OFFSET },
   sunglasses: { src: Sunglasses, defaultOffset: DEFAULT_FACE_ACCESSORY_OFFSET },
   tophat: { src: TopHat, defaultOffset: DEFAULT_TOPHAT_OFFSET },
-  cigarette: { src: Cigarette, defaultOffset: { x: 60, y: 150 } },
-  headband: { src: Headband, defaultOffset: {x: 0, y: 40} },
-  headphones: { src: Headphones, defaultOffset: { x: 0, y: 45 } },
-  wizard: { src: Wizard, defaultOffset: {x: 0, y: -50} }
+  cigarette: { src: Cigarette, defaultOffset: { x: 60, y: 125 } },
+  headband: { src: Headband, defaultOffset: {x: 0, y: 15} },
+  headphones: { src: Headphones, defaultOffset: { x: 0, y: 20 } },
+  wizard: { src: Wizard, defaultOffset: {x: 0, y: -75} }
 } satisfies Record<string, { src: string; defaultOffset: { x: number; y: number } }>;
 
 export type EyeVariant = keyof typeof eyes;

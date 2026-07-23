@@ -1,7 +1,7 @@
 import { accessories, eyes, heads } from "./avatar.assets";
 import { AvatarData } from "./avatar.types";
 
-const SIZE = 400;
+const SIZE = 450;
 const DEG_TO_RAD = Math.PI / 180;
 
 /** Loads an image asset once the browser resolves its module URL. */
