@@ -28,6 +28,8 @@ export const AvatarDataSchema = t.Object({
     rightEye: EyeSlotSchema,
     accessory1: AccessorySlotSchema,
     accessory2: AccessorySlotSchema
+}, {
+    additionalProperties: false
 });
 
 export type AvatarData = typeof AvatarDataSchema['static'];
