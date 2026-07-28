@@ -31,7 +31,7 @@ export type ClientMessage = typeof ClientMessageSchema['static'];
 export function toClientMessage(message: DbMessage): ClientMessage {
     const is_deleted = message.deleted_at !== null;
 
-    const sender = actions.getUserById(message.user_id);
+    const sender = actions.users.getUserById(message.user_id);
     const username = sender?.username ?? "ERR";
 
     return {

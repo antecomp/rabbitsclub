@@ -21,7 +21,7 @@ const app = new Elysia()
             status: t.String()
         })
     })
-    .get("/usercount", () => actions.getUserCount())
+    .get("/usercount", () => actions.users.getUserCount())
     .listen(process.env.PORT ?? 3000)
 
 export type App = typeof app

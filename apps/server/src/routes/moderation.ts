@@ -10,7 +10,7 @@ import { UserPermissionsSchema } from "~/schemas/moderation.schema";
 export const moderationRoutes = new Elysia({ prefix: '/moderation' })
     .use(authMiddleware)
     .get("/permissions", ({ user }) => {
-        const perms = actions.getUserPermissions(user.id)
+        const perms = actions.moderation.getUserPermissions(user.id)
         const grant = (val?: number | null) => user.is_admin === 1 || Boolean(val)
 
         return {
@@ -26,7 +26,7 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         }
     })
     .delete("/messages/:id", ({ params, user, body, status }) => {
-        const deleted = actions.deleteMessage(Number(params.id), user.id, "moderator", body?.reason)
+        const deleted = actions.messages.deleteMessage(Number(params.id), user.id, "moderator", body?.reason)
         if (!deleted) return status(404, { message: "Message not found" })
 
         broadcastChatMessage(toClientMessage(deleted));
@@ -42,7 +42,7 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
     .patch("/messages/:id", ({ params, user, body, status }) => {
         const targetId = Number(params.id);
         if (!targetId) return status(400, { message: 'invalid target message' });
-        const updated = actions.setModerationNote(targetId, user.id, body.note ?? null);
+        const updated = actions.messages.setModerationNote(targetId, user.id, body.note ?? null);
         if (!updated) return status(404, { message: "Message not found" });
 
         broadcastChatMessage(toClientMessage(updated));

@@ -6,10 +6,10 @@ import profileActions from "./profile.actions";
 import authActions from "./auth.actions";
 
 export const actions = {
-    ...messagesActions,
-    ...moderationActions,
-    ...userActions,
-    ...invitesActions,
-    ...profileActions,
-    ...authActions,
+    messages:       messagesActions,
+    moderation:     moderationActions,
+    users:           userActions,
+    invites:        invitesActions,
+    profiles:       profileActions,
+    auth:           authActions,
 }

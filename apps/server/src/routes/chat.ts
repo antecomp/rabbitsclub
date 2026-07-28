@@ -41,7 +41,7 @@ export const chatRoutes = new Elysia()
             if (message.content.length > MAX_MESSAGE_LENGTH) return;
             const msgContent = message.content.trim();
             if (!msgContent) return;
-            const saved = actions.insertMessage(ws.data.user.id, msgContent);
+            const saved = actions.messages.insertMessage(ws.data.user.id, msgContent);
             if (!saved) {
                 console.error("Unable to post message to DB", message);
                 return;

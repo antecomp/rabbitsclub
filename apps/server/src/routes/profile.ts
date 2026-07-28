@@ -8,7 +8,7 @@ import { ErrorSchema } from "../schemas/generic.schema"
 export const profileRoutes = new Elysia({ prefix: "/profile" })
     .use(authMiddleware)
     .get("/:username", ({ params: { username }, status }) => {
-        const avatar = actions.getProfile(username);
+        const avatar = actions.profiles.getProfile(username);
         if(!avatar) return status(404, { message: "Profile not found" });
         return avatar;
     }, {
@@ -19,7 +19,7 @@ export const profileRoutes = new Elysia({ prefix: "/profile" })
         }
     })
     .put("/avatar", ({ body, user }) => {
-        actions.upsertProfile(user.id, body)
+        actions.profiles.upsertProfile(user.id, body)
         return { success: true }
     }, {
         useAuth: true,

@@ -91,7 +91,7 @@ export function clearAuthCookie(authCookie: AuthCookie) {
 }
 
 export function revokeAllSessions(userId: number) {
-    return actions.bumpTokenVersion(userId)
+    return actions.auth.bumpTokenVersion(userId)
 }
 
 export async function validateAuthToken(jwt: JwtService, token: string): Promise<AuthSuccess | AuthFailure> {
@@ -101,7 +101,7 @@ export async function validateAuthToken(jwt: JwtService, token: string): Promise
     const now = Math.floor(Date.now() / 1000)
     if (payload.exp <= now) return { reason: "session_expired" }
 
-    const user = actions.getUserById(payload.id)
+    const user = actions.users.getUserById(payload.id)
     if (!user) return { reason: "session_revoked" }
 
     if (payload.ver !== user.token_version) return { reason: "session_revoked" }

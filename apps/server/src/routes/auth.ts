@@ -13,7 +13,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
         schema: JWTSchema
     }))
     .get("/invite/:code", ({ params, status }) => {
-        const invite = actions.getAvailableInvite(params.code)
+        const invite = actions.invites.getAvailableInvite(params.code)
         if (!invite) {
             return status(404, { message: "Invalid or already used invite code" })
         }
@@ -28,18 +28,18 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
     .post("/register", async ({ request, jwt, body, cookie: { auth }, status }) => {
         if (!isOriginAllowed(request)) return status(403, authError("origin_not_allowed"));
 
-        const invite = actions.getInviteCode(body.code);
+        const invite = actions.invites.getInviteCode(body.code);
         if (!invite || invite.used_by !== null) 
             return status(403, { message: "Invalid or already used invite code" });
 
-        const existing = actions.getUserByUsername(body.username);
+        const existing = actions.users.getUserByUsername(body.username);
         if (existing) 
             return status(409, { message: "Username already taken" });
 
         const hashed = await Bun.password.hash(body.password);
         let user;
         try {
-            user = actions.insertUserWithInvite(body.username, hashed, body.code, body.avatar);
+            user = actions.invites.insertUserWithInvite(body.username, hashed, body.code, body.avatar);
         } catch (error) {
             if (error instanceof Error && error.message === "INVITE_CLAIM_FAILED") {
                 return status(403, { message: "Invalid or already used invite code" });
@@ -66,7 +66,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
     .post("/login", async ({ request, jwt, body, cookie: { auth }, status }) => {
         if (!isOriginAllowed(request)) return status(403, authError("origin_not_allowed"));
 
-        const user = actions.getUserByUsername(body.username);
+        const user = actions.users.getUserByUsername(body.username);
         if (!user) return status(401, {message: "invalid credentials"});
 
         const valid = await Bun.password.verify(body.password, user.password);
