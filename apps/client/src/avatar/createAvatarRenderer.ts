@@ -104,16 +104,10 @@ export default function createAvatarRenderer() {
 
         let minX = SIZE, minY = SIZE, maxX = 0, maxY = 0;
 
-        /*  TODO: I think we can greatly reduce average-case complexity if we break early.
-            The break would need to be per scan direction (top/max, bottom/min, etc...)
-            fe...
-            let minY = 0;
-            top: for (; minY < SIZE; minY++) {
-                for (let x = 0; x < SIZE; x++) {
-                    if (data[(minY * SIZE + x) * 4 + 3] > 0) break top;
-                }
-            }
-         */
+        /* regarding complexity: o(n) always but not complex enough to worry about optimizing 
+         * for a slightly better best-case (when worst would still be o(n))
+         * In fact, the convertToBlob call takes significantly more time alone.
+        */
         for (let y = 0; y < SIZE; y++) {
             for (let x = 0; x < SIZE; x++) {
                 const alpha = data[(y * SIZE + x) * 4 + 3];
