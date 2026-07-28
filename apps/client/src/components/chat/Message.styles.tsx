@@ -10,7 +10,7 @@ import taghead_f from '@/assets/ui/taghead_f.png?url&no-inline';
 import tagtail from '@/assets/ui/tagtail.png?url&no-inline';
 import tagtail_f from '@/assets/ui/tagtail_f.png?url&no-inline';
 
-export const PFP_SIZE = '50px';
+export const PFP_SIZE = '60px';
 export const USERNAME_SIZE = '11.2px';
 export const DATE_SIZE = '10px';
 export const MESSAGE_MARGINS = '15px';
