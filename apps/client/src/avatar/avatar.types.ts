@@ -3,26 +3,22 @@ import { AccessoryVariant, EyeVariant } from "./avatar.assets";
 export type HeadVariant = number;
 export type AvatarRotation = number;
 
-export interface AvatarOffset {
+export type AvatarOffset = {
     x: number;
     y: number;
 }
 
-export interface AvatarTransform {
+export type AvatarTransform = {
     offset: AvatarOffset;
-    rotation: AvatarRotation;
+    rotation: AvatarRotation
 }
 
-export interface AvatarPart<TVariant extends string> extends AvatarTransform {
-    variant: TVariant;
-}
+export type AvatarPart<TVariant extends string | null> = {
+    variant: TVariant
+} & AvatarTransform
 
-export interface OptionalAvatarPart<TVariant extends string> extends AvatarTransform {
-    variant: TVariant | null;
-}
-
-export type EyeSlot = AvatarPart<EyeVariant>;
-export type AccessorySlot = OptionalAvatarPart<AccessoryVariant>;
+export type EyeSlot = AvatarPart<EyeVariant>
+export type AccessorySlot = AvatarPart<AccessoryVariant | null>
 
 /**
  * Serializable avatar customization state shared by profile APIs, editor UI,

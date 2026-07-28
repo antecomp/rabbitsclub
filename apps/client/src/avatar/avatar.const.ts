@@ -1,30 +1,43 @@
 import { AccessoryVariant, EyeVariant, clampedHeadVariant, isAccessoryVariant, isEyeVariant } from "./avatar.assets";
-import { AccessorySlot, AvatarData, AvatarOffset, EyeSlot } from "./avatar.types";
+import { AccessorySlot, AvatarData, AvatarOffset, AvatarRotation, EyeSlot, HeadVariant } from "./avatar.types";
 
 type AvatarInputSlot = {
     variant: string;
     offset: AvatarOffset;
-    rotation: number;
+    rotation: AvatarRotation;
 };
 
 type AccessoryInputSlot = {
     variant: string | null;
     offset: AvatarOffset;
-    rotation: number;
+    rotation: AvatarRotation;
 };
 
 export type AvatarInputData = {
-    head: number;
+    head: HeadVariant;
     leftEye: AvatarInputSlot;
     rightEye: AvatarInputSlot;
     accessory1: AccessoryInputSlot;
     accessory2: AccessoryInputSlot;
 };
 
+/**
+ * Create a fresh offset object for avatar parts.
+ *
+ * @param x - Horizontal offset value.
+ * @param y - Vertical offset value.
+ * @returns A new offset object.
+ */
 function createOffset(x = 0, y = 0): AvatarOffset {
     return { x, y };
 }
 
+/**
+ * Create a default eye slot for an avatar.
+ *
+ * @param variant - The eye variant name.
+ * @returns A new EyeSlot.
+ */
 export function createEyeSlot(variant: EyeVariant = "bead"): EyeSlot {
     return {
         variant,
@@ -33,6 +46,12 @@ export function createEyeSlot(variant: EyeVariant = "bead"): EyeSlot {
     };
 }
 
+/**
+ * Create a default accessory slot for an avatar.
+ *
+ * @param variant - The accessory variant name or null.
+ * @returns A new AccessorySlot.
+ */
 export function createAccessorySlot(variant: AccessoryVariant | null = null): AccessorySlot {
     return {
         variant,
@@ -46,6 +65,8 @@ export function createAccessorySlot(variant: AccessoryVariant | null = null): Ac
  *
  * Offset objects are intentionally created per call so Solid stores and callers
  * never share mutable nested references.
+ *
+ * @returns A default AvatarData object.
  */
 export function createDefaultAvatar(): AvatarData {
     return {
@@ -57,6 +78,11 @@ export function createDefaultAvatar(): AvatarData {
     };
 }
 
+/**
+ * Convert input eye data into a validated EyeSlot.
+ *
+ * Returns null if the variant is invalid.
+ */
 function toEyeSlot(input: AvatarInputSlot): EyeSlot | null {
     if (!isEyeVariant(input.variant)) return null;
 
@@ -67,6 +93,11 @@ function toEyeSlot(input: AvatarInputSlot): EyeSlot | null {
     };
 }
 
+/**
+ * Convert input accessory data into a validated AccessorySlot.
+ *
+ * Returns null if the variant is invalid.
+ */
 function toAccessorySlot(input: AccessoryInputSlot): AccessorySlot | null {
     if (input.variant !== null && !isAccessoryVariant(input.variant)) return null;
 
@@ -77,6 +108,11 @@ function toAccessorySlot(input: AccessoryInputSlot): AccessorySlot | null {
     };
 }
 
+/**
+ * Convert raw avatar input into validated AvatarData.
+ *
+ * Returns null if any input slot is invalid or missing.
+ */
 export function toAvatarData(data: AvatarInputData | null | undefined): AvatarData | null {
     if (!data) return null;
 
@@ -96,6 +132,12 @@ export function toAvatarData(data: AvatarInputData | null | undefined): AvatarDa
     };
 }
 
+/**
+ * Create a deep clone of AvatarData.
+ *
+ * @param data - AvatarData to clone.
+ * @returns A new AvatarData object with duplicated nested values.
+ */
 export function cloneAvatarData(data: AvatarData): AvatarData {
     return {
         head: clampedHeadVariant(data.head),
