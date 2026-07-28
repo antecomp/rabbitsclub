@@ -25,7 +25,19 @@ import CurlRight from '../assets/avatars/eyes/curl right.png';
 import ClenchLeft from '@/assets/avatars/eyes/clench left.png';
 import ClenchRight from '@/assets/avatars/eyes/clench right.png';
 
-const DEFAULT_EYE_OFFSET = { x: 80, y: 100 };
+import Bow from '../assets/avatars/accessories/bow.png';
+import Glasses from '../assets/avatars/accessories/glasses.png';
+import Sunglasses from '../assets/avatars/accessories/sunglasses.png';
+import TopHat from '../assets/avatars/accessories/tophat.png';
+import Cigarette from '@/assets/avatars/accessories/cigarette.png';
+import Headband from '@/assets/avatars/accessories/headband.png';
+import Headphones from '@/assets/avatars/accessories/headphones.png';
+import Wizard from '@/assets/avatars/accessories/wizard.png';
+
+
+const DEFAULT_EYE_OFFSET = { x: 75, y: 75 };
+const DEFAULT_FACE_ACCESSORY_OFFSET = { x: 0, y: 75 };
+const DEFAULT_TOPHAT_OFFSET = { x: 0, y: -65 };
 
 
 export const eyes = {
@@ -44,16 +56,36 @@ export const eyes = {
   clench:  { src: [ClenchLeft, ClenchRight], defaultOffset: DEFAULT_EYE_OFFSET },
 } satisfies Record<string, { src: string | [string, string]; defaultOffset: { x: number; y: number } }>;
 
+export const accessories = {
+  bow: { src: Bow, defaultOffset: { x: 0, y: 0 } },
+  glasses: { src: Glasses, defaultOffset: DEFAULT_FACE_ACCESSORY_OFFSET },
+  sunglasses: { src: Sunglasses, defaultOffset: DEFAULT_FACE_ACCESSORY_OFFSET },
+  tophat: { src: TopHat, defaultOffset: DEFAULT_TOPHAT_OFFSET },
+  cigarette: { src: Cigarette, defaultOffset: { x: 60, y: 125 } },
+  headband: { src: Headband, defaultOffset: {x: 0, y: 15} },
+  headphones: { src: Headphones, defaultOffset: { x: 0, y: 20 } },
+  wizard: { src: Wizard, defaultOffset: {x: 0, y: -75} }
+} satisfies Record<string, { src: string; defaultOffset: { x: number; y: number } }>;
+
 export type EyeVariant = keyof typeof eyes;
+export type AccessoryVariant = keyof typeof accessories;
 export type EyeImageEntry = HTMLImageElement | [HTMLImageElement, HTMLImageElement];
 
 export const eyeVariants = Object.keys(eyes) as EyeVariant[];
+export const accessoryVariants = Object.keys(accessories) as AccessoryVariant[];
 
 /**
  * Narrows arbitrary strings to supported eye asset keys.
  */
 export function isEyeVariant(variant: string): variant is EyeVariant {
   return variant in eyes;
+}
+
+/**
+ * Narrows arbitrary strings to supported accessory asset keys.
+ */
+export function isAccessoryVariant(variant: string): variant is AccessoryVariant {
+  return variant in accessories;
 }
 
 export const heads = [

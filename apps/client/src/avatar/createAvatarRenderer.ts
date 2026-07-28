@@ -1,7 +1,7 @@
-import { eyes, EyeVariant, heads } from "./avatar.assets";
+import { accessories, eyes, heads } from "./avatar.assets";
 import { AvatarData } from "./avatar.types";
 
-const SIZE = 400;
+const SIZE = 450;
 const DEG_TO_RAD = Math.PI / 180;
 
 /** Loads an image asset once the browser resolves its module URL. */
@@ -23,6 +23,14 @@ const eyePromises: Record<string, [Promise<HTMLImageElement>, Promise<HTMLImageE
             Array.isArray(src)
                 ? [loadImage(src[0]), loadImage(src[1])]
                 : [loadImage(src), loadImage(src)],
+        ])
+    );
+
+const accessoryPromises: Record<string, Promise<HTMLImageElement>> =
+    Object.fromEntries(
+        Object.entries(accessories).map(([key, { src }]) => [
+            key,
+            loadImage(src),
         ])
     );
 
@@ -55,19 +63,30 @@ export default function createAvatarRenderer() {
         ctx?.drawImage(head, 0, 0, SIZE, SIZE);
 
         // eyes ---
-        const leftImg = await eyePromises[state.leftEye][0];
-        const rightImg = await eyePromises[state.rightEye][1];
+        const leftImg = await eyePromises[state.leftEye.variant][0];
+        const rightImg = await eyePromises[state.rightEye.variant][1];
 
-        const leftBase = eyes[state.leftEye as EyeVariant].defaultOffset;
-        const rightBase = eyes[state.rightEye as EyeVariant].defaultOffset;
+        const leftBase = eyes[state.leftEye.variant].defaultOffset;
+        const rightBase = eyes[state.rightEye.variant].defaultOffset;
 
-        const leftX = (SIZE / 2) + (-leftBase.x) + state.leftEyeOffset.x;
-        const leftY = (SIZE / 2) + leftBase.y + state.leftEyeOffset.y;
-        const rightX = (SIZE / 2) + rightBase.x + state.rightEyeOffset.x;
-        const rightY = (SIZE / 2) + rightBase.y + state.rightEyeOffset.y;
+        const leftX = (SIZE / 2) + (-leftBase.x) + state.leftEye.offset.x;
+        const leftY = (SIZE / 2) + leftBase.y + state.leftEye.offset.y;
+        const rightX = (SIZE / 2) + rightBase.x + state.rightEye.offset.x;
+        const rightY = (SIZE / 2) + rightBase.y + state.rightEye.offset.y;
 
-        drawRotatedImage(ctx, leftImg, leftX, leftY, state.leftEyeRotation);
-        drawRotatedImage(ctx, rightImg, rightX, rightY, state.rightEyeRotation);
+        drawRotatedImage(ctx, leftImg, leftX, leftY, state.leftEye.rotation);
+        drawRotatedImage(ctx, rightImg, rightX, rightY, state.rightEye.rotation);
+
+        // accessories ---
+        for (const accessory of [state.accessory1, state.accessory2]) {
+            if (accessory.variant === null) continue;
+
+            const image = await accessoryPromises[accessory.variant];
+            const baseOffset = accessories[accessory.variant].defaultOffset;
+            const x = (SIZE / 2) + baseOffset.x + accessory.offset.x;
+            const y = (SIZE / 2) + baseOffset.y + accessory.offset.y;
+            drawRotatedImage(ctx, image, x, y, accessory.rotation);
+        }
 
     }
 
@@ -85,16 +104,10 @@ export default function createAvatarRenderer() {
 
         let minX = SIZE, minY = SIZE, maxX = 0, maxY = 0;
 
-        /*  TODO: I think we can greatly reduce average-case complexity if we break early.
-            The break would need to be per scan direction (top/max, bottom/min, etc...)
-            fe...
-            let minY = 0;
-            top: for (; minY < SIZE; minY++) {
-                for (let x = 0; x < SIZE; x++) {
-                    if (data[(minY * SIZE + x) * 4 + 3] > 0) break top;
-                }
-            }
-         */
+        /* regarding complexity: o(n) always but not complex enough to worry about optimizing 
+         * for a slightly better best-case (when worst would still be o(n))
+         * In fact, the convertToBlob call takes significantly more time alone.
+        */
         for (let y = 0; y < SIZE; y++) {
             for (let x = 0; x < SIZE; x++) {
                 const alpha = data[(y * SIZE + x) * 4 + 3];

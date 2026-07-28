@@ -2,13 +2,13 @@ import { useNavigate } from "@solidjs/router";
 import { createEffect, createSignal, For, Match, Show, Switch } from "solid-js";
 import { AvatarCanvas } from "../avatar/AvatarCanvas";
 import Footer from "../components/Footer";
-import { EyeVariant, clampedHeadVariant, eyeVariants, eyes, heads, isEyeVariant } from "../avatar/avatar.assets";
+import { AccessoryVariant, EyeVariant, accessories, accessoryVariants, eyeVariants, eyes, heads } from "../avatar/avatar.assets";
 import { Divider, Subtitle, Title } from "../styled/shared.styles";
 import { createStore } from "solid-js/store";
 import { api } from "../api/backend";
 import { user } from "../api/user";
 import { invalidateCachedProfile } from "../avatar/avatarCache";
-import { createDefaultAvatar } from "@/avatar/avatar.const";
+import { cloneAvatarData, createDefaultAvatar, toAvatarData } from "@/avatar/avatar.const";
 import { AvatarData } from "@/avatar/avatar.types";
 import { AvatarContainer, BackButton, Menu, MenuButton, MenuTitle, MiniDivider, OffsetButton, OffsetControls, Split, ThumbnailButton, ThumbnailGrid } from "./Avatar.styles";
 
@@ -18,7 +18,8 @@ import turn from '../assets/ui/turn.png';
 
 import { createRandomAvatar } from "@/avatar/createRandomAvatar";
 
-type AvatarMenu = 'root' | 'ears' | 'leftEye' | 'rightEye';
+type AvatarMenu = 'root' | 'ears' | 'leftEye' | 'rightEye' | 'accessory1' | 'accessory2';
+type TransformableSlot = 'leftEye' | 'rightEye' | 'accessory1' | 'accessory2';
 
 const EYE_OFFSET_STEP = 4;
 const EYE_ROTATION_STEP = 5;
@@ -94,21 +95,20 @@ export default function Avatar() {
         return Array.isArray(src) ? src[side] : src;
     }
 
-    const moveEye = (side: 'leftEyeOffset' | 'rightEyeOffset', x: number, y: number) => {
-        setAvatar(side, 'x', v => v + x);
-        setAvatar(side, 'y', v => v + y);
+    const accessoryThumbnail = (variant: AccessoryVariant) => accessories[variant].src;
+
+    const movePart = (side: TransformableSlot, x: number, y: number) => {
+        setAvatar(side, 'offset', 'x', v => v + x);
+        setAvatar(side, 'offset', 'y', v => v + y);
     }
 
-    const rotateEye = (side: 'leftEyeRotation' | 'rightEyeRotation', delta: number) => {
-        setAvatar(side, v => v + delta);
+    const rotatePart = (side: TransformableSlot, delta: number) => {
+        setAvatar(side, 'rotation', v => v + delta);
     }
 
-    const resetEye = (
-        offsetSide: 'leftEyeOffset' | 'rightEyeOffset',
-        rotationSide: 'leftEyeRotation' | 'rightEyeRotation'
-    ) => {
-        setAvatar(offsetSide, { x: 0, y: 0 });
-        setAvatar(rotationSide, 0);
+    const resetPart = (side: TransformableSlot) => {
+        setAvatar(side, 'offset', { x: 0, y: 0 });
+        setAvatar(side, 'rotation', 0);
     }
 
     const save = async () => {
@@ -134,19 +134,10 @@ export default function Avatar() {
         void (async () => {
             const profile = (await api.profile({ username }).get()).data;
             if (loadedUsername !== username || !profile) return;
-            const defaultAvatar = createDefaultAvatar();
 
-            setAvatar({
-                ...defaultAvatar,
-                ...profile,
-                leftEye: isEyeVariant(profile.leftEye) ? profile.leftEye : defaultAvatar.leftEye,
-                rightEye: isEyeVariant(profile.rightEye) ? profile.rightEye : defaultAvatar.rightEye,
-                leftEyeOffset: profile.leftEyeOffset ? { ...profile.leftEyeOffset } : defaultAvatar.leftEyeOffset,
-                rightEyeOffset: profile.rightEyeOffset ? { ...profile.rightEyeOffset } : defaultAvatar.rightEyeOffset,
-                leftEyeRotation: typeof profile.leftEyeRotation === "number" ? profile.leftEyeRotation : defaultAvatar.leftEyeRotation,
-                rightEyeRotation: typeof profile.rightEyeRotation === "number" ? profile.rightEyeRotation : defaultAvatar.rightEyeRotation,
-                head: clampedHeadVariant(profile.head)
-            });
+            const avatarData = toAvatarData(profile);
+            if (!avatarData) return;
+            setAvatar(cloneAvatarData(avatarData));
         })();
     });
 
@@ -154,6 +145,8 @@ export default function Avatar() {
         ears: 'Select ear variation by clicking preview buttons.',
         leftEye: 'Select eye variation by clicking preview buttons. Transform it using the control buttons.',
         rightEye: 'Select eye variation by clicking preview buttons. Transform it using the control buttons.',
+        accessory1: 'Select an accessory or none. Transform it using the control buttons.',
+        accessory2: 'Select an accessory or none. Transform it using the control buttons.',
         root: 'Select options on the right to customize rabbit.'
     } satisfies Record<AvatarMenu, string>)[menu()]
 
@@ -170,6 +163,8 @@ export default function Avatar() {
                             <MenuButton type="button" onClick={() => setMenu('ears')}>[ EARS ]</MenuButton>
                             <MenuButton type="button" onClick={() => setMenu('leftEye')}>[ EYE L ]</MenuButton>
                             <MenuButton type="button" onClick={() => setMenu('rightEye')}>[ EYE R ]</MenuButton>
+                            <MenuButton type="button" onClick={() => setMenu('accessory1')}>[ ACC 1 ]</MenuButton>
+                            <MenuButton type="button" onClick={() => setMenu('accessory2')}>[ ACC 2 ]</MenuButton>
                             <MiniDivider/>
                             <MenuButton type="button" onClick={() => setAvatar(createRandomAvatar())}>[ RANDOM ]</MenuButton>
                             <Show when={user()}>
@@ -204,18 +199,18 @@ export default function Avatar() {
                                 <p>LEFT EYE</p>
                             </MenuTitle>
                             <EyeOffsetControls
-                                setOffset={(x, y) => moveEye('leftEyeOffset', x, y)}
-                                setRotation={delta => rotateEye('leftEyeRotation', delta)}
-                                onReset={() => resetEye('leftEyeOffset', 'leftEyeRotation')}
+                                setOffset={(x, y) => movePart('leftEye', x, y)}
+                                setRotation={delta => rotatePart('leftEye', delta)}
+                                onReset={() => resetPart('leftEye')}
                             />
                             <ThumbnailGrid>
                                 <For each={eyeVariants}>
                                     {eye => (
                                         <ThumbnailButton
                                             type="button"
-                                            data-selected={avatar.leftEye === eye}
-                                            aria-pressed={avatar.leftEye === eye}
-                                            onClick={() => setAvatar('leftEye', eye)}
+                                            data-selected={avatar.leftEye.variant === eye}
+                                            aria-pressed={avatar.leftEye.variant === eye}
+                                            onClick={() => setAvatar('leftEye', 'variant', eye)}
                                         >
                                             <img src={eyeThumbnail(eye, 0)} alt={`${eye} left eye`} />
                                             {eye}
@@ -230,21 +225,89 @@ export default function Avatar() {
                                 <p>RIGHT EYE</p>
                             </MenuTitle>
                             <EyeOffsetControls
-                                setOffset={(x, y) => moveEye('rightEyeOffset', x, y)}
-                                setRotation={delta => rotateEye('rightEyeRotation', delta)}
-                                onReset={() => resetEye('rightEyeOffset', 'rightEyeRotation')}
+                                setOffset={(x, y) => movePart('rightEye', x, y)}
+                                setRotation={delta => rotatePart('rightEye', delta)}
+                                onReset={() => resetPart('rightEye')}
                             />
                             <ThumbnailGrid>
                                 <For each={eyeVariants}>
                                     {eye => (
                                         <ThumbnailButton
                                             type="button"
-                                            data-selected={avatar.rightEye === eye}
-                                            aria-pressed={avatar.rightEye === eye}
-                                            onClick={() => setAvatar('rightEye', eye)}
+                                            data-selected={avatar.rightEye.variant === eye}
+                                            aria-pressed={avatar.rightEye.variant === eye}
+                                            onClick={() => setAvatar('rightEye', 'variant', eye)}
                                         >
                                             <img src={eyeThumbnail(eye, 1)} alt={`${eye} right eye`} />
                                             {eye}
+                                        </ThumbnailButton>
+                                    )}
+                                </For>
+                            </ThumbnailGrid>
+                        </Match>
+                        <Match when={menu() === 'accessory1'}>
+                            <MenuTitle>
+                                <BackButton type="button" onClick={() => setMenu('root')}>[ BACK ]</BackButton>
+                                <p>ACCESSORY 1</p>
+                            </MenuTitle>
+                            <EyeOffsetControls
+                                setOffset={(x, y) => movePart('accessory1', x, y)}
+                                setRotation={delta => rotatePart('accessory1', delta)}
+                                onReset={() => resetPart('accessory1')}
+                            />
+                            <ThumbnailGrid>
+                                <ThumbnailButton
+                                    type="button"
+                                    data-selected={avatar.accessory1.variant === null}
+                                    aria-pressed={avatar.accessory1.variant === null}
+                                    onClick={() => setAvatar('accessory1', 'variant', null)}
+                                >
+                                    none
+                                </ThumbnailButton>
+                                <For each={accessoryVariants}>
+                                    {accessory => (
+                                        <ThumbnailButton
+                                            type="button"
+                                            data-selected={avatar.accessory1.variant === accessory}
+                                            aria-pressed={avatar.accessory1.variant === accessory}
+                                            onClick={() => setAvatar('accessory1', 'variant', accessory)}
+                                        >
+                                            <img src={accessoryThumbnail(accessory)} alt={`${accessory} accessory`} />
+                                            {accessory}
+                                        </ThumbnailButton>
+                                    )}
+                                </For>
+                            </ThumbnailGrid>
+                        </Match>
+                        <Match when={menu() === 'accessory2'}>
+                            <MenuTitle>
+                                <BackButton type="button" onClick={() => setMenu('root')}>[ BACK ]</BackButton>
+                                <p>ACCESSORY 2</p>
+                            </MenuTitle>
+                            <EyeOffsetControls
+                                setOffset={(x, y) => movePart('accessory2', x, y)}
+                                setRotation={delta => rotatePart('accessory2', delta)}
+                                onReset={() => resetPart('accessory2')}
+                            />
+                            <ThumbnailGrid>
+                                <ThumbnailButton
+                                    type="button"
+                                    data-selected={avatar.accessory2.variant === null}
+                                    aria-pressed={avatar.accessory2.variant === null}
+                                    onClick={() => setAvatar('accessory2', 'variant', null)}
+                                >
+                                    none
+                                </ThumbnailButton>
+                                <For each={accessoryVariants}>
+                                    {accessory => (
+                                        <ThumbnailButton
+                                            type="button"
+                                            data-selected={avatar.accessory2.variant === accessory}
+                                            aria-pressed={avatar.accessory2.variant === accessory}
+                                            onClick={() => setAvatar('accessory2', 'variant', accessory)}
+                                        >
+                                            <img src={accessoryThumbnail(accessory)} alt={`${accessory} accessory`} />
+                                            {accessory}
                                         </ThumbnailButton>
                                     )}
                                 </For>
