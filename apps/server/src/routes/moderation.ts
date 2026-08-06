@@ -1,6 +1,6 @@
 import Elysia, { t } from "elysia";
 import { authMiddleware } from "~/middleware/auth.middleware";
-import { broadcastChatMessage } from "~/util/chatSessions";
+import { broadcastChatMessage, disconnectChatSocketsForUser } from "~/util/chatSessions";
 import { toClientMessage } from "~/schemas/messages.schema";
 import { MAX_MESSAGE_LENGTH } from "#config";
 import { ErrorSchema, RequestResultSchema } from "~/schemas/generic.schema";
@@ -23,6 +23,32 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         useAuth: true,
         response: {
             200: UserPermissionsSchema
+        }
+    })
+    .post("/users/:id/ban", ({ params, user, body, status }) => {
+        const targetId = Number(params.id);
+        if (!targetId) return status(400, { message: "Invalid target user" });
+
+        const target = actions.users.getUserById(targetId);
+        if (!target) return status(404, { message: "User not found" });
+        if (target.is_banned) return status(409, { message: "User is already banned" });
+
+        const banned = actions.moderation.banUser(targetId, user.id, body?.reason);
+        if (!banned) return status(500, { message: "Unable to ban user" });
+
+        disconnectChatSocketsForUser(targetId, 4003, "account_banned");
+        return { success: true };
+    }, {
+        usePermission: 'can_ban_users',
+        body: t.Optional(t.Object({
+            reason: t.Optional(t.String({ maxLength: MAX_MESSAGE_LENGTH }))
+        })),
+        response: {
+            200: RequestResultSchema,
+            400: ErrorSchema,
+            404: ErrorSchema,
+            409: ErrorSchema,
+            500: ErrorSchema
         }
     })
     .delete("/messages/:id", ({ params, user, body, status }) => {

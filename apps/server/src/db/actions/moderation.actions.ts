@@ -1,7 +1,6 @@
 import * as schema from "../schema"
 import { eq, sql } from "drizzle-orm"
 import { db } from ".."
-import { disconnectChatSocketsForUser } from "~/util/chatSessions"
 
 export default {
     getUserPermissions: (user_id: number) => db.select()
