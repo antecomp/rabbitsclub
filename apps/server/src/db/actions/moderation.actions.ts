@@ -1,6 +1,7 @@
 import * as schema from "../schema"
 import { eq, sql } from "drizzle-orm"
 import { db } from ".."
+import { TIME_FORMAT } from "../time"
 
 export default {
     getUserPermissions: (user_id: number) => db.select()
@@ -28,7 +29,7 @@ export default {
                 is_banned: 1,
                 banned_reason: reason ?? null,
                 banned_by: bannedBy,
-                banned_at: sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+                banned_at: sql`(strftime(${TIME_FORMAT}, 'now'))`,
                 token_version: sql`${schema.users.token_version} + 1`
             })
             .where(eq(schema.users.id, userId))

@@ -2,6 +2,7 @@ import { db } from "..";
 import { lt, desc, eq, sql, and, isNull } from "drizzle-orm";
 import * as schema from "../schema"
 import { MESSAGE_PAGE_SIZE } from "#config";
+import { TIME_FORMAT } from "../time";
 
 export default {
     insertMessage: (user_id: number, content: string) =>
@@ -23,7 +24,7 @@ export default {
     deleteMessage: (messageId: number, deletedBy: number, kind: "user" | "moderator", reason?: string) => 
         db.update(schema.messages)
             .set({
-                deleted_at: sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+                deleted_at: sql`(strftime(${TIME_FORMAT}, 'now'))`,
                 deleted_by: deletedBy,
                 deleted_reason: reason ?? null,
                 deleted_kind: kind
@@ -37,7 +38,7 @@ export default {
             .set({
                 moderation_note: note,
                 moderation_note_author: notedBy,
-                moderation_note_at: sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`
+                moderation_note_at: sql`(strftime(${TIME_FORMAT}, 'now'))`
             })
             .where(eq(schema.messages.id, messageId))
             .returning()
@@ -50,7 +51,7 @@ export default {
         db.update(schema.messages)
             .set({
                 content,
-                edited_at: sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+                edited_at: sql`(strftime(${TIME_FORMAT}, 'now'))`,
             })
             .where(and(
                 eq(schema.messages.id, messageId),

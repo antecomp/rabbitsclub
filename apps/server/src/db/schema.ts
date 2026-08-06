@@ -1,10 +1,11 @@
 import { sqliteTable, text, integer, type AnySQLiteColumn } from "drizzle-orm/sqlite-core"
 import { sql } from "drizzle-orm"
+import { TIME_FORMAT } from "./time"
 
 
 const timestamps = {
     created_at: text("created_at").notNull()
-        .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`)
+        .default(sql`(strftime(${TIME_FORMAT}, 'now'))`)
 }
 
 export const users = sqliteTable("users", {
@@ -52,7 +53,7 @@ export const profiles = sqliteTable("profiles", {
     user_id:    integer("user_id").primaryKey().references(() => users.id),
     avatar:     text("avatar"),
     updated_at: text("updated_at").notNull()
-        .default(sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`)
+        .default(sql`(strftime(${TIME_FORMAT}, 'now'))`)
 })
 
 export const userPermissions = sqliteTable("user_permissions", {

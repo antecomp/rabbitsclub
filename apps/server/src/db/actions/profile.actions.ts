@@ -3,6 +3,7 @@ import type { AvatarData } from "~/schemas/profiles.schema";
 import parseAvatarData from "~/util/parseAvatarData";
 import { db } from "..";
 import * as schema from "../schema";
+import { TIME_FORMAT } from "../time";
 
 export default {
     getProfile: (username: string) => {
@@ -21,7 +22,7 @@ export default {
             target: schema.profiles.user_id,
             set: {
                 avatar: JSON.stringify(avatar),
-                updated_at: sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`
+                updated_at: sql`(strftime(${TIME_FORMAT}, 'now'))`
             }
         })
         .returning()
