@@ -9,6 +9,8 @@ const AUTH_ERROR_DESCRIPTIONS: Readonly<Record<AuthErrorCode, string>> = {
         'Your session has expired.',
     session_revoked:
         'Your session was revoked.',
+    account_banned:
+        'Your account has been banned.',
     unauthenticated:
         'You are missing credentials.'
 }

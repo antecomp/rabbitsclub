@@ -1,6 +1,7 @@
 import * as schema from "../schema"
 import { eq, sql } from "drizzle-orm"
 import { db } from ".."
+import { disconnectChatSocketsForUser } from "~/util/chatSessions"
 
 export default {
     getUserPermissions: (user_id: number) => db.select()
@@ -24,15 +25,16 @@ export default {
 
     // Banning
     banUser: (userId: number, bannedBy: number, reason?: string) => db.update(schema.users)
-        .set({
-            is_banned: 1,
-            banned_reason: reason ?? null,
-            banned_by: bannedBy,
-            banned_at: sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`
-        })
-        .where(eq(schema.users.id, userId))
-        .returning()
-        .get(),
+            .set({
+                is_banned: 1,
+                banned_reason: reason ?? null,
+                banned_by: bannedBy,
+                banned_at: sql`(strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))`,
+                token_version: sql`${schema.users.token_version} + 1`
+            })
+            .where(eq(schema.users.id, userId))
+            .returning()
+            .get(),
 
     unbanUser: (userId: number) => db.update(schema.users)
         .set({

@@ -61,7 +61,11 @@ export function unregisterChatSocket(userId: number, socket: ChatSocket) {
     if (registrations.length === 0) socketsByUser.delete(userId)
 }
 
-export function disconnectChatSocketsForUser(userId: number) {
+export function disconnectChatSocketsForUser(
+    userId: number,
+    code = 4001,
+    reason = "session_revoked"
+) {
     const registrations = socketsByUser.get(userId)
     if (!registrations) return 0
 
@@ -70,7 +74,7 @@ export function disconnectChatSocketsForUser(userId: number) {
 
     for (const { socket, expiresTimeout } of snapshot) {
         clearTimeout(expiresTimeout)
-        socket.close(4001, "session_revoked")
+        socket.close(code, reason)
     }
 
     return snapshot.length

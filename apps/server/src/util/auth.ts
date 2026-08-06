@@ -104,6 +104,8 @@ export async function validateAuthToken(jwt: JwtService, token: string): Promise
     const user = actions.users.getUserById(payload.id)
     if (!user) return { reason: "session_revoked" }
 
+    if (user.is_banned) return { reason: "account_banned" }
+
     if (payload.ver !== user.token_version) return { reason: "session_revoked" }
 
     return { user, payload }

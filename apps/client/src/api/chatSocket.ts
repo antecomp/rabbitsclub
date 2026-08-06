@@ -15,7 +15,8 @@ export type ChatAuthErrorCode = Exclude<AuthErrorCode, 'origin_not_allowed'>;
 const AUTH_CLOSE_REASONS = new Set<ChatAuthErrorCode>([
     "unauthenticated",
     "session_expired",
-    "session_revoked"
+    "session_revoked",
+    "account_banned"
 ])
 
 /** Delay in milliseconds before attempting to reconnect after an unexpected close. */
@@ -34,6 +35,7 @@ function getAuthCloseReason(event: CloseEvent): ChatAuthErrorCode | null {
 
     if (event.code === 4001) return "session_revoked"
     if (event.code === 4002) return "session_expired"
+    if (event.code === 4003) return "account_banned"
 
     return null
 }

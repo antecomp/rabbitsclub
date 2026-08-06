@@ -71,6 +71,7 @@ export const authRoutes = new Elysia({ prefix: "/auth" })
 
         const valid = await Bun.password.verify(body.password, user.password);
         if (!valid) return status(401, {message: "invalid credentials"});
+        if (user.is_banned) return status(403, authError("account_banned"));
 
         await issueAuthCookie(user, auth, jwt);
 

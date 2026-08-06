@@ -38,6 +38,7 @@ export const AuthErrorCodeSchema = t.Union([
     t.Literal("unauthenticated"),
     t.Literal("session_expired"),
     t.Literal("session_revoked"),
+    t.Literal("account_banned"),
     t.Literal("origin_not_allowed")
 ]);
 
