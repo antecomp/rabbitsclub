@@ -9,12 +9,11 @@ export default {
         .where(eq(schema.userPermissions.user_id, user_id))
         .get(),
 
-    upsertUserPermissions: (user_id: number, permissions: Partial<{
-        can_ban_users: number
-        can_delete_messages: number
-        can_leave_notes: number
-        can_manage_invites: number
-    }>) => db.insert(schema.userPermissions)
+    upsertUserPermissions: (
+        user_id: number,
+        // odd type to keep parity with db schema
+        permissions: Partial<Omit<typeof schema.userPermissions.$inferSelect, "user_id">>
+    ) => db.insert(schema.userPermissions)
         .values({ user_id, ...permissions })
         .onConflictDoUpdate({
             target: schema.userPermissions.user_id,
@@ -25,16 +24,16 @@ export default {
 
     // Banning
     banUser: (userId: number, bannedBy: number, reason?: string) => db.update(schema.users)
-            .set({
-                is_banned: 1,
-                banned_reason: reason ?? null,
-                banned_by: bannedBy,
-                banned_at: sql`(strftime(${TIME_FORMAT}, 'now'))`,
-                token_version: sql`${schema.users.token_version} + 1`
-            })
-            .where(eq(schema.users.id, userId))
-            .returning()
-            .get(),
+        .set({
+            is_banned: 1,
+            banned_reason: reason ?? null,
+            banned_by: bannedBy,
+            banned_at: sql`(strftime(${TIME_FORMAT}, 'now'))`,
+            token_version: sql`${schema.users.token_version} + 1`
+        })
+        .where(eq(schema.users.id, userId))
+        .returning()
+        .get(),
 
     unbanUser: (userId: number) => db.update(schema.users)
         .set({
