@@ -20,7 +20,7 @@ export default function AdminInvites() {
         if(!inviteCode()) return;
 
         setError("");
-        const { data, error: err } = await api.admin.invite.post({code: inviteCode()});
+        const { data, error: err } = await api.invites.post({code: inviteCode()});
 
         if (err) {
             setError(err.value.message ?? "unable to create invite");

@@ -7,6 +7,7 @@ import { actions } from "./db/actions"
 import { profileRoutes } from "./routes/profile"
 import { moderationRoutes } from "./routes/moderation"
 import { messageRoutes } from "./routes/messages"
+import { inviteRoutes } from "./routes/invites"
 
 const app = new Elysia()
     .use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }))
@@ -16,6 +17,7 @@ const app = new Elysia()
     .use(adminRoutes)
     .use(moderationRoutes)
     .use(profileRoutes)
+    .use(inviteRoutes)
     .get("/health", () => ({ status: "ok" }), {
         response: t.Object({
             status: t.String()
