@@ -58,9 +58,9 @@ export const profiles = sqliteTable("profiles", {
 
 export const userPermissions = sqliteTable("user_permissions", {
     user_id:             integer("user_id").primaryKey().references(() => users.id),
-    can_ban_users:       integer("can_ban_users").notNull().default(0),
-    can_delete_messages: integer("can_delete_messages").notNull().default(0),
+    can_ban_users:       integer("can_ban_users", {mode: 'boolean'}).notNull().default(false),
+    can_delete_messages: integer("can_delete_messages", {mode: 'boolean'}).notNull().default(false),
     // can_edit_messages:   integer("can_edit_messages").notNull().default(0),
-    can_leave_notes:     integer("can_leave_notes").notNull().default(0),
-    can_manage_invites:  integer("can_manage_invites").notNull().default(0),
+    can_leave_notes:     integer("can_leave_notes", {mode: 'boolean'}).notNull().default(false),
+    can_manage_invites:  integer("can_manage_invites", {mode: 'boolean'}).notNull().default(false),
 })

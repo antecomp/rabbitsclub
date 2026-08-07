@@ -7,15 +7,15 @@
  *           - `obj` is the whole input object.
  * @returns Mapped object.
  */
-export default function mapObject<
+export function mapObject<
   T,
   O,
   K extends PropertyKey
 >(
-  obj: Partial<Record<K, T>>,
-  fn: (v: T, k: K, obj: Partial<Record<K, T>>) => O
-): Partial<Record<K, O>> {
+  obj: Record<K, T>,
+  fn: (v: T, k: K, obj: Record<K, T>) => O
+): Record<K, O> {
   return Object.fromEntries(
     Object.entries(obj).map(([k, v]) => [k, fn(v as T, k as K, obj)])
-  ) as Partial<Record<K, O>>;
+  ) as Record<K, O>;
 }

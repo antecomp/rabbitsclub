@@ -1,26 +1,18 @@
-import Elysia, { t } from "elysia";
+import Elysia from "elysia";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { UserPermissionsSchema } from "~/schemas/moderation.schema";
 import { actions } from "~/db/actions";
 import { ErrorSchema } from "~/schemas/generic.schema";
-import mapObject from "~/util/mapObject";
 
 export const adminRoutes = new Elysia({ prefix: '/admin' })
     .use(authMiddleware)
-    .patch("/users/:id/permissions", ({ params, body, status }) => {
-        if (Object.keys(body).length === 0) {
-            return status(400, { message: "At least one permission is required" });
-        }
-
-        // Permissions for db rep
-        const permissions = mapObject(body, Number);
-
+    .patch("/users/:id/permissions", ({ params, body: permissions, status }) => {
         const targetid = Number(params.id);
 
-        if(!targetid)
-            return status(400, {message: "Invalid user id"});
+        if (!targetid)
+            return status(400, { message: "Invalid user id" });
 
-        if (!actions.users.getUserById(targetid)) 
+        if (!actions.users.getUserById(targetid))
             return status(404, { message: "User not found" });
 
         const updated = actions.moderation.upsertUserPermissions(targetid, permissions);
@@ -28,10 +20,10 @@ export const adminRoutes = new Elysia({ prefix: '/admin' })
 
         // Only surface permissions in schema rep for resp
         const { user_id, ...storedPermissions } = updated;
-        return mapObject(storedPermissions, Boolean);
+        return storedPermissions;
     }, {
         useAdmin: true,
-        body: t.Partial(UserPermissionsSchema),
+        body: UserPermissionsSchema,
         response: {
             400: ErrorSchema,
             404: ErrorSchema,

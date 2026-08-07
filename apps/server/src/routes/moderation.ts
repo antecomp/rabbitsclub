@@ -5,20 +5,34 @@ import { toClientMessage } from "~/schemas/messages.schema";
 import { MAX_MESSAGE_LENGTH } from "#config";
 import { ErrorSchema, RequestResultSchema } from "~/schemas/generic.schema";
 import { actions } from "~/db/actions";
-import { UserPermissionsSchema } from "~/schemas/moderation.schema";
+import { UserPermissionsSchema, type UserPermissions } from "~/schemas/moderation.schema";
+import { mapObject } from "~/util/mapObject";
+import { Value } from "@sinclair/typebox/value";
+
+// To create fallback permissions object when db row is empty
+// NOTE, ONE WARNING: this constructor defaults to `false` (irregardless of db default)
+// if any permission becomes a default true, you'll need to ensure theres a db row for
+// everyone instead of using this, or come up with some hacky override.
+export const createUserPermissions = (): UserPermissions =>
+    Value.Create(UserPermissionsSchema);
 
 export const moderationRoutes = new Elysia({ prefix: '/moderation' })
     .use(authMiddleware)
     .get("/permissions", ({ user }) => {
-        const perms = actions.moderation.getUserPermissions(user.id)
-        const grant = (val?: number | null) => user.is_admin === 1 || Boolean(val)
+        const dbPermissions =
+            actions.moderation.getUserPermissions(user.id);
 
-        return {
-            can_ban_users: grant(perms?.can_ban_users),
-            can_delete_messages: grant(perms?.can_delete_messages),
-            can_leave_notes: grant(perms?.can_leave_notes),
-            can_manage_invites: grant(perms?.can_manage_invites),
-        }
+        const { user_id: _userId, ...permissions } =
+            dbPermissions ?? {
+                user_id: user.id,
+                ...createUserPermissions()
+            };
+
+        return mapObject(
+            permissions,
+            // TODO: We should update is_admin to the boolean mode too.
+            permission => Boolean(user.is_admin) || permission
+        );
     }, {
         useAuth: true,
         response: {
