@@ -12,7 +12,7 @@ export const users = sqliteTable("users", {
     id:       integer("id").primaryKey({ autoIncrement: true }),
     username: text("username").notNull().unique(),
     password: text("password").notNull(),
-    is_admin: integer("is_admin").notNull().default(0),
+    is_admin: integer("is_admin", {mode: 'boolean'}).notNull().default(false),
     token_version: integer("token_version").notNull().default(0),
 
     is_banned:     integer("is_banned").notNull().default(0),
@@ -60,7 +60,6 @@ export const userPermissions = sqliteTable("user_permissions", {
     user_id:             integer("user_id").primaryKey().references(() => users.id),
     can_ban_users:       integer("can_ban_users", {mode: 'boolean'}).notNull().default(false),
     can_delete_messages: integer("can_delete_messages", {mode: 'boolean'}).notNull().default(false),
-    // can_edit_messages:   integer("can_edit_messages").notNull().default(0),
     can_leave_notes:     integer("can_leave_notes", {mode: 'boolean'}).notNull().default(false),
     can_manage_invites:  integer("can_manage_invites", {mode: 'boolean'}).notNull().default(false),
 })

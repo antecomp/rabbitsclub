@@ -6,6 +6,7 @@ import {
     MIN_PASSWORD_LENGTH,
     MIN_USERNAME_LENGTH
 } from "#config";
+import { UserSchema } from "./users.schema";
 
 /** Request body schema for login requests. */
 export const LoginBodySchema = t.Object({
@@ -64,11 +65,7 @@ export const AuthorizationErrorSchema = t.Object({
 });
 
 /** Current user profile payload schema. */
-export const CurrentUserSchema = t.Object({
-    id: t.Number(),
-    username: t.String(),
-    is_admin: t.Integer()
-});
+export const CurrentUserSchema = t.Pick(UserSchema, ['id', 'username', 'is_admin']);
 
 /** Cookie schema for auth session storage. */
 export const AuthCookieSchema = t.Object({ auth: t.Optional(t.String()) });
@@ -80,7 +77,7 @@ export const AuthCookieSchema = t.Object({ auth: t.Optional(t.String()) });
 export const JWTSchema = t.Object({
     id: t.Number(),
     username: t.String(),
-    is_admin: t.Number(),
+    is_admin: t.Boolean(),
     ver: t.Number(),
     iat: t.Number(),
     exp: t.Number()

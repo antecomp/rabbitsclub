@@ -30,8 +30,7 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
 
         return mapObject(
             permissions,
-            // TODO: We should update is_admin to the boolean mode too.
-            permission => Boolean(user.is_admin) || permission
+            permission => user.is_admin || permission
         );
     }, {
         useAuth: true,

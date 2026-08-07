@@ -28,13 +28,13 @@ if (process.env.SEED_ADMIN === "true") {
         .values({
             username: initialAdminUsername,
             password: hashedPassword,
-            is_admin: 1
+            is_admin: true
         })
         .onConflictDoUpdate({
             target: schema.users.username,
             set: {
                 password: hashedPassword,
-                is_admin: 1
+                is_admin: true
             }
         })
         .run()
