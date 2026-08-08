@@ -4,15 +4,15 @@ import Login from "./routes/Login"
 import Register from "./routes/Register"
 import Chat from "./routes/Chat"
 import { AdminRoute, GuestRoute, ProtectedRoute } from "./components/ProtectedRoute"
-import Admin from "./routes/Admin"
+import Manage from "./routes/Manage"
 import Landing from "./routes/Landing"
 import './style/index.css'
 import About from "./routes/About"
 import Settings from "./routes/Settings"
 import { PreferencesProvider } from "./context/Preferences"
 import Avatar from "@/routes/Avatar"
-import AdminIndex from "./routes/admin/AdminIndex"
-import AdminInvites from "./routes/admin/AdminInvites"
+import ManageIndex from "./routes/manage/ManageIndex"
+import ManageInvites from "./routes/manage/ManageInvites"
 import Invite from "./routes/Invite"
 import AuthGuard from "./components/AuthGuard"
 import LoggedOut from "./routes/LoggedOut"
@@ -48,11 +48,11 @@ render(
                 <Route path="/settings" component={() => (
                     <ProtectedRoute><Settings /></ProtectedRoute>
                 )} />
-                <Route path="/admin" component={(props) => (
-                    <AdminRoute><Admin>{props.children}</Admin></AdminRoute>
+                <Route path="/manage" component={(props) => (
+                    <AdminRoute><Manage>{props.children}</Manage></AdminRoute>
                 )}>
-                    <Route path="/" component={AdminIndex} />
-                    <Route path="/invites" component={AdminInvites} />
+                    <Route path="/" component={ManageIndex} />
+                    <Route path="/invites" component={ManageInvites} />
                 </Route>
                 <Route path="/about" component={About} />
                 <Route path="/avatar" component={() => (

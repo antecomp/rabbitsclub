@@ -22,7 +22,7 @@ export default function Landing() {
                 </Show>
                 <Selector onClick={() => navigate("/avatar")}>avatar</Selector>
                 <Show when={user()?.is_admin}>
-                    <Selector onClick={() => navigate("/admin")}>admin</Selector>
+                    <Selector onClick={() => navigate("/manage")}>manage</Selector>
                 </Show>
                 <Show when={!user()}>
                     <Selector onClick={() => navigate("/about")}>about</Selector>

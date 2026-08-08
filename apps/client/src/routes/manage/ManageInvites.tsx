@@ -4,7 +4,7 @@ import { api } from "../../api/backend";
 import Footer from "../../components/Footer";
 import { AuthForm, Divider, Subtitle, Title } from "../../styled/shared.styles";
 
-export default function AdminInvites() {
+export default function ManageInvites() {
     const navigate = useNavigate();
     const [inviteCode, setInviteCode] = createSignal("");
     const [inviteLinks, setInviteLinks] = createSignal<string[]>([]);
@@ -39,7 +39,7 @@ export default function AdminInvites() {
     }
 
     return <>
-        <Title>Admin</Title>
+        <Title>Manage</Title>
         <Subtitle>Invite management</Subtitle>
         <Divider/>
         <AuthForm onsubmit={sendInvite}>
@@ -49,7 +49,7 @@ export default function AdminInvites() {
                 placeholder="Invite Code"
             />
             <button type="submit">[ SEND INVITE ]</button>
-            <button type="button" onClick={() => navigate("/admin")}>[ BACK ]</button>
+            <button type="button" onClick={() => navigate("/manage")}>[ BACK ]</button>
         </AuthForm>
         <Show when={inviteLinks().length > 0}>
             <AuthForm as="div">
