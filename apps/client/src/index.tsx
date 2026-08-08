@@ -3,7 +3,7 @@ import { Route, Router, type RouteSectionProps } from "@solidjs/router"
 import Login from "./routes/Login"
 import Register from "./routes/Register"
 import Chat from "./routes/Chat"
-import { AdminRoute, GuestRoute, ProtectedRoute } from "./components/ProtectedRoute"
+import { GuestRoute, ProtectedRoute } from "./components/ProtectedRoute"
 import Manage from "./routes/Manage"
 import Landing from "./routes/Landing"
 import './style/index.css'
@@ -49,7 +49,7 @@ render(
                     <ProtectedRoute><Settings /></ProtectedRoute>
                 )} />
                 <Route path="/manage" component={(props) => (
-                    <AdminRoute><Manage>{props.children}</Manage></AdminRoute>
+                    <Manage>{props.children}</Manage>
                 )}>
                     <Route path="/" component={ManageIndex} />
                     <Route path="/invites" component={ManageInvites} />

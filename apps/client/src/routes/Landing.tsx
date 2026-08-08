@@ -3,6 +3,9 @@ import { Show } from "solid-js";
 import { Container, Selector } from "../styled/shared.styles";
 import Footer from "../components/Footer";
 import { user } from "../api/user";
+import { hasManagementPermissions } from "./Manage";
+
+
 
 export default function Landing() {
 
@@ -21,7 +24,7 @@ export default function Landing() {
                     <Selector onClick={() => navigate("/settings")}>settings</Selector>
                 </Show>
                 <Selector onClick={() => navigate("/avatar")}>avatar</Selector>
-                <Show when={user()?.is_admin}>
+                <Show when={hasManagementPermissions()}>
                     <Selector onClick={() => navigate("/manage")}>manage</Selector>
                 </Show>
                 <Show when={!user()}>

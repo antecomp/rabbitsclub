@@ -1,20 +1,17 @@
-import { createEffect, createSignal } from 'solid-js';
-import type { UserPermissions } from '~/schemas/moderation.schema';
-import { user } from './user';
-import { api } from './backend';
+import { createResource } from "solid-js"
+import { api } from "./backend"
+import { user } from "./user"
 
-const [permissions, setPermissions] = createSignal<UserPermissions | null>(null);
+export const [permissions, {
+    refetch: refetchPermissions,
+    mutate: mutatePermissions,
+}] = createResource(
+    () => ({ userId: user()?.id }),
+    ({ userId }) => {
+        if (userId == null) return null
 
-createEffect(() => {
-    const u = user();
-    if (!u) {
-        setPermissions(null);
-        return;
+        return api.moderation.permissions
+            .get()
+            .then(({ data }) => data ?? null)
     }
-
-    void api.moderation.permissions.get().then(({ data }) => {
-        setPermissions(data ?? null);
-    })
-})
-
-export { permissions }
+)
