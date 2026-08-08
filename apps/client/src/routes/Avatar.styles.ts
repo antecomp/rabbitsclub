@@ -8,7 +8,7 @@ export const AvatarContainer = styled("div")`
     transform: translate(0%, -50%);
     max-width: 580px;
     width: 70vw;
-    height: 300px;
+    height: 350px;
     user-select: none;
     animation: flicker-in 0.3s steps(12, end) forwards;
 `;
@@ -17,7 +17,7 @@ export const Split = styled('div')`
     display: grid;
     grid-template-columns: 300px 1fr;
     gap: 10px;
-    height: 100%;
+    height: 300px;
     padding-bottom: 10px;
     padding-top: 10px;
 
