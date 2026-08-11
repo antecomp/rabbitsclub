@@ -1,7 +1,7 @@
-import { styled } from "solid-styled-components";
+import { styled } from 'solid-styled-components';
 import cbr from '../assets/ui/c_br.png?url&no-inline';
 
-export const AvatarContainer = styled("div")`
+export const AvatarContainer = styled('div')`
     position: absolute;
     top: 40%;
     left: 10vw;
@@ -168,4 +168,4 @@ export const MiniDivider = styled('hr')`
     border: none;
     background: #bfbfbf;
     margin: 5px;
-`
+`;

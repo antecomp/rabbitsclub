@@ -1,6 +1,6 @@
-import { For, Show } from "solid-js";
-import { styled } from "solid-styled-components";
-import Link from "@/components/Link";
+import { For, Show } from 'solid-js';
+import { styled } from 'solid-styled-components';
+import Link from '@/components/Link';
 
 const MAX_ONLINE_VISIBLE = 10;
 
@@ -22,14 +22,14 @@ const Body = styled('aside')`
         outline: none;
         cursor: pointer;
     }
-`
+`;
 
 const SmallDivider = styled('hr')`
     border: none;
     height: 1px;
     background-color: gray;
     margin: 5px 0px;
-`
+`;
 
 /** Chat sidebar with online user presence, return-to-present control, and exit navigation. */
 export default function Aside(props: {
@@ -60,5 +60,5 @@ export default function Aside(props: {
             </Show>
             <Link href="/">[ EXIT ]</Link>
         </Body>
-    )
+    );
 }

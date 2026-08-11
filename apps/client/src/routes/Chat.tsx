@@ -1,13 +1,13 @@
-import { For, Show } from "solid-js"
-import { MAX_MESSAGE_LENGTH } from "#config";
-import { user } from "../api/user"
-import Message from "../components/chat/Message";
-import SystemMessage from "../components/chat/SystemMessage";
-import Footer from "../components/Footer";
-import { Divider, Title } from "../styled/shared.styles";
-import Aside from "../components/chat/Aside";
-import { ChatBody, ChatContainer, FormTooltip, LoadMoreButton, Messages, SendButton, SendForm, SendInput } from "./Chat.styles";
-import useChatSocket from "@/hooks/useChatSocket";
+import { For, Show } from 'solid-js';
+import { MAX_MESSAGE_LENGTH } from '#config';
+import { user } from '../api/user';
+import Message from '../components/chat/Message';
+import SystemMessage from '../components/chat/SystemMessage';
+import Footer from '../components/Footer';
+import { Divider, Title } from '../styled/shared.styles';
+import Aside from '../components/chat/Aside';
+import { ChatBody, ChatContainer, FormTooltip, LoadMoreButton, Messages, SendButton, SendForm, SendInput } from './Chat.styles';
+import useChatSocket from '@/hooks/useChatSocket';
 
 export default function Chat() {
     let messagesEl: HTMLDivElement | undefined;
@@ -27,13 +27,13 @@ export default function Chat() {
     } = useChatSocket({
         messagesEl: () => messagesEl,
         sendInputEl: () => sendInputEl
-    })
+    });
 
     const formTooltip = () => {
         if (inputText().length >= MAX_MESSAGE_LENGTH * 0.80) {
-            return `( ${inputText().length} / ${MAX_MESSAGE_LENGTH} )`
+            return `( ${inputText().length} / ${MAX_MESSAGE_LENGTH} )`;
         }
-    }
+    };
 
     return (
         <ChatContainer>
@@ -48,7 +48,7 @@ export default function Chat() {
                     </Show>
                     <For each={messages()}>
                         {msg => (
-                            msg.type === "system"
+                            msg.type === 'system'
                                 ? <SystemMessage message={msg} />
                                 : (
                                     <Message
@@ -83,5 +83,5 @@ export default function Chat() {
                 <span>You are {user()?.username}. Be kind.</span>
             </Footer>
         </ChatContainer>
-    )
+    );
 }

@@ -1,8 +1,8 @@
 import pfp_placeholder from '@/assets/ui/pfp_placeholder.png';
-import { format, formatDistanceToNow } from "date-fns";
-import { createSignal, onCleanup, onMount, Show } from "solid-js";
-import { usePreferences } from "@/context/Preferences";
-import { loadAvatarForUser } from "@/avatar/avatarCache";
+import { format, formatDistanceToNow } from 'date-fns';
+import { createSignal, onCleanup, onMount, Show } from 'solid-js';
+import { usePreferences } from '@/context/Preferences';
+import { loadAvatarForUser } from '@/avatar/avatarCache';
 import {
     MessageBody,
     MessageContainer,
@@ -13,14 +13,14 @@ import {
     DeletedMessageNote,
     MessageModerationNote,
     EditedMessageNote
-} from "./Message.styles";
+} from './Message.styles';
 import { UserChatMessage } from '@/types/message.type';
 import createMessageContextMenu from './MessageContextMenu';
 
 export type Side = 'left' | 'right';
 type Variant = 'incoming' | 'outgoing';
 
-export type MessageProps = UserChatMessage & { isOwn: boolean }
+export type MessageProps = UserChatMessage & { isOwn: boolean };
 
 export default function Message(props: MessageProps) {
     const { preferences } = usePreferences();
@@ -41,7 +41,7 @@ export default function Message(props: MessageProps) {
     onMount(async () => {
         const url = await loadAvatarForUser(props.username);
         setAvatarSrc(url);
-    })
+    });
 
     const isIncoming = () => !props.isOwn;
     const side = (): Side => {
@@ -56,7 +56,7 @@ export default function Message(props: MessageProps) {
 
     const messageContent = () => props.is_deleted
         ? <DeletedMessageNote>[ DELETED : {props.deleted_reason} ]</DeletedMessageNote>
-        : <> {props.content} </>
+        : <> {props.content} </>;
 
     const MessageMenus = createMessageContextMenu({ ...props, side: side() });
 
@@ -88,5 +88,5 @@ export default function Message(props: MessageProps) {
             </MessageBody>
             <MessageMenus.ExpandedMenu />
         </MessageContainer>
-    )
+    );
 }

@@ -1,13 +1,13 @@
-import { useNavigate } from "@solidjs/router"
-import { createEffect, createMemo } from "solid-js"
-import type { UserPermissions } from "~/schemas/moderation.schema"
-import { permissions } from "@/api/permissions"
-import { user } from "@/api/user"
+import { useNavigate } from '@solidjs/router';
+import { createEffect, createMemo } from 'solid-js';
+import type { UserPermissions } from '~/schemas/moderation.schema';
+import { permissions } from '@/api/permissions';
+import { user } from '@/api/user';
 
-type Permission = keyof UserPermissions
+type Permission = keyof UserPermissions;
 
 interface PermissionGuardOptions {
-    mode?: "any" | "all"
+    mode?: 'any' | 'all'
     redirectTo?: string
 }
 
@@ -43,15 +43,15 @@ export default function usePermissionGuard(
 
         return options.mode === 'any'
             ? requiredPermissions.some(check)
-            : requiredPermissions.every(check)
+            : requiredPermissions.every(check);
     });
 
     createEffect(() => {
         if (access() === false) {
-            navigate(options.redirectTo ?? "/", { replace: true })
+            navigate(options.redirectTo ?? '/', { replace: true });
         }
     });
 
     // Also can be used to prevent rendering while loading or redirecting.
-    return () => access() === true
+    return () => access() === true;
 }

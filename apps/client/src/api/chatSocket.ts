@@ -1,10 +1,10 @@
-import { Accessor, createEffect, onCleanup } from "solid-js"
-import { api } from "./backend"
-import type { AuthErrorCode } from "~/schemas/auth.schema"
+import { Accessor, createEffect, onCleanup } from 'solid-js';
+import { api } from './backend';
+import type { AuthErrorCode } from '~/schemas/auth.schema';
 
-type ChatSubscription = ReturnType<typeof api.ws.subscribe>
-type ChatMessageHandler = Parameters<ChatSubscription["subscribe"]>[0]
-type ChatSendPayload = Parameters<ChatSubscription["send"]>[0]
+type ChatSubscription = ReturnType<typeof api.ws.subscribe>;
+type ChatMessageHandler = Parameters<ChatSubscription['subscribe']>[0];
+type ChatSendPayload = Parameters<ChatSubscription['send']>[0];
 
 /**
  * Represents reasons for chat authentication failures.
@@ -13,14 +13,14 @@ export type ChatAuthErrorCode = Exclude<AuthErrorCode, 'origin_not_allowed'>;
 
 /** Set of authentication-related close reasons to identify auth failures. */
 const AUTH_CLOSE_REASONS = new Set<ChatAuthErrorCode>([
-    "unauthenticated",
-    "session_expired",
-    "session_revoked",
-    "account_banned"
-])
+    'unauthenticated',
+    'session_expired',
+    'session_revoked',
+    'account_banned'
+]);
 
 /** Delay in milliseconds before attempting to reconnect after an unexpected close. */
-const RECONNECT_DELAY_MS = 1000
+const RECONNECT_DELAY_MS = 1000;
 
 /**
  * Extracts an authentication failure reason from a WebSocket close event.
@@ -30,14 +30,14 @@ const RECONNECT_DELAY_MS = 1000
  */
 function getAuthCloseReason(event: CloseEvent): ChatAuthErrorCode | null {
     if (AUTH_CLOSE_REASONS.has(event.reason as ChatAuthErrorCode)) {
-        return event.reason as ChatAuthErrorCode
+        return event.reason as ChatAuthErrorCode;
     }
 
-    if (event.code === 4001) return "session_revoked"
-    if (event.code === 4002) return "session_expired"
-    if (event.code === 4003) return "account_banned"
+    if (event.code === 4001) return 'session_revoked';
+    if (event.code === 4002) return 'session_expired';
+    if (event.code === 4003) return 'account_banned';
 
-    return null
+    return null;
 }
 
 /**
@@ -57,90 +57,90 @@ export function createAuthAwareChatSocket(options: {
     onMessage: ChatMessageHandler
     onAuthFailure: (reason: ChatAuthErrorCode) => void
 }) {
-    let socket: ChatSubscription | undefined
-    let reconnectTimeout: ReturnType<typeof setTimeout> | undefined
-    let manuallyClosed = false
-    let disposed = false
+    let socket: ChatSubscription | undefined;
+    let reconnectTimeout: ReturnType<typeof setTimeout> | undefined;
+    let manuallyClosed = false;
+    let disposed = false;
 
     const clearReconnect = () => {
-        if (!reconnectTimeout) return
-        clearTimeout(reconnectTimeout)
-        reconnectTimeout = undefined
-    }
+        if (!reconnectTimeout) return;
+        clearTimeout(reconnectTimeout);
+        reconnectTimeout = undefined;
+    };
 
     const closeSocket = () => {
-        manuallyClosed = true
-        clearReconnect()
-        socket?.close()
-        socket = undefined
-    }
+        manuallyClosed = true;
+        clearReconnect();
+        socket?.close();
+        socket = undefined;
+    };
 
     const handleAmbiguousClose = async () => {
-        if (disposed || manuallyClosed) return
+        if (disposed || manuallyClosed) return;
 
         try {
             // 401 triggers global onAuthFailure automatically
-            await api.auth.me.get()
+            await api.auth.me.get();
         } catch {
-            if (disposed || manuallyClosed) return
+            if (disposed || manuallyClosed) return;
         }
 
-        if (disposed || manuallyClosed) return
-        scheduleReconnect()
-    }
+        if (disposed || manuallyClosed) return;
+        scheduleReconnect();
+    };
 
     const scheduleReconnect = () => {
-        if (disposed || manuallyClosed || reconnectTimeout || !options.isAuthenticated()) return
+        if (disposed || manuallyClosed || reconnectTimeout || !options.isAuthenticated()) return;
 
         reconnectTimeout = setTimeout(() => {
-            reconnectTimeout = undefined
-            openSocket()
-        }, RECONNECT_DELAY_MS)
-    }
+            reconnectTimeout = undefined;
+            openSocket();
+        }, RECONNECT_DELAY_MS);
+    };
 
     const openSocket = () => {
-        if (disposed || socket || !options.isAuthenticated()) return
+        if (disposed || socket || !options.isAuthenticated()) return;
 
-        manuallyClosed = false
-        const nextSocket = api.ws.subscribe()
-        socket = nextSocket
+        manuallyClosed = false;
+        const nextSocket = api.ws.subscribe();
+        socket = nextSocket;
 
-        nextSocket.subscribe(options.onMessage)
-        nextSocket.on("close", (event) => {
+        nextSocket.subscribe(options.onMessage);
+        nextSocket.on('close', event => {
             // only clear the active socket reference if the socket that closed is still the active one.
-            if (socket === nextSocket) socket = undefined
-            const authReason = getAuthCloseReason(event)
+            if (socket === nextSocket) socket = undefined;
+            const authReason = getAuthCloseReason(event);
 
             if (authReason) {
-                clearReconnect()
-                options.onAuthFailure(authReason)
-                return
+                clearReconnect();
+                options.onAuthFailure(authReason);
+                return;
             }
 
-            if (manuallyClosed) return
+            if (manuallyClosed) return;
 
-            void handleAmbiguousClose()
-        })
-    }
+            void handleAmbiguousClose();
+        });
+    };
 
     createEffect(() => {
         if (options.isAuthenticated()) {
-            openSocket()
-            return
+            openSocket();
+            return;
         }
 
-        closeSocket()
-    })
+        closeSocket();
+    });
 
     onCleanup(() => {
-        disposed = true
-        closeSocket()
-    })
+        disposed = true;
+        closeSocket();
+    });
 
     return {
         send(payload: ChatSendPayload) {
-            socket?.send(payload)
+            socket?.send(payload);
         },
         close: closeSocket
-    }
+    };
 }

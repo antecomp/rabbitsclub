@@ -1,11 +1,11 @@
-import { api } from "../api/backend";
-import { AuthForm, Container, Divider, Subtitle, ThinDivider, Title } from "../styled/shared.styles";
-import Footer from "../components/Footer";
-import { useNavigate } from "@solidjs/router";
-import { refetchUser } from "../api/user";
-import { usePreferences } from "../context/Preferences";
-import { styled } from "solid-styled-components";
-import Link from "@/components/Link";
+import { api } from '../api/backend';
+import { AuthForm, Container, Divider, Subtitle, ThinDivider, Title } from '../styled/shared.styles';
+import Footer from '../components/Footer';
+import { useNavigate } from '@solidjs/router';
+import { refetchUser } from '../api/user';
+import { usePreferences } from '../context/Preferences';
+import { styled } from 'solid-styled-components';
+import Link from '@/components/Link';
 
 const ToggleCon = styled('div')`
     display: flex;
@@ -18,22 +18,22 @@ const ToggleCon = styled('div')`
       border-top: dashed gray 2px;
       margin: 0 10px;
     }
-`
+`;
 
 export default function Settings() {
     const navigate = useNavigate();
 
     const logout = async () => {
-        await api.auth.logout.post()
+        await api.auth.logout.post();
         await refetchUser();
-        navigate("/", { replace: true });
-    }
+        navigate('/', { replace: true });
+    };
 
     const logoutAll = async () => {
-        await api.auth["logout-all"].post();
+        await api.auth['logout-all'].post();
         await refetchUser();
-        navigate("/", { replace: true })
-    }
+        navigate('/', { replace: true });
+    };
 
     const { preferences, setPreferences } = usePreferences();
 
@@ -55,5 +55,5 @@ export default function Settings() {
             <Link href="/">[ BACK ]</Link>
         </AuthForm>
         <Footer>Use input device to select user option.</Footer>
-    </Container>
+    </Container>;
 }

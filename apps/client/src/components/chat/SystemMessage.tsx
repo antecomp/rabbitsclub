@@ -1,8 +1,8 @@
-import type { SystemChatMessage } from "@/types/message.type";
-import { styled } from "solid-styled-components";
-import { PFP_SIZE } from "./Message.styles";
+import type { SystemChatMessage } from '@/types/message.type';
+import { styled } from 'solid-styled-components';
+import { PFP_SIZE } from './Message.styles';
 
-const SystemMessageContainer = styled("div")`
+const SystemMessageContainer = styled('div')`
     margin: 15px auto;
     max-width: calc(100% - ${PFP_SIZE});
     box-sizing: border-box;
@@ -34,12 +34,12 @@ export default function SystemMessage(props: {
     const eventToMessage = ({
         user_joined: `${content} has joined`,
         user_left: `${content} has left`
-    } satisfies Record<SystemChatMessage['event'], string>)[event]
+    } satisfies Record<SystemChatMessage['event'], string>)[event];
 
     return (
         <SystemMessageContainer>
             <span/>
-                <p>&lt; {eventToMessage} &gt;</p>
+            <p>&lt; {eventToMessage} &gt;</p>
             <span/>
         </SystemMessageContainer>
     );

@@ -1,5 +1,5 @@
-import { spreads } from "./utils"
-import * as schema from "./schema"
+import { spreads } from './utils';
+import * as schema from './schema';
 
 // todo document
 export const model = {
@@ -9,12 +9,12 @@ export const model = {
         inviteCodes:       schema.inviteCodes,
         profiles:          schema.profiles,
         userPermissions:   schema.userPermissions
-    }, "insert"),
+    }, 'insert'),
     select: spreads({
         users:             schema.users,
         messages:          schema.messages,
         inviteCodes:       schema.inviteCodes,
         profiles:          schema.profiles,
         userPermissions:   schema.userPermissions
-    }, "select")
-} as const
+    }, 'select')
+} as const;

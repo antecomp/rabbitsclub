@@ -1,10 +1,10 @@
-import Elysia from "elysia";
-import { authMiddleware } from "../middleware/auth.middleware";
-import { UpdateUserPermissionsSchema } from "~/schemas/moderation.schema";
-import { actions } from "~/db/actions";
-import { ErrorSchema } from "~/schemas/generic.schema";
-import { mapObject } from "~/util/mapObject";
-import { createUserPermissions } from "./moderation";
+import Elysia from 'elysia';
+import { authMiddleware } from '../middleware/auth.middleware';
+import { UpdateUserPermissionsSchema } from '~/schemas/moderation.schema';
+import { actions } from '~/db/actions';
+import { ErrorSchema } from '~/schemas/generic.schema';
+import { mapObject } from '~/util/mapObject';
+import { createUserPermissions } from './moderation';
 
 export const adminRoutes = new Elysia({ prefix: '/admin' })
     .use(authMiddleware)
@@ -12,12 +12,12 @@ export const adminRoutes = new Elysia({ prefix: '/admin' })
         const targetid = Number(params.id);
 
         if (!targetid)
-            return status(400, { message: "Invalid user id" });
+            return status(400, { message: 'Invalid user id' });
 
-        const targetUser = actions.users.getUserById(targetid)
+        const targetUser = actions.users.getUserById(targetid);
 
         if (!targetUser)
-            return status(404, { message: "User not found" });
+            return status(404, { message: 'User not found' });
 
         const dbPermissions =
             actions.moderation.getUserPermissions(targetid);
@@ -40,17 +40,17 @@ export const adminRoutes = new Elysia({ prefix: '/admin' })
             500: ErrorSchema
         }
     })
-    .patch("/users/:id/permissions", ({ params, body: permissions, status }) => {
+    .patch('/users/:id/permissions', ({ params, body: permissions, status }) => {
         const targetid = Number(params.id);
 
         if (!targetid)
-            return status(400, { message: "Invalid user id" });
+            return status(400, { message: 'Invalid user id' });
 
         if (!actions.users.getUserById(targetid))
-            return status(404, { message: "User not found" });
+            return status(404, { message: 'User not found' });
 
         const updated = actions.moderation.upsertUserPermissions(targetid, permissions);
-        if (!updated) return status(500, { message: "Unable to update permissions" });
+        if (!updated) return status(500, { message: 'Unable to update permissions' });
 
         // Only surface permissions in schema rep for resp
         const { user_id, ...storedPermissions } = updated;
@@ -63,4 +63,4 @@ export const adminRoutes = new Elysia({ prefix: '/admin' })
             404: ErrorSchema,
             500: ErrorSchema
         }
-    })
+    });

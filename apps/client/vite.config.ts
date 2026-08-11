@@ -1,15 +1,15 @@
-import { fileURLToPath, URL } from "node:url"
-import { defineConfig } from "vite"
-import solidPlugin from "vite-plugin-solid"
+import { fileURLToPath, URL } from 'node:url';
+import { defineConfig } from 'vite';
+import solidPlugin from 'vite-plugin-solid';
 
 export default defineConfig({
-  plugins: [solidPlugin()],
-  resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-      "~": fileURLToPath(new URL("../server/src", import.meta.url)),
-      "#config": fileURLToPath(new URL("../../config.ts", import.meta.url))
-    }
-  },
-  appType: 'spa'
-})
+    plugins: [solidPlugin()],
+    resolve: {
+        alias: {
+            '@': fileURLToPath(new URL('./src', import.meta.url)),
+            '~': fileURLToPath(new URL('../server/src', import.meta.url)),
+            '#config': fileURLToPath(new URL('../../config.ts', import.meta.url))
+        }
+    },
+    appType: 'spa'
+});

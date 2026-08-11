@@ -1,10 +1,10 @@
-import { Show } from "solid-js";
-import { Container, Selector } from "../styled/shared.styles";
-import Footer from "../components/Footer";
-import Link from "../components/Link";
-import { user } from "../api/user";
-import { MANAGEMENT_PERMISSIONS } from "./Manage";
-import { hasPermission } from "@/api/permissions";
+import { Show } from 'solid-js';
+import { Container, Selector } from '../styled/shared.styles';
+import Footer from '../components/Footer';
+import Link from '../components/Link';
+import { user } from '../api/user';
+import { MANAGEMENT_PERMISSIONS } from './Manage';
+import { hasPermission } from '@/api/permissions';
 
 export default function Landing() {
     return (
@@ -32,5 +32,5 @@ export default function Landing() {
                 Use input device to select menu options.
             </Footer>
         </Container>
-    )
+    );
 }

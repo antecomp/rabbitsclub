@@ -1,7 +1,7 @@
-import { eq, and, isNull } from "drizzle-orm";
-import type { AvatarData } from "~/schemas/profiles.schema";
-import { db } from "..";
-import * as schema from "../schema";
+import { eq, and, isNull } from 'drizzle-orm';
+import type { AvatarData } from '~/schemas/profiles.schema';
+import { db } from '..';
+import * as schema from '../schema';
 
 export default {
     insertInviteCode: (code: string, created_by: number) => db.insert(schema.inviteCodes)
@@ -27,11 +27,11 @@ export default {
         ))
         .get(),
 
-    insertUserWithInvite: (username: string, password: string, code: string, avatar?: AvatarData) => db.transaction((tx) => {
+    insertUserWithInvite: (username: string, password: string, code: string, avatar?: AvatarData) => db.transaction(tx => {
         const user = tx.insert(schema.users)
             .values({ username, password })
             .returning()
-            .get()
+            .get();
 
         const invite = tx.update(schema.inviteCodes)
             .set({ used_by: user.id })
@@ -40,19 +40,19 @@ export default {
                 isNull(schema.inviteCodes.used_by)
             ))
             .returning()
-            .get()
+            .get();
 
         if (!invite) {
-            throw new Error("INVITE_CLAIM_FAILED")
+            throw new Error('INVITE_CLAIM_FAILED');
         }
 
         if (avatar) {
             tx.insert(schema.profiles)
                 .values({ user_id: user.id, avatar: JSON.stringify(avatar) })
-                .run()
+                .run();
         }
 
-        return user
+        return user;
     }),
 
     claimInviteCode: (code: string, userId: number) => db.update(schema.inviteCodes)
@@ -62,6 +62,6 @@ export default {
             isNull(schema.inviteCodes.used_by)
         ))
         .returning()
-        .get(),
+        .get()
 
-}
+};

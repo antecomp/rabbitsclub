@@ -1,6 +1,6 @@
-import { createEffect, onCleanup } from "solid-js";
-import createAvatarRenderer from "./createAvatarRenderer";
-import { AvatarData } from "./avatar.types";
+import { createEffect, onCleanup } from 'solid-js';
+import createAvatarRenderer from './createAvatarRenderer';
+import { AvatarData } from './avatar.types';
 
 /**
  * Renders avatar state into a canvas element.
@@ -9,67 +9,67 @@ import { AvatarData } from "./avatar.types";
  * without drawing stale ImageBitmaps after a later update arrives.
  */
 export function AvatarCanvas(props: {
-  state: AvatarData;
-  size?: number;
+    state: AvatarData;
+    size?: number;
 }) {
-  const renderer = createAvatarRenderer();
-  let canvas!: HTMLCanvasElement;
-  let queuedState: AvatarData | undefined;
-  let isRendering = false;
-  let isDisposed = false;
+    const renderer = createAvatarRenderer();
+    let canvas!: HTMLCanvasElement;
+    let queuedState: AvatarData | undefined;
+    let isRendering = false;
+    let isDisposed = false;
 
-  /**
+    /**
    * Drains the latest pending avatar state into the visible canvas.
    */
-  async function renderQueued() {
-    if (isRendering) return;
+    async function renderQueued() {
+        if (isRendering) return;
 
-    isRendering = true;
-    try {
-      while (queuedState && !isDisposed) {
-        const state = queuedState;
-        queuedState = undefined;
+        isRendering = true;
+        try {
+            while (queuedState && !isDisposed) {
+                const state = queuedState;
+                queuedState = undefined;
 
-        await renderer.render(state);
-        const bitmap = await renderer.toImageBitmap();
+                await renderer.render(state);
+                const bitmap = await renderer.toImageBitmap();
 
-        if (queuedState || isDisposed) {
-          bitmap.close();
-          continue;
+                if (queuedState || isDisposed) {
+                    bitmap.close();
+                    continue;
+                }
+
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    bitmap.close();
+                    return;
+                }
+
+                const size = props.size ?? 400;
+                ctx.clearRect(0, 0, size, size);
+                ctx.drawImage(bitmap, 0, 0, size, size);
+                bitmap.close();
+            }
+        } finally {
+            isRendering = false;
+            if (queuedState && !isDisposed) void renderQueued();
         }
-
-        const ctx = canvas.getContext("2d");
-        if (!ctx) {
-          bitmap.close();
-          return;
-        }
-
-        const size = props.size ?? 400;
-        ctx.clearRect(0, 0, size, size);
-        ctx.drawImage(bitmap, 0, 0, size, size);
-        bitmap.close();
-      }
-    } finally {
-      isRendering = false;
-      if (queuedState && !isDisposed) void renderQueued();
     }
-  }
 
-  createEffect(() => {
-    JSON.stringify(props.state);   // forces deep tracking
-    queuedState = props.state;
-    void renderQueued();
-  });
+    createEffect(() => {
+        JSON.stringify(props.state);   // forces deep tracking
+        queuedState = props.state;
+        void renderQueued();
+    });
 
-  onCleanup(() => {
-    isDisposed = true;
-  });
+    onCleanup(() => {
+        isDisposed = true;
+    });
 
-  return (
-    <canvas
-      ref={canvas}
-      width={props.size ?? 400}
-      height={props.size ?? 400}
-    />
-  );
+    return (
+        <canvas
+            ref={canvas}
+            width={props.size ?? 400}
+            height={props.size ?? 400}
+        />
+    );
 }

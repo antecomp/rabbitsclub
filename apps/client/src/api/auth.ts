@@ -1,4 +1,4 @@
-import type { AuthErrorCode } from "~/schemas/auth.schema";
+import type { AuthErrorCode } from '~/schemas/auth.schema';
 
 type AuthFailureHandler = (code: AuthErrorCode) => void;
 
@@ -20,6 +20,6 @@ export function notifyAuthFailure(code: AuthErrorCode) {
 
 // TODO: Move this somewhere cleaner later.
 export const AUTH_FAILURE_EXCLUDED_PATHS = new Set([
-  "/auth/login",
-  "/auth/register"
-])
+    '/auth/login',
+    '/auth/register'
+]);

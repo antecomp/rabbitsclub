@@ -1,7 +1,7 @@
-import * as schema from "../schema"
-import { eq, sql } from "drizzle-orm"
-import { db } from ".."
-import { TIME_FORMAT } from "../time"
+import * as schema from '../schema';
+import { eq, sql } from 'drizzle-orm';
+import { db } from '..';
+import { TIME_FORMAT } from '../time';
 
 export default {
     getUserPermissions: (user_id: number) => db.select()
@@ -12,7 +12,7 @@ export default {
     upsertUserPermissions: (
         user_id: number,
         // odd type to keep parity with db schema
-        permissions: Partial<Omit<typeof schema.userPermissions.$inferSelect, "user_id">>
+        permissions: Partial<Omit<typeof schema.userPermissions.$inferSelect, 'user_id'>>
     ) => db.insert(schema.userPermissions)
         .values({ user_id, ...permissions })
         .onConflictDoUpdate({
@@ -44,5 +44,5 @@ export default {
         })
         .where(eq(schema.users.id, userId))
         .returning()
-        .get(),
-}
+        .get()
+};

@@ -1,5 +1,5 @@
-import { t } from "elysia"
-import { model } from "../db/model"
+import { t } from 'elysia';
+import { model } from '../db/model';
 
 /**
  * Runtime schema for a user record backed by the users table.

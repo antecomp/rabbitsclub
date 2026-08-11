@@ -1,17 +1,17 @@
-import { t } from "elysia"
-import { model } from "../db/model"
-import { MAX_MESSAGE_LENGTH } from "#config"
-import { actions } from "~/db/actions"
+import { t } from 'elysia';
+import { model } from '../db/model';
+import { MAX_MESSAGE_LENGTH } from '#config';
+import { actions } from '~/db/actions';
 
 /**
  * Runtime schema for a persisted chat message backed by the messages table.
  * Extracted type: Message
  */
-export const DbMessageSchema = t.Object(model.select.messages)
-export type DbMessage = typeof DbMessageSchema['static']
+export const DbMessageSchema = t.Object(model.select.messages);
+export type DbMessage = typeof DbMessageSchema['static'];
 
 /** Client-to-server schema for a newly sent message body. */
-export const SentMessageSchema = t.Object({ content: t.String({maxLength: MAX_MESSAGE_LENGTH}) })
+export const SentMessageSchema = t.Object({ content: t.String({ maxLength: MAX_MESSAGE_LENGTH }) });
 
 /** Message form as sent to the client */
 export const ClientMessageSchema = t.Object({
@@ -32,29 +32,29 @@ export function toClientMessage(message: DbMessage): ClientMessage {
     const is_deleted = message.deleted_at !== null;
 
     const sender = actions.users.getUserById(message.user_id);
-    const username = sender?.username ?? "ERR";
+    const username = sender?.username ?? 'ERR';
 
     return {
         type: 'user',
         id: message.id,
         username,
-        content: is_deleted ? "" : message.content,
+        content: is_deleted ? '' : message.content,
         is_deleted,
         deleted_reason: is_deleted ? message.deleted_reason : null,
         created_at: message.created_at,
         moderation_note: message.moderation_note,
         edited: !!message.edited_at
-    }
+    };
 }
 
 export enum SystemEvents {
-    USER_JOINED = "user_joined",
-    USER_LEFT = "user_left"
+    USER_JOINED = 'user_joined',
+    USER_LEFT = 'user_left'
 }
 
 /** WebSocket broadcast payload for system events such as join/leave notifications. */
 export const WSBroadcastMessageSchema = t.Object({
-    type: t.Literal("system"),
+    type: t.Literal('system'),
     event: t.Union([
         t.Literal(SystemEvents.USER_JOINED),
         t.Literal(SystemEvents.USER_LEFT)
@@ -64,9 +64,9 @@ export const WSBroadcastMessageSchema = t.Object({
 
 /** WebSocket broadcast payload listing currently online users. */
 export const WSBroadcastOnlineSchema = t.Object({
-    type: t.Literal("online"),
+    type: t.Literal('online'),
     users: t.Array(t.String())
-})
+});
 
 /**
  * Union schema for all supported WebSocket message payloads.

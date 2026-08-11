@@ -1,21 +1,21 @@
-import { render } from "solid-js/web"
-import { Route, Router, type RouteSectionProps } from "@solidjs/router"
-import Login from "./routes/Login"
-import Register from "./routes/Register"
-import Chat from "./routes/Chat"
-import { GuestRoute, ProtectedRoute } from "./components/ProtectedRoute"
-import Manage from "./routes/Manage"
-import Landing from "./routes/Landing"
-import './style/index.css'
-import About from "./routes/About"
-import Settings from "./routes/Settings"
-import { PreferencesProvider } from "./context/Preferences"
-import Avatar from "@/routes/Avatar"
-import ManageIndex from "./routes/manage/ManageIndex"
-import ManageInvites from "./routes/manage/ManageInvites"
-import Invite from "./routes/Invite"
-import AuthGuard from "./components/AuthGuard"
-import LoggedOut from "./routes/LoggedOut"
+import { render } from 'solid-js/web';
+import { Route, Router, type RouteSectionProps } from '@solidjs/router';
+import Login from './routes/Login';
+import Register from './routes/Register';
+import Chat from './routes/Chat';
+import { GuestRoute, ProtectedRoute } from './components/ProtectedRoute';
+import Manage from './routes/Manage';
+import Landing from './routes/Landing';
+import './style/index.css';
+import About from './routes/About';
+import Settings from './routes/Settings';
+import { PreferencesProvider } from './context/Preferences';
+import Avatar from '@/routes/Avatar';
+import ManageIndex from './routes/manage/ManageIndex';
+import ManageInvites from './routes/manage/ManageInvites';
+import Invite from './routes/Invite';
+import AuthGuard from './components/AuthGuard';
+import LoggedOut from './routes/LoggedOut';
 
 function AppRoot(props: RouteSectionProps) {
     return (
@@ -23,7 +23,7 @@ function AppRoot(props: RouteSectionProps) {
             <AuthGuard />
             {props.children}
         </>
-    )
+    );
 }
 
 render(
@@ -48,7 +48,7 @@ render(
                 <Route path="/settings" component={() => (
                     <ProtectedRoute><Settings /></ProtectedRoute>
                 )} />
-                <Route path="/manage" component={(props) => (
+                <Route path="/manage" component={props => (
                     <Manage>{props.children}</Manage>
                 )}>
                     <Route path="/" component={ManageIndex} />
@@ -62,5 +62,5 @@ render(
             </Router>
         </PreferencesProvider>
     ),
-    document.getElementById("root")!
-)
+    document.getElementById('root')!
+);

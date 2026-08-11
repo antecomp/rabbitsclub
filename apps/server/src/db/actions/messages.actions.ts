@@ -1,8 +1,8 @@
-import { db } from "..";
-import { lt, desc, eq, sql, and, isNull } from "drizzle-orm";
-import * as schema from "../schema"
-import { MESSAGE_PAGE_SIZE } from "#config";
-import { TIME_FORMAT } from "../time";
+import { db } from '..';
+import { lt, desc, eq, sql, and, isNull } from 'drizzle-orm';
+import * as schema from '../schema';
+import { MESSAGE_PAGE_SIZE } from '#config';
+import { TIME_FORMAT } from '../time';
 
 export default {
     insertMessage: (user_id: number, content: string) =>
@@ -21,7 +21,7 @@ export default {
             .reverse(),
 
     // Message moderation
-    deleteMessage: (messageId: number, deletedBy: number, kind: "user" | "moderator", reason?: string) => 
+    deleteMessage: (messageId: number, deletedBy: number, kind: 'user' | 'moderator', reason?: string) => 
         db.update(schema.messages)
             .set({
                 deleted_at: sql`(strftime(${TIME_FORMAT}, 'now'))`,
@@ -51,7 +51,7 @@ export default {
         db.update(schema.messages)
             .set({
                 content,
-                edited_at: sql`(strftime(${TIME_FORMAT}, 'now'))`,
+                edited_at: sql`(strftime(${TIME_FORMAT}, 'now'))`
             })
             .where(and(
                 eq(schema.messages.id, messageId),
@@ -60,4 +60,4 @@ export default {
             ))
             .returning()
             .get()
-}
+};

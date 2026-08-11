@@ -1,4 +1,4 @@
-import { t } from "elysia"
+import { t } from 'elysia';
 
 /** Schema for the X/Y offset applied to a transformable avatar part. */
 export const AvatarOffsetSchema = t.Object({

@@ -1,10 +1,10 @@
-import { styled } from "solid-styled-components";
+import { styled } from 'solid-styled-components';
 
 export const MESSAGE_COLUMN_SIZE = '1fr';
 export const ASIDE_COLUMN_SIZE = '120px';
 export const CHAT_COLUMN_GAP = '10px';
 
-export const ChatContainer = styled("div")`
+export const ChatContainer = styled('div')`
     position: absolute;
     top: 5vh;
     left: 5vw;
@@ -36,7 +36,7 @@ export const Messages = styled('div')`
     }
 `;
 
-export const SendInput = styled(`input`)`
+export const SendInput = styled('input')`
     background: lightgray;
     border: none;
     font-family: 'main';
@@ -55,14 +55,14 @@ export const SendInput = styled(`input`)`
     }
 `;
 
-export const SendForm = styled(`form`)`
+export const SendForm = styled('form')`
     display: flex;
     margin-bottom: 15px;
     margin-top: 10px;
     position: relative;
 `;
 
-export const SendButton = styled(`button`)`
+export const SendButton = styled('button')`
     border: none;
     padding: 5px 25px;
     font-size: 16px;
@@ -96,4 +96,4 @@ export const FormTooltip = styled('p')`
     color: gray;
     bottom: 0;
     transform: translateY(150%);
-`
+`;

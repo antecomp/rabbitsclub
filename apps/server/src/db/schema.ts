@@ -1,65 +1,65 @@
-import { sqliteTable, text, integer, type AnySQLiteColumn } from "drizzle-orm/sqlite-core"
-import { sql } from "drizzle-orm"
-import { TIME_FORMAT } from "./time"
+import { sqliteTable, text, integer, type AnySQLiteColumn } from 'drizzle-orm/sqlite-core';
+import { sql } from 'drizzle-orm';
+import { TIME_FORMAT } from './time';
 
 
 const timestamps = {
-    created_at: text("created_at").notNull()
+    created_at: text('created_at').notNull()
         .default(sql`(strftime(${TIME_FORMAT}, 'now'))`)
-}
+};
 
-export const users = sqliteTable("users", {
-    id:       integer("id").primaryKey({ autoIncrement: true }),
-    username: text("username").notNull().unique(),
-    password: text("password").notNull(),
-    is_admin: integer("is_admin", {mode: 'boolean'}).notNull().default(false),
-    token_version: integer("token_version").notNull().default(0),
+export const users = sqliteTable('users', {
+    id:       integer('id').primaryKey({ autoIncrement: true }),
+    username: text('username').notNull().unique(),
+    password: text('password').notNull(),
+    is_admin: integer('is_admin', { mode: 'boolean' }).notNull().default(false),
+    token_version: integer('token_version').notNull().default(0),
 
-    is_banned:     integer("is_banned").notNull().default(0),
-    banned_reason: text("banned_reason"),
-    banned_at:     text("banned_at"),
-    banned_by:     integer("banned_by").references((): AnySQLiteColumn => users.id),
+    is_banned:     integer('is_banned').notNull().default(0),
+    banned_reason: text('banned_reason'),
+    banned_at:     text('banned_at'),
+    banned_by:     integer('banned_by').references((): AnySQLiteColumn => users.id),
     ...timestamps
-})
+});
 
-export const messages = sqliteTable("messages", {
-    id:             integer("id").primaryKey({ autoIncrement: true }),
-    content:        text("content").notNull(),
+export const messages = sqliteTable('messages', {
+    id:             integer('id').primaryKey({ autoIncrement: true }),
+    content:        text('content').notNull(),
 
-    user_id:        integer("user_id").notNull().references(() => users.id),
+    user_id:        integer('user_id').notNull().references(() => users.id),
 
-    deleted_at:     text("deleted_at"),
-    deleted_by:     integer("deleted_by").references(() => users.id),
-    deleted_reason: text("deleted_reason"),
-    deleted_kind:   text("deleted_kind", { enum: ['user', 'moderator'] }),
+    deleted_at:     text('deleted_at'),
+    deleted_by:     integer('deleted_by').references(() => users.id),
+    deleted_reason: text('deleted_reason'),
+    deleted_kind:   text('deleted_kind', { enum: ['user', 'moderator'] }),
 
-    edited_at:      text("edited_at"),
+    edited_at:      text('edited_at'),
 
-    moderation_note:          text("moderation_note"),
-    moderation_note_author:   integer("moderation_note_author").references(() => users.id),
-    moderation_note_at:       text("moderation_note_at"),
+    moderation_note:          text('moderation_note'),
+    moderation_note_author:   integer('moderation_note_author').references(() => users.id),
+    moderation_note_at:       text('moderation_note_at'),
     ...timestamps
-})
+});
 
-export const inviteCodes = sqliteTable("invite_codes", {
-    id:         integer("id").primaryKey({ autoIncrement: true }),
-    code:       text("code").notNull().unique(),
-    used_by:    integer("used_by").references(() => users.id),
-    created_by: integer("created_by").notNull().references(() => users.id),
+export const inviteCodes = sqliteTable('invite_codes', {
+    id:         integer('id').primaryKey({ autoIncrement: true }),
+    code:       text('code').notNull().unique(),
+    used_by:    integer('used_by').references(() => users.id),
+    created_by: integer('created_by').notNull().references(() => users.id),
     ...timestamps
-})
+});
 
-export const profiles = sqliteTable("profiles", {
-    user_id:    integer("user_id").primaryKey().references(() => users.id),
-    avatar:     text("avatar"),
-    updated_at: text("updated_at").notNull()
+export const profiles = sqliteTable('profiles', {
+    user_id:    integer('user_id').primaryKey().references(() => users.id),
+    avatar:     text('avatar'),
+    updated_at: text('updated_at').notNull()
         .default(sql`(strftime(${TIME_FORMAT}, 'now'))`)
-})
+});
 
-export const userPermissions = sqliteTable("user_permissions", {
-    user_id:             integer("user_id").primaryKey().references(() => users.id),
-    can_ban_users:       integer("can_ban_users", {mode: 'boolean'}).notNull().default(false),
-    can_delete_messages: integer("can_delete_messages", {mode: 'boolean'}).notNull().default(false),
-    can_leave_notes:     integer("can_leave_notes", {mode: 'boolean'}).notNull().default(false),
-    can_manage_invites:  integer("can_manage_invites", {mode: 'boolean'}).notNull().default(false),
-})
+export const userPermissions = sqliteTable('user_permissions', {
+    user_id:             integer('user_id').primaryKey().references(() => users.id),
+    can_ban_users:       integer('can_ban_users', { mode: 'boolean' }).notNull().default(false),
+    can_delete_messages: integer('can_delete_messages', { mode: 'boolean' }).notNull().default(false),
+    can_leave_notes:     integer('can_leave_notes', { mode: 'boolean' }).notNull().default(false),
+    can_manage_invites:  integer('can_manage_invites', { mode: 'boolean' }).notNull().default(false)
+});

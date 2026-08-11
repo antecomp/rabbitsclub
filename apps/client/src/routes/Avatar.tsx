@@ -1,22 +1,22 @@
-import { createEffect, createSignal, For, Match, Show, Switch } from "solid-js";
-import { AvatarCanvas } from "../avatar/AvatarCanvas";
-import Footer from "../components/Footer";
-import { AccessoryVariant, EyeVariant, accessories, accessoryVariants, eyeVariants, eyes, heads } from "../avatar/avatar.assets";
-import { Divider, Subtitle, Title } from "../styled/shared.styles";
-import { createStore } from "solid-js/store";
-import { api } from "../api/backend";
-import { user } from "../api/user";
-import { invalidateCachedProfile } from "../avatar/avatarCache";
-import { cloneAvatarData, createDefaultAvatar, toAvatarData } from "@/avatar/avatar.const";
-import { AvatarData } from "@/avatar/avatar.types";
-import { AvatarContainer, BackButton, Menu, MenuButton, MenuTitle, MiniDivider, OffsetButton, OffsetControls, Split, ThumbnailButton, ThumbnailGrid } from "./Avatar.styles";
+import { createEffect, createSignal, For, Match, Show, Switch } from 'solid-js';
+import { AvatarCanvas } from '../avatar/AvatarCanvas';
+import Footer from '../components/Footer';
+import { AccessoryVariant, EyeVariant, accessories, accessoryVariants, eyeVariants, eyes, heads } from '../avatar/avatar.assets';
+import { Divider, Subtitle, Title } from '../styled/shared.styles';
+import { createStore } from 'solid-js/store';
+import { api } from '../api/backend';
+import { user } from '../api/user';
+import { invalidateCachedProfile } from '../avatar/avatarCache';
+import { cloneAvatarData, createDefaultAvatar, toAvatarData } from '@/avatar/avatar.const';
+import { AvatarData } from '@/avatar/avatar.types';
+import { AvatarContainer, BackButton, Menu, MenuButton, MenuTitle, MiniDivider, OffsetButton, OffsetControls, Split, ThumbnailButton, ThumbnailGrid } from './Avatar.styles';
 
 import arrow from '../assets/ui/dir.png';
 import center from '../assets/ui/center.png';
 import turn from '../assets/ui/turn.png';
 
-import { createRandomAvatar } from "@/avatar/createRandomAvatar";
-import Link from "@/components/Link";
+import { createRandomAvatar } from '@/avatar/createRandomAvatar';
+import Link from '@/components/Link';
 
 type AvatarMenu = 'root' | 'ears' | 'leftEye' | 'rightEye' | 'accessory1' | 'accessory2';
 type TransformableSlot = 'leftEye' | 'rightEye' | 'accessory1' | 'accessory2';
@@ -28,12 +28,12 @@ const directions: { x: number; y: number; rotation: number; gridColumn: number; 
     { x: 0, y: -EYE_OFFSET_STEP, rotation: -90, gridColumn: 2, gridRow: 1, label: 'Move eye up' },
     { x: -EYE_OFFSET_STEP, y: 0, rotation: 180, gridColumn: 1, gridRow: 2, label: 'Move eye left' },
     { x: EYE_OFFSET_STEP, y: 0, rotation: 0, gridColumn: 3, gridRow: 2, label: 'Move eye right' },
-    { x: 0, y: EYE_OFFSET_STEP, rotation: 90, gridColumn: 2, gridRow: 3, label: 'Move eye down' },
+    { x: 0, y: EYE_OFFSET_STEP, rotation: 90, gridColumn: 2, gridRow: 3, label: 'Move eye down' }
 ];
 
 const rotations: { delta: number; gridColumn: number; label: string; mirrored?: boolean }[] = [
     { delta: -EYE_ROTATION_STEP, gridColumn: 1, label: 'Turn eye counterclockwise', mirrored: true },
-    { delta: EYE_ROTATION_STEP, gridColumn: 3, label: 'Turn eye clockwise' },
+    { delta: EYE_ROTATION_STEP, gridColumn: 3, label: 'Turn eye clockwise' }
 ];
 
 // Directional control cluster for nudging one eye's avatar offset and rotation.
@@ -73,7 +73,7 @@ function EyeOffsetControls(props: {
             <OffsetButton
                 type="button"
                 aria-label="Reset eye transform"
-                title={"Reset eye transform"}
+                title={'Reset eye transform'}
                 onClick={props.onReset}
                 style={{ 'grid-column': 2, 'grid-row': 2 }}
             >
@@ -93,32 +93,32 @@ export default function Avatar() {
     const eyeThumbnail = (variant: EyeVariant, side: 0 | 1) => {
         const src = eyes[variant].src;
         return Array.isArray(src) ? src[side] : src;
-    }
+    };
 
     const accessoryThumbnail = (variant: AccessoryVariant) => accessories[variant].src;
 
     const movePart = (side: TransformableSlot, x: number, y: number) => {
         setAvatar(side, 'offset', 'x', v => v + x);
         setAvatar(side, 'offset', 'y', v => v + y);
-    }
+    };
 
     const rotatePart = (side: TransformableSlot, delta: number) => {
         setAvatar(side, 'rotation', v => v + delta);
-    }
+    };
 
     const resetPart = (side: TransformableSlot) => {
         setAvatar(side, 'offset', { x: 0, y: 0 });
         setAvatar(side, 'rotation', 0);
-    }
+    };
 
     const save = async () => {
         const { error } = await api.profile.avatar.put({ ...avatar });
         if(error) return;
         const username = user()?.username;
         if (username) invalidateCachedProfile(username);
-        setMessage("Avatar saved successfully.");
-        setTimeout(() => message() && setMessage(""), 5000);
-    }
+        setMessage('Avatar saved successfully.');
+        setTimeout(() => message() && setMessage(''), 5000);
+    };
 
     createEffect(() => {
         if (user.loading) return;
@@ -149,7 +149,7 @@ export default function Avatar() {
         accessory1: 'Select an accessory or none. Transform it using the control buttons.',
         accessory2: 'Select an accessory or none. Transform it using the control buttons.',
         root: 'Select options on the right to customize rabbit.'
-    } satisfies Record<AvatarMenu, string>)[menu()]
+    } satisfies Record<AvatarMenu, string>)[menu()];
 
     return (
         <AvatarContainer>
@@ -324,5 +324,5 @@ export default function Avatar() {
                 {message()}
             </Footer>
         </AvatarContainer>
-    )
+    );
 }

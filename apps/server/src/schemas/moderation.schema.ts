@@ -1,10 +1,10 @@
-import { t } from "elysia";
-import { model } from "~/db/model";
+import { t } from 'elysia';
+import { model } from '~/db/model';
 
 // Custom type because we're swaying the SQL numbers to booleans + omitting info
 export const UserPermissionsSchema = t.Omit(
     t.Object(model.select.userPermissions),
-    ["user_id"]
+    ['user_id']
 );
 
 export const UpdateUserPermissionsSchema = t.Partial(

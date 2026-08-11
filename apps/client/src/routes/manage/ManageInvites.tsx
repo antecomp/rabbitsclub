@@ -1,14 +1,14 @@
-import { createSignal, For, Show } from "solid-js"
-import { api } from "../../api/backend";
-import Footer from "../../components/Footer";
-import { AuthForm, Divider, Subtitle, Title } from "../../styled/shared.styles";
-import usePermissionGuard from "@/hooks/usePermissionGuard";
-import Link from "@/components/Link";
+import { createSignal, For, Show } from 'solid-js';
+import { api } from '../../api/backend';
+import Footer from '../../components/Footer';
+import { AuthForm, Divider, Subtitle, Title } from '../../styled/shared.styles';
+import usePermissionGuard from '@/hooks/usePermissionGuard';
+import Link from '@/components/Link';
 
 export default function ManageInvites() {
-    const [inviteCode, setInviteCode] = createSignal("");
+    const [inviteCode, setInviteCode] = createSignal('');
     const [inviteLinks, setInviteLinks] = createSignal<string[]>([]);
-    const [error, setError] = createSignal("");
+    const [error, setError] = createSignal('');
 
     const canAccess = usePermissionGuard('can_manage_invites', {
         redirectTo: '/manage'
@@ -17,17 +17,17 @@ export default function ManageInvites() {
     const createInviteLink = (code: string) => {
         const url = new URL(`/invite/${encodeURIComponent(code)}`, window.location.origin);
         return url.toString();
-    }
+    };
 
     const sendInvite = async (e: SubmitEvent) => {
         e.preventDefault();
         if (!inviteCode()) return;
 
-        setError("");
+        setError('');
         const { data, error: err } = await api.invites.post({ code: inviteCode() });
 
         if (err) {
-            setError(err.value.message ?? "unable to create invite");
+            setError(err.value.message ?? 'unable to create invite');
             return;
         }
 
@@ -35,12 +35,12 @@ export default function ManageInvites() {
             setInviteLinks(links => [createInviteLink(data.code), ...links]);
         }
 
-        setInviteCode("");
-    }
+        setInviteCode('');
+    };
 
     const copyInviteLink = async (link: string) => {
         await navigator.clipboard.writeText(link);
-    }
+    };
 
     return (
         <Show when={canAccess()}>
@@ -70,5 +70,5 @@ export default function ManageInvites() {
             </Show>
             <Footer>Create new invite by putting key in input field. <br /> {error()} </Footer>
         </Show>
-    )
+    );
 }

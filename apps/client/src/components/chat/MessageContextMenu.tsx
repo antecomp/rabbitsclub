@@ -1,55 +1,55 @@
-import { Component, createSignal, For, Show } from "solid-js";
-import { MessageContextMenu, MessageExpandedMenu } from "./Message.styles";
-import { MessageProps, Side } from "./Message";
-import { permissions } from "@/api/permissions";
-import { MAX_MESSAGE_LENGTH } from "#config";
-import { api } from "@/api/backend";
-import { Dynamic } from "solid-js/web";
+import { Component, createSignal, For, Show } from 'solid-js';
+import { MessageContextMenu, MessageExpandedMenu } from './Message.styles';
+import { MessageProps, Side } from './Message';
+import { permissions } from '@/api/permissions';
+import { MAX_MESSAGE_LENGTH } from '#config';
+import { api } from '@/api/backend';
+import { Dynamic } from 'solid-js/web';
 
-type MessageMenuProps = MessageProps & { side: Side }
+type MessageMenuProps = MessageProps & { side: Side };
 
 type MenuItem = {
     name: string,
     condition: (props: MessageMenuProps) => boolean
     component: Component<MessageMenuProps & { closeSelf: () => void }>
-}
+};
 
 const MENUS = {
     mod: {
-        name: "MOD",
+        name: 'MOD',
         condition: () => {
-            const perms = permissions()
-            return Boolean(perms?.can_leave_notes || perms?.can_delete_messages)
+            const perms = permissions();
+            return Boolean(perms?.can_leave_notes || perms?.can_delete_messages);
         },
-        component: (props) => {
-            const [reason, setReason] = createSignal("");
+        component: props => {
+            const [reason, setReason] = createSignal('');
             return <MessageExpandedMenu>
                 &gt; message moderation...
                 <br />
                 <input type="text" value={reason()} onInput={e => setReason(e.target.value)} maxlength={MAX_MESSAGE_LENGTH} /> <br />
                 <button onClick={() => api.moderation.messages({ id: props.id }).delete({ reason: reason() })}>[ DELETE MESSAGE ]</button>
                 <button onClick={() => api.moderation.messages({ id: props.id }).patch({ note: reason() })}>[ LEAVE NOTE ]</button>
-            </MessageExpandedMenu>
+            </MessageExpandedMenu>;
         }
     },
     delete: {
-        name: "DEL",
+        name: 'DEL',
         condition: props => props.isOwn && !props.is_deleted,
-        component: (props) => {
+        component: props => {
             // pull this into higher scope to prevent func closure copy for every message
-            const del = () => { api.messages({ id: props.id }).delete(); props.closeSelf() }
+            const del = () => { api.messages({ id: props.id }).delete(); props.closeSelf(); };
             return <MessageExpandedMenu>
                 &gt; confirm delete... <br />
                 <button onClick={del}>[ DELETE ]</button>
                 <button onClick={props.closeSelf}>[ CANCEL ]</button>
-            </MessageExpandedMenu>
+            </MessageExpandedMenu>;
         }
     },
     edit: {
-        name: "EDT",
+        name: 'EDT',
         condition: props => props.isOwn && !props.is_deleted,
-        component: (props) => {
-            const [newContent, setNewContent] = createSignal("");
+        component: props => {
+            const [newContent, setNewContent] = createSignal('');
             return <MessageExpandedMenu>
                 {/* todo: change this to a form so enter press will send the edit out */}
                 &gt; edit message...
@@ -57,12 +57,12 @@ const MENUS = {
                 <input type="text" value={newContent()} onInput={e => setNewContent(e.target.value)} maxlength={MAX_MESSAGE_LENGTH} /> <br />
                 <button onClick={() => api.messages({ id: props.id }).patch({ content: newContent() })}>[ EDIT MESSAGE ]</button>
                 <button onClick={props.closeSelf}>[ CANCEL ]</button>
-            </MessageExpandedMenu>
+            </MessageExpandedMenu>;
         }
     }
-} as const satisfies Record<string, MenuItem>
+} as const satisfies Record<string, MenuItem>;
 
-type MenuChoice = keyof typeof MENUS
+type MenuChoice = keyof typeof MENUS;
 
 export default function createMessageContextMenu(props: MessageMenuProps) {
     const [currentlyOpenedMenu, setOpenMenu] = createSignal<MenuChoice | null>(null);
@@ -93,7 +93,7 @@ export default function createMessageContextMenu(props: MessageMenuProps) {
                 closeSelf={() => setOpenMenu(null)}
             />
         </Show>
-    )
+    );
 
-    return { ContextMenu, ExpandedMenu }
+    return { ContextMenu, ExpandedMenu };
 }

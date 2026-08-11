@@ -1,4 +1,4 @@
-import { AccessoryVariant, EyeVariant } from "./avatar.assets";
+import { AccessoryVariant, EyeVariant } from './avatar.assets';
 
 /** Zero-based index of the selected head asset. */
 export type HeadVariant = number;
@@ -12,7 +12,7 @@ export type AvatarOffset = {
     x: number;
     /** Vertical position adjustment. */
     y: number;
-}
+};
 
 /** Position and rotation adjustments applied to an avatar part. */
 export type AvatarTransform = {
@@ -20,7 +20,7 @@ export type AvatarTransform = {
     offset: AvatarOffset;
     /** Clockwise rotation in degrees. */
     rotation: AvatarRotation
-}
+};
 
 /**
  * A selectable avatar part and its transform.
@@ -30,13 +30,13 @@ export type AvatarTransform = {
 export type AvatarPart<TVariant extends string | null> = {
     /** Selected asset key, or `null` when the slot is empty. */
     variant: TVariant
-} & AvatarTransform
+} & AvatarTransform;
 
 /** Configured eye part. */
-export type EyeSlot = AvatarPart<EyeVariant>
+export type EyeSlot = AvatarPart<EyeVariant>;
 
 /** Configured accessory part, which may be empty. */
-export type AccessorySlot = AvatarPart<AccessoryVariant | null>
+export type AccessorySlot = AvatarPart<AccessoryVariant | null>;
 
 /** Serializable avatar customization state shared by APIs, UI, and renderers. */
 export interface AvatarData {

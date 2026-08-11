@@ -1,5 +1,5 @@
-import { AvatarDataSchema, type AvatarData } from "~/schemas/profiles.schema"
-import { Value } from "@sinclair/typebox/value"
+import { AvatarDataSchema, type AvatarData } from '~/schemas/profiles.schema';
+import { Value } from '@sinclair/typebox/value';
 
 export default function parseAvatarData(value: string | null): AvatarData | null {
     if (!value) return null;

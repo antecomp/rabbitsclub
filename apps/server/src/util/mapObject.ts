@@ -8,14 +8,14 @@
  * @returns Mapped object.
  */
 export function mapObject<
-  T,
-  O,
-  K extends PropertyKey
+    T,
+    O,
+    K extends PropertyKey
 >(
-  obj: Record<K, T>,
-  fn: (v: T, k: K, obj: Record<K, T>) => O
+    obj: Record<K, T>,
+    fn: (v: T, k: K, obj: Record<K, T>) => O
 ): Record<K, O> {
-  return Object.fromEntries(
-    Object.entries(obj).map(([k, v]) => [k, fn(v as T, k as K, obj)])
-  ) as Record<K, O>;
+    return Object.fromEntries(
+        Object.entries(obj).map(([k, v]) => [k, fn(v as T, k as K, obj)])
+    ) as Record<K, O>;
 }

@@ -1,5 +1,5 @@
-import { splitProps, type JSX } from "solid-js";
-import { styled } from "solid-styled-components";
+import { splitProps, type JSX } from 'solid-js';
+import { styled } from 'solid-styled-components';
 
 import chatbox from '@/assets/ui/chatbox.png?url&no-inline';
 import chatbox_f from '@/assets/ui/chatbox_f.png?url&no-inline';
@@ -25,22 +25,22 @@ type MessageBodyProps = JSX.HTMLAttributes<HTMLDivElement> & { side: Side; varia
 type UsernameTagProps = JSX.HTMLAttributes<HTMLDivElement> & SideProps;
 
 const MessageContainerBase = (props: MessageContainerProps) => {
-    const [, divProps] = splitProps(props, ["side", "withUsername"]);
+    const [, divProps] = splitProps(props, ['side', 'withUsername']);
     return <div {...divProps} />;
 };
 
 const MessagePfpContainerBase = (props: MessagePfpContainerProps) => {
-    const [, divProps] = splitProps(props, ["side", "raised"]);
+    const [, divProps] = splitProps(props, ['side', 'raised']);
     return <div {...divProps} />;
 };
 
 const MessageBodyBase = (props: MessageBodyProps) => {
-    const [, divProps] = splitProps(props, ["side", "variant"]);
+    const [, divProps] = splitProps(props, ['side', 'variant']);
     return <div {...divProps} />;
 };
 
 const UsernameTagBase = (props: UsernameTagProps) => {
-    const [, divProps] = splitProps(props, ["side"]);
+    const [, divProps] = splitProps(props, ['side']);
     return <div {...divProps} />;
 };
 
@@ -149,20 +149,20 @@ export const MessageBody = styled(MessageBodyBase) <MessageBodyProps>`
     position: relative;
 `;
 
-export const TimestampContainer = styled("div") <{ align: 'right' | 'left'; }> `
+export const TimestampContainer = styled('div') <{ align: 'right' | 'left'; }> `
     font-size: ${DATE_SIZE};
     text-align: ${props => props.align};
     color: gray;
     transform: translate(2px, -4px);
 `;
 
-export const EditedMessageNote = styled("div") <{align: 'right' | 'left'}>`
+export const EditedMessageNote = styled('div') <{ align: 'right' | 'left' }>`
     font-size: ${DATE_SIZE};
     text-align: ${props => props.align};
     font-style: italic;
     color: gray;
     transform: translateY(4px);
-`
+`;
 
 export const UsernameTag = styled(UsernameTagBase) <UsernameTagProps>`
     position: absolute;
@@ -191,17 +191,17 @@ export const UsernameTag = styled(UsernameTagBase) <UsernameTagProps>`
     }
 `;
 
-export const MessageContent = styled("div")`
+export const MessageContent = styled('div')`
     user-select: text;
 `;
 
-export const MessageModerationNote = styled("span")`
+export const MessageModerationNote = styled('span')`
     color: orangered;
-`
+`;
 
 export const DeletedMessageNote = styled('span')`
     color: red;
-`
+`;
 
 export const MessageExpandedMenu = styled('div')`
     grid-column: 1 / -1;
@@ -213,7 +213,7 @@ export const MessageExpandedMenu = styled('div')`
         border-bottom: 1px solid gray;
                 outline: none;
     }
-`
+`;
 
 export const MessageContextMenu = styled('div') <SideProps>`
     position: absolute;
@@ -222,8 +222,8 @@ export const MessageContextMenu = styled('div') <SideProps>`
     button { font-size: 12px; }
     top: -10px;
     ${({ side }) => side === 'right'
-        ? `left: -10px; text-align: right;`
-        : `right: -10px; text-align: left;`
+            ? 'left: -10px; text-align: right;'
+            : 'right: -10px; text-align: left;'
     }
 
     transform: ${({ side }) => side === 'right' ? 'translateX(-100%)' : 'translateX(100%)'};
@@ -237,7 +237,7 @@ export const MessageContextMenu = styled('div') <SideProps>`
     }
 
     visibility: hidden;
-`
+`;
 
 export const MessageContainer = styled(MessageContainerBase) <MessageContainerProps>`
     display: grid;

@@ -1,21 +1,21 @@
-import { styled } from "solid-styled-components";
-import { Container, Divider, Subtitle, Title } from "../styled/shared.styles";
-import Footer from "../components/Footer";
-import { createResource } from "solid-js";
-import { api } from "../api/backend";
-import Link from "@/components/Link";
+import { styled } from 'solid-styled-components';
+import { Container, Divider, Subtitle, Title } from '../styled/shared.styles';
+import Footer from '../components/Footer';
+import { createResource } from 'solid-js';
+import { api } from '../api/backend';
+import Link from '@/components/Link';
 
-const Details = styled("p")`
+const Details = styled('p')`
     padding: 10px;
 
     .link-button {
         font-size: 18px;
     }
-`
+`;
 
 const [userCount] = createResource(async () => {
-    return (await api.usercount.get()).data
-})
+    return (await api.usercount.get()).data;
+});
 
 export default function About() {
     return (
@@ -35,5 +35,5 @@ export default function About() {
                 For inquiries you can reach us at: <a href="mailto:adm@omni.vi">adm@omni.vi</a>
             </Footer>
         </Container>
-    )
+    );
 }

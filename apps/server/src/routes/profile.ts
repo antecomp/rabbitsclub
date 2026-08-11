@@ -1,15 +1,15 @@
-import Elysia from "elysia"
-import { authMiddleware } from "../middleware/auth.middleware"
-import { AvatarDataSchema } from "../schemas/profiles.schema"
-import { actions } from "~/db/actions"
-import { t } from "elysia"
-import { ErrorSchema } from "../schemas/generic.schema"
+import Elysia from 'elysia';
+import { authMiddleware } from '../middleware/auth.middleware';
+import { AvatarDataSchema } from '../schemas/profiles.schema';
+import { actions } from '~/db/actions';
+import { t } from 'elysia';
+import { ErrorSchema } from '../schemas/generic.schema';
 
-export const profileRoutes = new Elysia({ prefix: "/profile" })
+export const profileRoutes = new Elysia({ prefix: '/profile' })
     .use(authMiddleware)
-    .get("/:username", ({ params: { username }, status }) => {
+    .get('/:username', ({ params: { username }, status }) => {
         const avatar = actions.profiles.getProfile(username);
-        if(!avatar) return status(404, { message: "Profile not found" });
+        if(!avatar) return status(404, { message: 'Profile not found' });
         return avatar;
     }, {
         useAuth: true,
@@ -18,13 +18,13 @@ export const profileRoutes = new Elysia({ prefix: "/profile" })
             404: ErrorSchema
         }
     })
-    .put("/avatar", ({ body, user }) => {
-        actions.profiles.upsertProfile(user.id, body)
-        return { success: true }
+    .put('/avatar', ({ body, user }) => {
+        actions.profiles.upsertProfile(user.id, body);
+        return { success: true };
     }, {
         useAuth: true,
         body: AvatarDataSchema,
         response: {
             200: t.Object({ success: t.Boolean() })
         }
-    })
+    });

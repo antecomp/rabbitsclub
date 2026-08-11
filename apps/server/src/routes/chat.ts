@@ -1,10 +1,10 @@
-import { Elysia } from "elysia";
-import { actions } from "~/db/actions";
-import { SentMessageSchema, SystemEvents, toClientMessage, WSMessageSchema } from "../schemas/messages.schema";
-import { authMiddleware } from "../middleware/auth.middleware";
-import { CHAT_WS_NAME } from "../config";
-import { registerChatSocket, unregisterChatSocket } from "../util/chatSessions";
-import { MAX_MESSAGE_LENGTH } from "#config";
+import { Elysia } from 'elysia';
+import { actions } from '~/db/actions';
+import { SentMessageSchema, SystemEvents, toClientMessage, WSMessageSchema } from '../schemas/messages.schema';
+import { authMiddleware } from '../middleware/auth.middleware';
+import { CHAT_WS_NAME } from '../config';
+import { registerChatSocket, unregisterChatSocket } from '../util/chatSessions';
+import { MAX_MESSAGE_LENGTH } from '#config';
 
 const onlineUsers = new Map<number, { username: string, count: number }>();
 const getOnlineUsers = () => Array.from(onlineUsers.values()).map(u => u.username);
@@ -12,7 +12,7 @@ const getOnlineUsers = () => Array.from(onlineUsers.values()).map(u => u.usernam
 
 export const chatRoutes = new Elysia()
     .use(authMiddleware)
-    .ws("/ws", {
+    .ws('/ws', {
         // invokes auth middleware, provides us with "user" JWT payload too!
         useAuth: true,
         body: SentMessageSchema,
@@ -25,16 +25,16 @@ export const chatRoutes = new Elysia()
             ws.subscribe(CHAT_WS_NAME);
 
             if (current) {
-                current.count++
+                current.count++;
             } else {
                 onlineUsers.set(id, { username, count: 1 });
-                ws.publish(CHAT_WS_NAME, { type: 'system', event: SystemEvents.USER_JOINED, content: username })
-                ws.send({ type: 'system', event: SystemEvents.USER_JOINED, content: username })
-                ws.publish(CHAT_WS_NAME, { type: 'online', users: getOnlineUsers() })
+                ws.publish(CHAT_WS_NAME, { type: 'system', event: SystemEvents.USER_JOINED, content: username });
+                ws.send({ type: 'system', event: SystemEvents.USER_JOINED, content: username });
+                ws.publish(CHAT_WS_NAME, { type: 'online', users: getOnlineUsers() });
             }
 
             // Send current online list to the newly connected client
-            ws.send({ type: 'online', users: getOnlineUsers() })
+            ws.send({ type: 'online', users: getOnlineUsers() });
         },
         message(ws, message) {
             // silently fail for now.
@@ -43,7 +43,7 @@ export const chatRoutes = new Elysia()
             if (!msgContent) return;
             const saved = actions.messages.insertMessage(ws.data.user.id, msgContent);
             if (!saved) {
-                console.error("Unable to post message to DB", message);
+                console.error('Unable to post message to DB', message);
                 return;
             }
 
@@ -61,10 +61,10 @@ export const chatRoutes = new Elysia()
             current.count--;
             if (current.count === 0) {
                 onlineUsers.delete(id);
-                ws.publish(CHAT_WS_NAME, { type: "system", event: SystemEvents.USER_LEFT, content: username });
-                ws.publish(CHAT_WS_NAME, { type: 'online', users: getOnlineUsers() })
+                ws.publish(CHAT_WS_NAME, { type: 'system', event: SystemEvents.USER_LEFT, content: username });
+                ws.publish(CHAT_WS_NAME, { type: 'online', users: getOnlineUsers() });
             }
 
             ws.unsubscribe(CHAT_WS_NAME);
         }
-    })
+    });

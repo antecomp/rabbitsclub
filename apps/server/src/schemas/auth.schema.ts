@@ -1,12 +1,12 @@
-import { t } from "elysia"
-import { AvatarDataSchema } from "./profiles.schema"
+import { t } from 'elysia';
+import { AvatarDataSchema } from './profiles.schema';
 import {
     MAX_PASSWORD_LENGTH,
     MAX_USERNAME_LENGTH,
     MIN_PASSWORD_LENGTH,
     MIN_USERNAME_LENGTH
-} from "#config";
-import { UserSchema } from "./users.schema";
+} from '#config';
+import { UserSchema } from './users.schema';
 
 /** Request body schema for login requests. */
 export const LoginBodySchema = t.Object({
@@ -36,11 +36,11 @@ export const LoginResponseSchema = t.Object({ success: t.Boolean() });
  * Extracted type: AuthErrorCode
  */
 export const AuthErrorCodeSchema = t.Union([
-    t.Literal("unauthenticated"),
-    t.Literal("session_expired"),
-    t.Literal("session_revoked"),
-    t.Literal("account_banned"),
-    t.Literal("origin_not_allowed")
+    t.Literal('unauthenticated'),
+    t.Literal('session_expired'),
+    t.Literal('session_revoked'),
+    t.Literal('account_banned'),
+    t.Literal('origin_not_allowed')
 ]);
 
 export type AuthErrorCode = typeof AuthErrorCodeSchema['static'];
@@ -55,7 +55,7 @@ export const AuthErrorSchema = t.Object({
  * Authorization error codes.
  * Extracted type: AuthorizationErrorCode
  */
-export const AuthorizationErrorCodeSchema = t.Literal("forbidden");
+export const AuthorizationErrorCodeSchema = t.Literal('forbidden');
 export type AuthorizationErrorCode = typeof AuthorizationErrorCodeSchema['static'];
 
 /** Error payload schema for authorization failures. */

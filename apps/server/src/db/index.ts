@@ -1,29 +1,29 @@
-import { Database } from "bun:sqlite"
-import { drizzle } from "drizzle-orm/bun-sqlite"
-import { migrate } from "drizzle-orm/bun-sqlite/migrator"
-import { join } from "path"
-import * as schema from "./schema"
+import { Database } from 'bun:sqlite';
+import { drizzle } from 'drizzle-orm/bun-sqlite';
+import { migrate } from 'drizzle-orm/bun-sqlite/migrator';
+import { join } from 'path';
+import * as schema from './schema';
 
-const dbPath = process.env.DB_PATH ?? join(import.meta.dir, "../../chat.db")
-const migrationsPath = process.env.MIGRATIONS_PATH ?? join(import.meta.dir, "../../migrations")
-const sqlite = new Database(dbPath, { create: true })
-sqlite.run("PRAGMA journal_mode = WAL")
+const dbPath = process.env.DB_PATH ?? join(import.meta.dir, '../../chat.db');
+const migrationsPath = process.env.MIGRATIONS_PATH ?? join(import.meta.dir, '../../migrations');
+const sqlite = new Database(dbPath, { create: true });
+sqlite.run('PRAGMA journal_mode = WAL');
 
-export const db = drizzle(sqlite, { schema })
+export const db = drizzle(sqlite, { schema });
 
 // Auto-apply pending migrations on startup
 migrate(db, { migrationsFolder: migrationsPath });
 
 
-if (process.env.SEED_ADMIN === "true") {
-    const initialAdminUsername = process.env.INITIAL_ADMIN_USERNAME
-    const initialAdminPassword = process.env.INITIAL_ADMIN_PASSWORD
+if (process.env.SEED_ADMIN === 'true') {
+    const initialAdminUsername = process.env.INITIAL_ADMIN_USERNAME;
+    const initialAdminPassword = process.env.INITIAL_ADMIN_PASSWORD;
 
     if (!initialAdminUsername || !initialAdminPassword) {
-        throw new Error("SEED_ADMIN=true requires INITIAL_ADMIN_USERNAME and INITIAL_ADMIN_PASSWORD")
+        throw new Error('SEED_ADMIN=true requires INITIAL_ADMIN_USERNAME and INITIAL_ADMIN_PASSWORD');
     }
 
-    const hashedPassword = await Bun.password.hash(initialAdminPassword)
+    const hashedPassword = await Bun.password.hash(initialAdminPassword);
     db.insert(schema.users)
         .values({
             username: initialAdminUsername,
@@ -37,7 +37,7 @@ if (process.env.SEED_ADMIN === "true") {
                 is_admin: true
             }
         })
-        .run()
+        .run();
 
-    console.log(`Admin user '${initialAdminUsername}' seeded.`)
+    console.log(`Admin user '${initialAdminUsername}' seeded.`);
 }

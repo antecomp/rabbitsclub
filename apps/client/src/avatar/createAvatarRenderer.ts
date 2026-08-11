@@ -1,5 +1,5 @@
-import { accessories, eyes, heads } from "./avatar.assets";
-import { AvatarData } from "./avatar.types";
+import { accessories, eyes, heads } from './avatar.assets';
+import { AvatarData } from './avatar.types';
 
 const SIZE = 450;
 const DEG_TO_RAD = Math.PI / 180;
@@ -22,7 +22,7 @@ const eyePromises: Record<string, [Promise<HTMLImageElement>, Promise<HTMLImageE
             key,
             Array.isArray(src)
                 ? [loadImage(src[0]), loadImage(src[1])]
-                : [loadImage(src), loadImage(src)],
+                : [loadImage(src), loadImage(src)]
         ])
     );
 
@@ -30,7 +30,7 @@ const accessoryPromises: Record<string, Promise<HTMLImageElement>> =
     Object.fromEntries(
         Object.entries(accessories).map(([key, { src }]) => [
             key,
-            loadImage(src),
+            loadImage(src)
         ])
     );
 
@@ -51,7 +51,7 @@ function drawRotatedImage(
 /** Creates an offscreen avatar renderer with methods for drawing and exporting the current avatar image. */
 export default function createAvatarRenderer() {
     const offscreen = new OffscreenCanvas(SIZE, SIZE);
-    const ctx = offscreen.getContext("2d", { willReadFrequently: true });
+    const ctx = offscreen.getContext('2d', { willReadFrequently: true });
 
     async function render(state: AvatarData) {
         if (!ctx) return;
@@ -59,7 +59,7 @@ export default function createAvatarRenderer() {
 
         // head ---
         const head = await headPromises[state.head];
-        if (!head) throw new Error("Invalid head index: " + state.head);
+        if (!head) throw new Error('Invalid head index: ' + state.head);
         ctx?.drawImage(head, 0, 0, SIZE, SIZE);
 
         // eyes ---
@@ -94,12 +94,12 @@ export default function createAvatarRenderer() {
         return offscreen.transferToImageBitmap();
     }
 
-    async function toBlob(type = "image/png"): Promise<Blob> {
+    async function toBlob(type = 'image/png'): Promise<Blob> {
         return offscreen.convertToBlob({ type });
     }
 
-    async function toContentBlob(type = "image/png"): Promise<Blob> {
-        if (!ctx) throw new Error("Unable to get canvas context");
+    async function toContentBlob(type = 'image/png'): Promise<Blob> {
+        if (!ctx) throw new Error('Unable to get canvas context');
         const { data } = ctx.getImageData(0, 0, SIZE, SIZE);
 
         let minX = SIZE, minY = SIZE, maxX = 0, maxY = 0;
@@ -124,7 +124,7 @@ export default function createAvatarRenderer() {
         const h = maxY - minY + 1;
 
         const temp = new OffscreenCanvas(w, h);
-        temp.getContext("2d")!.drawImage(offscreen, minX, minY, w, h, 0, 0, w, h);
+        temp.getContext('2d')!.drawImage(offscreen, minX, minY, w, h, 0, 0, w, h);
         return temp.convertToBlob({ type });
     }
 
@@ -137,14 +137,14 @@ export default function createAvatarRenderer() {
         toBlob,
         /** Exports a blob cropped to the non-transparent avatar bounds. */
         toContentBlob
-    }
+    };
 }
 
 const renderer = createAvatarRenderer();
 
 /** Renders avatar state to a cropped object URL suitable for img tags.  */
 export async function generateAvatarAssetURL(state: AvatarData): Promise<string> {
-    await renderer.render(state)
-    const blob = await renderer.toContentBlob()
-    return URL.createObjectURL(blob)
+    await renderer.render(state);
+    const blob = await renderer.toContentBlob();
+    return URL.createObjectURL(blob);
 }

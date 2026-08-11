@@ -1,22 +1,22 @@
-import { createResource, Show } from "solid-js"
-import { useParams } from "@solidjs/router"
-import { api } from "../api/backend"
-import Footer from "../components/Footer"
-import { AuthForm, Container, Divider, Subtitle, Title } from "../styled/shared.styles"
-import Register from "./Register"
-import { styled } from "solid-styled-components"
-import { AvatarCanvas } from "@/avatar/AvatarCanvas"
+import { createResource, Show } from 'solid-js';
+import { useParams } from '@solidjs/router';
+import { api } from '../api/backend';
+import Footer from '../components/Footer';
+import { AuthForm, Container, Divider, Subtitle, Title } from '../styled/shared.styles';
+import Register from './Register';
+import { styled } from 'solid-styled-components';
+import { AvatarCanvas } from '@/avatar/AvatarCanvas';
 
 import cbr from '../assets/ui/c_br.png?url&no-inline';
-import { createStore } from "solid-js/store"
-import { AvatarData } from "@/avatar/avatar.types"
-import { createRandomAvatar } from "../avatar/createRandomAvatar"
-import Link from "@/components/Link"
+import { createStore } from 'solid-js/store';
+import { AvatarData } from '@/avatar/avatar.types';
+import { createRandomAvatar } from '../avatar/createRandomAvatar';
+import Link from '@/components/Link';
 
 const InviteMessage = styled('p')`
     font-size: 18px;
     padding: 10px;
-`
+`;
 
 const RegisterGrid = styled('div')`
     display: grid;
@@ -57,16 +57,16 @@ const RegisterGrid = styled('div')`
         clip-path: polygon(100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 0);
         }
     }
-`
+`;
 
 export default function Invite() {
-    const params = useParams()
+    const params = useParams();
 
     const [invite] = createResource(
         () => params.code,
-        async (code) => {
-            const { data } = await api.auth.invite({ code }).get()
-            return data
+        async code => {
+            const { data } = await api.auth.invite({ code }).get();
+            return data;
         }
     );
 
@@ -101,7 +101,7 @@ export default function Invite() {
                     </Container>
                 }
             >
-                {(inviteData) => (
+                {inviteData => (
                     <Container>
                         <Title>Welcome</Title>
                         <Subtitle>New User Creation</Subtitle>
@@ -125,5 +125,5 @@ export default function Invite() {
                 )}
             </Show>
         </Show>
-    )
+    );
 }

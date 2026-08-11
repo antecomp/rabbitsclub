@@ -1,6 +1,6 @@
-import { styled } from "solid-styled-components";
+import { styled } from 'solid-styled-components';
 
-export const Container = styled("div")`
+export const Container = styled('div')`
     position: absolute;
     top: 40%;
     left: 10vw;
@@ -12,9 +12,9 @@ export const Container = styled("div")`
     flex-direction: column;
     user-select: none;
     animation: flicker-in 0.3s steps(12, end) forwards;
-`
+`;
 
-export const Selector = styled("span")`
+export const Selector = styled('span')`
     display: flex;
     width: fit-content;
     padding: 0;
@@ -33,26 +33,26 @@ export const Selector = styled("span")`
     .link-button {
         font-family: 'wo3';
     }
-`
-export const Title = styled("h1")`
+`;
+export const Title = styled('h1')`
     font-size: 64px;
-`
-export const Subtitle = styled("h2")`
+`;
+export const Subtitle = styled('h2')`
     font-size: 32px;
-`
-export const Divider = styled("hr")<{color?: string}>`
-    border-color: ${props => props.color ?? "black"};
+`;
+export const Divider = styled('hr')<{ color?: string }>`
+    border-color: ${props => props.color ?? 'black'};
     border-style: solid;
     border-width: 1px;
     width: 100%;
-`
+`;
 
-export const ThinDivider = styled('hr')<{color?: string}>`
-    background: ${props => props.color ?? "black"};
+export const ThinDivider = styled('hr')<{ color?: string }>`
+    background: ${props => props.color ?? 'black'};
     border: none;
     height: 1px;
     width: 100%;
-`
+`;
 
 export const AuthForm = styled('form')`
     display: flex;
@@ -108,4 +108,4 @@ export const AuthForm = styled('form')`
         outline: none;
         cursor: pointer;
     }
-`
+`;

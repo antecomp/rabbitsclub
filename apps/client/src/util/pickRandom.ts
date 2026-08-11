@@ -7,5 +7,5 @@
  * @throws Will throw an error if the array is empty.
  */
 export default function pickRandom<T>(items: T[]): T {
-	return items[Math.floor(Math.random() * items.length)];
+    return items[Math.floor(Math.random() * items.length)];
 }

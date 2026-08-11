@@ -1,6 +1,6 @@
-import { eq, sql } from "drizzle-orm";
-import { db } from "..";
-import * as schema from "../schema";
+import { eq, sql } from 'drizzle-orm';
+import { db } from '..';
+import * as schema from '../schema';
 
 export default {
     insertUser: (username: string, password: string) => db.insert(schema.users)
@@ -20,5 +20,5 @@ export default {
 
     getUserCount: () => db.select({ count: sql<number> `count(*)` })
         .from(schema.users)
-        .get()?.count ?? 0,
-}
+        .get()?.count ?? 0
+};

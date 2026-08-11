@@ -1,14 +1,14 @@
-import { createContext, createEffect, ParentProps, useContext } from "solid-js";
-import { createStore, SetStoreFunction } from "solid-js/store";
+import { createContext, createEffect, ParentProps, useContext } from 'solid-js';
+import { createStore, SetStoreFunction } from 'solid-js/store';
 
-const STORAGE_KEY = "rabbitclub.preferences";
+const STORAGE_KEY = 'rabbitclub.preferences';
 
 export type Preferences = {
     incomingOnRight: boolean;
 };
 
 const defaultPreferences: Preferences = {
-    incomingOnRight: true,
+    incomingOnRight: true
 };
 
 type PreferencesContextValue = {
@@ -25,7 +25,7 @@ function loadPreferences(): Preferences {
 
         return {
             ...defaultPreferences,
-            ...JSON.parse(stored),
+            ...JSON.parse(stored)
         };
     } catch {
         return defaultPreferences;
@@ -59,6 +59,6 @@ export function PreferencesProvider(props: ParentProps) {
  */
 export function usePreferences() {
     const context = useContext(PreferencesContext);
-    if (!context) throw new Error("usePreferences must be used within PreferencesProvider");
+    if (!context) throw new Error('usePreferences must be used within PreferencesProvider');
     return context;
 }

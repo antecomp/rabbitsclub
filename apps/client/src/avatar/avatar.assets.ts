@@ -41,30 +41,30 @@ const DEFAULT_TOPHAT_OFFSET = { x: 0, y: -65 };
 
 
 export const eyes = {
-  bead:    { src: Bead,                     defaultOffset: DEFAULT_EYE_OFFSET },
-  circle:  { src: Circle,                   defaultOffset: DEFAULT_EYE_OFFSET },
-  cross:   { src: Cross,                    defaultOffset: DEFAULT_EYE_OFFSET },
-  dash:    { src: Dash,                     defaultOffset: DEFAULT_EYE_OFFSET },
-  diamond: { src: Diamond,                  defaultOffset: DEFAULT_EYE_OFFSET },
-  glee:    { src: Glee,                     defaultOffset: DEFAULT_EYE_OFFSET },
-  square:  { src: Square,                   defaultOffset: DEFAULT_EYE_OFFSET },
-  gleam:   { src: Gleam,                    defaultOffset: DEFAULT_EYE_OFFSET },
-  shock:   {src: Shock,                     defaultOffset: DEFAULT_EYE_OFFSET },
-  wedge:   { src: [WedgeLeft, WedgeRight],  defaultOffset: DEFAULT_EYE_OFFSET },
-  lazy:    { src: [LazyLeft,  LazyRight],   defaultOffset: DEFAULT_EYE_OFFSET },
-  curl:    { src: [CurlLeft,  CurlRight],   defaultOffset: DEFAULT_EYE_OFFSET },
-  clench:  { src: [ClenchLeft, ClenchRight], defaultOffset: DEFAULT_EYE_OFFSET },
+    bead:    { src: Bead,                     defaultOffset: DEFAULT_EYE_OFFSET },
+    circle:  { src: Circle,                   defaultOffset: DEFAULT_EYE_OFFSET },
+    cross:   { src: Cross,                    defaultOffset: DEFAULT_EYE_OFFSET },
+    dash:    { src: Dash,                     defaultOffset: DEFAULT_EYE_OFFSET },
+    diamond: { src: Diamond,                  defaultOffset: DEFAULT_EYE_OFFSET },
+    glee:    { src: Glee,                     defaultOffset: DEFAULT_EYE_OFFSET },
+    square:  { src: Square,                   defaultOffset: DEFAULT_EYE_OFFSET },
+    gleam:   { src: Gleam,                    defaultOffset: DEFAULT_EYE_OFFSET },
+    shock:   { src: Shock,                     defaultOffset: DEFAULT_EYE_OFFSET },
+    wedge:   { src: [WedgeLeft, WedgeRight],  defaultOffset: DEFAULT_EYE_OFFSET },
+    lazy:    { src: [LazyLeft,  LazyRight],   defaultOffset: DEFAULT_EYE_OFFSET },
+    curl:    { src: [CurlLeft,  CurlRight],   defaultOffset: DEFAULT_EYE_OFFSET },
+    clench:  { src: [ClenchLeft, ClenchRight], defaultOffset: DEFAULT_EYE_OFFSET }
 } satisfies Record<string, { src: string | [string, string]; defaultOffset: { x: number; y: number } }>;
 
 export const accessories = {
-  bow: { src: Bow, defaultOffset: { x: 0, y: 0 } },
-  glasses: { src: Glasses, defaultOffset: DEFAULT_FACE_ACCESSORY_OFFSET },
-  sunglasses: { src: Sunglasses, defaultOffset: DEFAULT_FACE_ACCESSORY_OFFSET },
-  tophat: { src: TopHat, defaultOffset: DEFAULT_TOPHAT_OFFSET },
-  cigarette: { src: Cigarette, defaultOffset: { x: 60, y: 125 } },
-  headband: { src: Headband, defaultOffset: {x: 0, y: 15} },
-  headphones: { src: Headphones, defaultOffset: { x: 0, y: 20 } },
-  wizard: { src: Wizard, defaultOffset: {x: 0, y: -75} }
+    bow: { src: Bow, defaultOffset: { x: 0, y: 0 } },
+    glasses: { src: Glasses, defaultOffset: DEFAULT_FACE_ACCESSORY_OFFSET },
+    sunglasses: { src: Sunglasses, defaultOffset: DEFAULT_FACE_ACCESSORY_OFFSET },
+    tophat: { src: TopHat, defaultOffset: DEFAULT_TOPHAT_OFFSET },
+    cigarette: { src: Cigarette, defaultOffset: { x: 60, y: 125 } },
+    headband: { src: Headband, defaultOffset: { x: 0, y: 15 } },
+    headphones: { src: Headphones, defaultOffset: { x: 0, y: 20 } },
+    wizard: { src: Wizard, defaultOffset: { x: 0, y: -75 } }
 } satisfies Record<string, { src: string; defaultOffset: { x: number; y: number } }>;
 
 export type EyeVariant = keyof typeof eyes;
@@ -78,14 +78,14 @@ export const accessoryVariants = Object.keys(accessories) as AccessoryVariant[];
  * Narrows arbitrary strings to supported eye asset keys.
  */
 export function isEyeVariant(variant: string): variant is EyeVariant {
-  return variant in eyes;
+    return variant in eyes;
 }
 
 /**
  * Narrows arbitrary strings to supported accessory asset keys.
  */
 export function isAccessoryVariant(variant: string): variant is AccessoryVariant {
-  return variant in accessories;
+    return variant in accessories;
 }
 
 export const heads = [
@@ -96,11 +96,11 @@ export const heads = [
  * Coerces persisted or user-provided head indexes into the available asset range.
  */
 export function clampedHeadVariant(variant: number) {
-  if(variant < 0) {
-    return 0;
-  }
-  if(variant >= heads.length) {
-    return heads.length - 1;
-  }
-  return variant;
+    if(variant < 0) {
+        return 0;
+    }
+    if(variant >= heads.length) {
+        return heads.length - 1;
+    }
+    return variant;
 }

@@ -1,9 +1,9 @@
-import { eq, sql } from "drizzle-orm";
-import type { AvatarData } from "~/schemas/profiles.schema";
-import parseAvatarData from "~/util/parseAvatarData";
-import { db } from "..";
-import * as schema from "../schema";
-import { TIME_FORMAT } from "../time";
+import { eq, sql } from 'drizzle-orm';
+import type { AvatarData } from '~/schemas/profiles.schema';
+import parseAvatarData from '~/util/parseAvatarData';
+import { db } from '..';
+import * as schema from '../schema';
+import { TIME_FORMAT } from '../time';
 
 export default {
     getProfile: (username: string) => {
@@ -11,9 +11,9 @@ export default {
             .from(schema.profiles)
             .innerJoin(schema.users, eq(schema.profiles.user_id, schema.users.id))
             .where(eq(schema.users.username, username))
-            .get()
-        if (!row) return null
-        return parseAvatarData(row.avatar)
+            .get();
+        if (!row) return null;
+        return parseAvatarData(row.avatar);
     },
 
     upsertProfile: (user_id: number, avatar: AvatarData) => db.insert(schema.profiles)
@@ -26,5 +26,5 @@ export default {
             }
         })
         .returning()
-        .get(),
-}
+        .get()
+};

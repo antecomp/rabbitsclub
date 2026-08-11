@@ -1,5 +1,5 @@
-import { AccessoryVariant, EyeVariant, clampedHeadVariant, isAccessoryVariant, isEyeVariant } from "./avatar.assets";
-import { AccessorySlot, AvatarData, AvatarOffset, AvatarRotation, EyeSlot, HeadVariant } from "./avatar.types";
+import { AccessoryVariant, EyeVariant, clampedHeadVariant, isAccessoryVariant, isEyeVariant } from './avatar.assets';
+import { AccessorySlot, AvatarData, AvatarOffset, AvatarRotation, EyeSlot, HeadVariant } from './avatar.types';
 
 type AvatarInputSlot = {
     variant: string;
@@ -38,7 +38,7 @@ function createOffset(x = 0, y = 0): AvatarOffset {
  * @param variant - The eye variant name.
  * @returns A new EyeSlot.
  */
-export function createEyeSlot(variant: EyeVariant = "bead"): EyeSlot {
+export function createEyeSlot(variant: EyeVariant = 'bead'): EyeSlot {
     return {
         variant,
         offset: createOffset(),
@@ -71,8 +71,8 @@ export function createAccessorySlot(variant: AccessoryVariant | null = null): Ac
 export function createDefaultAvatar(): AvatarData {
     return {
         head: 0,
-        leftEye: createEyeSlot("bead"),
-        rightEye: createEyeSlot("bead"),
+        leftEye: createEyeSlot('bead'),
+        rightEye: createEyeSlot('bead'),
         accessory1: createAccessorySlot(),
         accessory2: createAccessorySlot()
     };

@@ -1,59 +1,59 @@
-import { createSignal, Show } from "solid-js"
-import { api } from "../api/backend"
-import { refetchUser } from "../api/user"
-import { AuthForm } from "../styled/shared.styles"
-import { AvatarData } from "@/avatar/avatar.types"
+import { createSignal, Show } from 'solid-js';
+import { api } from '../api/backend';
+import { refetchUser } from '../api/user';
+import { AuthForm } from '../styled/shared.styles';
+import { AvatarData } from '@/avatar/avatar.types';
 import {
     MAX_PASSWORD_LENGTH,
     MAX_USERNAME_LENGTH,
     MIN_PASSWORD_LENGTH,
     MIN_USERNAME_LENGTH
-} from "#config"
-import Link from "@/components/Link"
+} from '#config';
+import Link from '@/components/Link';
 
 type RegisterProps = {
     inviteCode?: string
     avatar?: AvatarData
-}
+};
 
 export default function Register(props: RegisterProps) {
-    const [username, setUsername] = createSignal("")
-    const [password, setPassword] = createSignal("")
-    const [error, setError] = createSignal("");
+    const [username, setUsername] = createSignal('');
+    const [password, setPassword] = createSignal('');
+    const [error, setError] = createSignal('');
 
     const validateCredentials = () => {
         if (username().length < MIN_USERNAME_LENGTH) {
-            return `Username must be at least ${MIN_USERNAME_LENGTH} characters.`
+            return `Username must be at least ${MIN_USERNAME_LENGTH} characters.`;
         }
 
         if (username().length > MAX_USERNAME_LENGTH) {
-            return `Username must be at most ${MAX_USERNAME_LENGTH} characters.`
+            return `Username must be at most ${MAX_USERNAME_LENGTH} characters.`;
         }
 
         if (password().length < MIN_PASSWORD_LENGTH) {
-            return `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`
+            return `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`;
         }
 
         if (password().length > MAX_PASSWORD_LENGTH) {
-            return `Password must be at most ${MAX_PASSWORD_LENGTH} characters.`
+            return `Password must be at most ${MAX_PASSWORD_LENGTH} characters.`;
         }
 
-        return ""
-    }
+        return '';
+    };
 
     const submit = async (e: SubmitEvent) => {
-        e.preventDefault()
-        setError("")
+        e.preventDefault();
+        setError('');
 
         if (!props.inviteCode) {
-            setError("You need a valid invitation link to join.")
-            return
+            setError('You need a valid invitation link to join.');
+            return;
         }
 
-        const validationError = validateCredentials()
+        const validationError = validateCredentials();
         if (validationError) {
-            setError(validationError)
-            return
+            setError(validationError);
+            return;
         }
 
         const { error: err } = await api.auth.register.post({
@@ -61,17 +61,17 @@ export default function Register(props: RegisterProps) {
             password: password(),
             avatar: props.avatar,
             code: props.inviteCode
-        })
+        });
 
         if (err) {
-            setError(err.value.message ?? "unknown error")
-            return
+            setError(err.value.message ?? 'unknown error');
+            return;
         }
 
-        await refetchUser()
-    }
+        await refetchUser();
+    };
 
-    const hasInvite = () => Boolean(props.inviteCode)
+    const hasInvite = () => Boolean(props.inviteCode);
 
     return (
         <>
@@ -110,5 +110,5 @@ export default function Register(props: RegisterProps) {
                 </AuthForm>
             </Show>
         </>
-    )
+    );
 }

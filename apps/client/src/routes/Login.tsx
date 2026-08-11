@@ -1,63 +1,63 @@
-import { createSignal } from "solid-js"
-import { api } from "../api/backend"
-import { refetchUser } from "../api/user"
-import Footer from "../components/Footer"
-import { Container, Title, Subtitle, Divider, AuthForm } from "../styled/shared.styles"
+import { createSignal } from 'solid-js';
+import { api } from '../api/backend';
+import { refetchUser } from '../api/user';
+import Footer from '../components/Footer';
+import { Container, Title, Subtitle, Divider, AuthForm } from '../styled/shared.styles';
 import {
     MAX_PASSWORD_LENGTH,
     MAX_USERNAME_LENGTH,
     MIN_PASSWORD_LENGTH,
     MIN_USERNAME_LENGTH
-} from "#config"
-import Link from "@/components/Link"
+} from '#config';
+import Link from '@/components/Link';
 
 export default function Login() {
-    const [username, setUsername] = createSignal("")
-    const [password, setPassword] = createSignal("")
-    const [error, setError] = createSignal("")
+    const [username, setUsername] = createSignal('');
+    const [password, setPassword] = createSignal('');
+    const [error, setError] = createSignal('');
 
     const validateCredentials = () => {
         if (username().length < MIN_USERNAME_LENGTH) {
-            return `Username must be at least ${MIN_USERNAME_LENGTH} characters.`
+            return `Username must be at least ${MIN_USERNAME_LENGTH} characters.`;
         }
 
         if (username().length > MAX_USERNAME_LENGTH) {
-            return `Username must be at most ${MAX_USERNAME_LENGTH} characters.`
+            return `Username must be at most ${MAX_USERNAME_LENGTH} characters.`;
         }
 
         if (password().length < MIN_PASSWORD_LENGTH) {
-            return `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`
+            return `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`;
         }
 
         if (password().length > MAX_PASSWORD_LENGTH) {
-            return `Password must be at most ${MAX_PASSWORD_LENGTH} characters.`
+            return `Password must be at most ${MAX_PASSWORD_LENGTH} characters.`;
         }
 
-        return ""
-    }
+        return '';
+    };
 
     const submit = async (e: SubmitEvent) => {
-        e.preventDefault()
-        setError("")
+        e.preventDefault();
+        setError('');
 
-        const validationError = validateCredentials()
+        const validationError = validateCredentials();
         if (validationError) {
-            setError(validationError)
-            return
+            setError(validationError);
+            return;
         }
 
         const { error: err } = await api.auth.login.post({
             username: username(),
-            password: password(),
-        })
+            password: password()
+        });
 
         if (err) {
-            setError(err.value.message ?? "unknown error")
-            return
+            setError(err.value.message ?? 'unknown error');
+            return;
         }
 
-        await refetchUser()
-    }
+        await refetchUser();
+    };
 
     return (
         <Container>
@@ -89,5 +89,5 @@ export default function Login() {
                 Enter credentials into input fields. <br /> {error()}
             </Footer>
         </Container>
-    )
+    );
 }

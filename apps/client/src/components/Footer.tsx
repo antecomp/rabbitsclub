@@ -1,8 +1,8 @@
-import { createResource, ParentProps } from "solid-js";
-import { api } from "../api/backend";
-import { styled } from "solid-styled-components";
+import { createResource, ParentProps } from 'solid-js';
+import { api } from '../api/backend';
+import { styled } from 'solid-styled-components';
 
-const FooterContainer = styled('footer')<{showborder: boolean}>`
+const FooterContainer = styled('footer')<{ showborder: boolean }>`
     margin-top: auto;
     width: 100%;
     display: flex;
@@ -16,13 +16,13 @@ const FooterContainer = styled('footer')<{showborder: boolean}>`
     span {
         white-space: nowrap;
     }
-`
+`;
 
 // Raised global to prevent a health request every time the footer mounts.
 const [status] = createResource(async () => {
     const rez = (await api.health.get()).data;
     return rez?.status;
-})
+});
 
 /** Shared footer that displays application health and optional contextual text. */
 export default function Footer(props: ParentProps) {
@@ -37,5 +37,5 @@ export default function Footer(props: ParentProps) {
         <div>
             {props.children}
         </div>
-    </FooterContainer>
+    </FooterContainer>;
 }
