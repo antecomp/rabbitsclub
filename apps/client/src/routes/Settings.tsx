@@ -5,6 +5,7 @@ import { useNavigate } from "@solidjs/router";
 import { refetchUser } from "../api/user";
 import { usePreferences } from "../context/Preferences";
 import { styled } from "solid-styled-components";
+import Link from "@/components/Link";
 
 const ToggleCon = styled('div')`
     display: flex;
@@ -51,7 +52,7 @@ export default function Settings() {
             <button type="button" onClick={logout}>[ LOGOUT ]</button>
             <button type="button" onClick={logoutAll}>[ LOGOUT EVERYWHERE ]</button>
             <ThinDivider color="gray"/>
-            <button type="button" onClick={() => navigate("/")}>[ BACK ]</button>
+            <Link href="/">[ BACK ]</Link>
         </AuthForm>
         <Footer>Use input device to select user option.</Footer>
     </Container>

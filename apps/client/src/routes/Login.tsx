@@ -1,5 +1,4 @@
 import { createSignal } from "solid-js"
-import { useNavigate } from "@solidjs/router"
 import { api } from "../api/backend"
 import { refetchUser } from "../api/user"
 import Footer from "../components/Footer"
@@ -10,9 +9,9 @@ import {
     MIN_PASSWORD_LENGTH,
     MIN_USERNAME_LENGTH
 } from "#config"
+import Link from "@/components/Link"
 
 export default function Login() {
-    const navigate = useNavigate()
     const [username, setUsername] = createSignal("")
     const [password, setPassword] = createSignal("")
     const [error, setError] = createSignal("")
@@ -84,7 +83,7 @@ export default function Login() {
                     required
                 />
                 <button type="submit">[ LOGIN ]</button>
-                <button type="button" onClick={() => navigate("/")}>[ BACK ]</button>
+                <Link href="/">[ BACK ]</Link>
             </AuthForm>
             <Footer>
                 Enter credentials into input fields. <br /> {error()}

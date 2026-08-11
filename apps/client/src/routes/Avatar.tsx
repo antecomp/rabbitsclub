@@ -1,4 +1,3 @@
-import { useNavigate } from "@solidjs/router";
 import { createEffect, createSignal, For, Match, Show, Switch } from "solid-js";
 import { AvatarCanvas } from "../avatar/AvatarCanvas";
 import Footer from "../components/Footer";
@@ -17,6 +16,7 @@ import center from '../assets/ui/center.png';
 import turn from '../assets/ui/turn.png';
 
 import { createRandomAvatar } from "@/avatar/createRandomAvatar";
+import Link from "@/components/Link";
 
 type AvatarMenu = 'root' | 'ears' | 'leftEye' | 'rightEye' | 'accessory1' | 'accessory2';
 type TransformableSlot = 'leftEye' | 'rightEye' | 'accessory1' | 'accessory2';
@@ -85,9 +85,9 @@ function EyeOffsetControls(props: {
 
 /** Avatar customization route for editing head, eye variants, and eye offsets. */
 export default function Avatar() {
-    const navigate = useNavigate();
     const [menu, setMenu] = createSignal<AvatarMenu>('root');
     const [avatar, setAvatar] = createStore<AvatarData>(createDefaultAvatar());
+    const [message, setMessage] = createSignal('');
     let loadedUsername: string | undefined;
 
     const eyeThumbnail = (variant: EyeVariant, side: 0 | 1) => {
@@ -116,7 +116,8 @@ export default function Avatar() {
         if(error) return;
         const username = user()?.username;
         if (username) invalidateCachedProfile(username);
-        navigate("/");
+        setMessage("Avatar saved successfully.");
+        setTimeout(() => message() && setMessage(""), 5000);
     }
 
     createEffect(() => {
@@ -170,7 +171,9 @@ export default function Avatar() {
                             <Show when={user()}>
                                 <MenuButton type="button" onClick={save}>[ SAVE ]</MenuButton>
                             </Show>
-                            <MenuButton type="button" onClick={() => navigate("/")}>[ BACK ]</MenuButton>
+                            <MenuButton>
+                                <Link href="/">[ BACK ]</Link>
+                            </MenuButton>
                         </Match>
                         <Match when={menu() === 'ears'}>
                             <MenuTitle>
@@ -317,7 +320,8 @@ export default function Avatar() {
                 </Menu>
             </Split>
             <Footer>
-                {menuDescription()}
+                {menuDescription()} <br />
+                {message()}
             </Footer>
         </AvatarContainer>
     )

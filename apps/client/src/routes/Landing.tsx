@@ -1,33 +1,28 @@
-import { useNavigate } from "@solidjs/router";
 import { Show } from "solid-js";
 import { Container, Selector } from "../styled/shared.styles";
 import Footer from "../components/Footer";
+import Link from "../components/Link";
 import { user } from "../api/user";
 import { MANAGEMENT_PERMISSIONS } from "./Manage";
 import { hasPermission } from "@/api/permissions";
 
 export default function Landing() {
-
-    const navigate = useNavigate();
-
     return (
         <Container>
             <Show when={!user.loading}>
                 <Show
                     when={user()}
-                    fallback={<>
-                        <Selector onClick={() => navigate("/login")}>login</Selector>
-                    </>}
+                    fallback={<Selector><Link href="/login">login</Link></Selector>}
                 >
-                    <Selector onClick={() => navigate("/chat")}>chat</Selector>
-                    <Selector onClick={() => navigate("/settings")}>settings</Selector>
+                    <Selector><Link href="/chat">chat</Link></Selector>
+                    <Selector><Link href="/settings">settings</Link></Selector>
                 </Show>
-                <Selector onClick={() => navigate("/avatar")}>avatar</Selector>
+                <Selector><Link href="/avatar">avatar</Link></Selector>
                 <Show when={MANAGEMENT_PERMISSIONS.some(hasPermission)}>
-                    <Selector onClick={() => navigate("/manage")}>manage</Selector>
+                    <Selector><Link href="/manage">manage</Link></Selector>
                 </Show>
                 <Show when={!user()}>
-                    <Selector onClick={() => navigate("/about")}>about</Selector>
+                    <Selector><Link href="/about">about</Link></Selector>
                 </Show>
             </Show>
             <Footer>

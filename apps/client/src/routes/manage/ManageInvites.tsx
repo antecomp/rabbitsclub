@@ -1,12 +1,11 @@
-import { useNavigate } from "@solidjs/router";
 import { createSignal, For, Show } from "solid-js"
 import { api } from "../../api/backend";
 import Footer from "../../components/Footer";
 import { AuthForm, Divider, Subtitle, Title } from "../../styled/shared.styles";
 import usePermissionGuard from "@/hooks/usePermissionGuard";
+import Link from "@/components/Link";
 
 export default function ManageInvites() {
-    const navigate = useNavigate();
     const [inviteCode, setInviteCode] = createSignal("");
     const [inviteLinks, setInviteLinks] = createSignal<string[]>([]);
     const [error, setError] = createSignal("");
@@ -55,7 +54,7 @@ export default function ManageInvites() {
                     placeholder="Invite Code"
                 />
                 <button type="submit">[ SEND INVITE ]</button>
-                <button type="button" onClick={() => navigate("/manage")}>[ BACK ]</button>
+                <Link href="/manage">[ BACK ]</Link>
             </AuthForm>
             <Show when={inviteLinks().length > 0}>
                 <AuthForm as="div">

@@ -1,5 +1,4 @@
 import { createSignal, Show } from "solid-js"
-import { useNavigate } from "@solidjs/router"
 import { api } from "../api/backend"
 import { refetchUser } from "../api/user"
 import { AuthForm } from "../styled/shared.styles"
@@ -10,6 +9,7 @@ import {
     MIN_PASSWORD_LENGTH,
     MIN_USERNAME_LENGTH
 } from "#config"
+import Link from "@/components/Link"
 
 type RegisterProps = {
     inviteCode?: string
@@ -17,7 +17,6 @@ type RegisterProps = {
 }
 
 export default function Register(props: RegisterProps) {
-    const navigate = useNavigate()
     const [username, setUsername] = createSignal("")
     const [password, setPassword] = createSignal("")
     const [error, setError] = createSignal("");
@@ -80,7 +79,7 @@ export default function Register(props: RegisterProps) {
                 when={hasInvite()}
                 fallback={
                     <AuthForm as="div">
-                        <button type="button" onClick={() => navigate("/")}>[ BACK ]</button>
+                        <Link href="/">[ BACK ]</Link>
                     </AuthForm>
                 }
             >
@@ -103,7 +102,7 @@ export default function Register(props: RegisterProps) {
                         required
                     />
                     <button type="submit">[ REGISTER ]</button>
-                    <button type="button" onClick={() => navigate("/")}>[ BACK ]</button>
+                    <Link href="/">[ BACK ]</Link>
                     <Show when={error()}>
                         <hr/>
                         {error()}

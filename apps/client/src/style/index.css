@@ -49,14 +49,19 @@ h1, h2, h3, h4, h5 {
   100.00% { opacity: 1.000; }
 }
 
-button {
+button,
+.link-button {
      font-family: 'main';
      border: none;
      background: none;
+     text-decoration: none;
+     color: black;
 }
 
 button:hover,
-button:focus {
+button:focus,
+.link-button:hover,
+.link-button:focus {
      color: gray;
      outline: none;
      cursor: pointer;

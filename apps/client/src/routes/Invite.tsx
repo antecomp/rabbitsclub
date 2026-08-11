@@ -1,5 +1,5 @@
 import { createResource, Show } from "solid-js"
-import { useNavigate, useParams } from "@solidjs/router"
+import { useParams } from "@solidjs/router"
 import { api } from "../api/backend"
 import Footer from "../components/Footer"
 import { AuthForm, Container, Divider, Subtitle, Title } from "../styled/shared.styles"
@@ -11,6 +11,7 @@ import cbr from '../assets/ui/c_br.png?url&no-inline';
 import { createStore } from "solid-js/store"
 import { AvatarData } from "@/avatar/avatar.types"
 import { createRandomAvatar } from "../avatar/createRandomAvatar"
+import Link from "@/components/Link"
 
 const InviteMessage = styled('p')`
     font-size: 18px;
@@ -60,7 +61,6 @@ const RegisterGrid = styled('div')`
 
 export default function Invite() {
     const params = useParams()
-    const navigate = useNavigate()
 
     const [invite] = createResource(
         () => params.code,
@@ -95,7 +95,7 @@ export default function Invite() {
                             Invite invalid or already claimed.
                         </InviteMessage>
                         <AuthForm as="div">
-                            <button type="button" onClick={() => navigate("/")}>[ BACK ]</button>
+                            <Link href="/">[ BACK ]</Link>
                         </AuthForm>
                         <Footer />
                     </Container>

@@ -14,7 +14,7 @@ export const Container = styled("div")`
     animation: flicker-in 0.3s steps(12, end) forwards;
 `
 
-export const Selector = styled("button")`
+export const Selector = styled("span")`
     display: flex;
     width: fit-content;
     padding: 0;
@@ -28,6 +28,10 @@ export const Selector = styled("button")`
         cursor: pointer;
         color: gray;
         outline: none;
+    }
+
+    .link-button {
+        font-family: 'wo3';
     }
 `
 export const Title = styled("h1")`

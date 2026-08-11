@@ -1,3 +1,4 @@
+import Link from "@/components/Link";
 import { AuthForm, Container, Divider, Subtitle, Title } from "@/styled/shared.styles";
 import { Navigate, useLocation, useNavigate } from "@solidjs/router";
 import type { AuthErrorCode } from "~/schemas/auth.schema";
@@ -30,8 +31,8 @@ export default function LoggedOut() {
             <AuthForm>
                 You have been automatically logged out due to an authentication failure: 
                 {reason && AUTH_ERROR_DESCRIPTIONS[reason]}
-                <button type="button" onClick={() => navigate("/", { replace: true })}>[ HOME ]</button>
-                <button type="button" onClick={() => navigate("/login", { replace: true })}>[ LOGIN ]</button>
+                <Link href="/" replace>[ HOME ]</Link>
+                <Link href="/login" replace>[ LOGIN ]</Link>
             </AuthForm>
         </Container>
     )

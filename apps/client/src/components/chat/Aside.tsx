@@ -1,6 +1,6 @@
-import { useNavigate } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import { styled } from "solid-styled-components";
+import Link from "@/components/Link";
 
 const MAX_ONLINE_VISIBLE = 10;
 
@@ -41,8 +41,6 @@ export default function Aside(props: {
     const onlineHidden = () => props.whoIsOnline.slice(MAX_ONLINE_VISIBLE);
     const andMoreCount = () => onlineHidden().length;
 
-    const navigate = useNavigate();
-
     return (
         <Body>
             <u>users online</u>
@@ -60,7 +58,7 @@ export default function Aside(props: {
             <Show when={props.showReturnToPresent}>
                 <button onClick={props.onReturnToPresent}>[ PRESENT ]</button>
             </Show>
-            <button onClick={() => navigate("/")}>[ EXIT ]</button>
+            <Link href="/">[ EXIT ]</Link>
         </Body>
     )
 }

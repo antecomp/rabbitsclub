@@ -1,14 +1,14 @@
 import { styled } from "solid-styled-components";
 import { Container, Divider, Subtitle, Title } from "../styled/shared.styles";
-import { useNavigate } from "@solidjs/router";
 import Footer from "../components/Footer";
 import { createResource } from "solid-js";
 import { api } from "../api/backend";
+import Link from "@/components/Link";
 
 const Details = styled("p")`
     padding: 10px;
 
-    button {
+    .link-button {
         font-size: 18px;
     }
 `
@@ -18,7 +18,6 @@ const [userCount] = createResource(async () => {
 })
 
 export default function About() {
-    const navigate = useNavigate();
     return (
         <Container>
             <Title>About</Title>
@@ -30,7 +29,7 @@ export default function About() {
                 we choose our new members with care. <br />
                 <br />
                 There are {userCount() ?? '__'} registered users. <br /> <br />
-                <button onClick={() => navigate("/")}>[ BACK ]</button>
+                <Link href="/">[ BACK ]</Link>
             </Details>
             <Footer>
                 For inquiries you can reach us at: <a href="mailto:adm@omni.vi">adm@omni.vi</a>
