@@ -3,12 +3,23 @@ import Footer from "@/components/Footer";
 import Link from "@/components/Link";
 import usePermissionGuard from "@/hooks/usePermissionGuard";
 import { AuthForm, Divider, Subtitle, ThinDivider, Title } from "@/styled/shared.styles";
-import { createResource, For, Show } from "solid-js";
+import { HammerIcon, LucideIcon, NotebookIcon, SendIcon, TrashIcon } from "lucide-solid";
+import { createResource, createSignal, For, Show } from "solid-js";
 import { styled } from "solid-styled-components";
+import { type UserPermissions } from "~/schemas/moderation.schema";
+
+const PERMISSION_KEYS = ['can_ban_users', 'can_delete_messages', 'can_leave_notes', 'can_manage_invites'] as const
+
+const PERM_ICON_MAP: Record<typeof PERMISSION_KEYS[number], LucideIcon> = {
+    'can_ban_users': HammerIcon,
+    'can_delete_messages': TrashIcon,
+    'can_leave_notes': NotebookIcon,
+    'can_manage_invites': SendIcon
+}
 
 const UserSelectionTable = styled('div')`
     width: 100%;
-    height: 125px;
+    height: 150px;
     overflow-y: auto;
     display: block;
     scrollbar-width: none;
@@ -36,14 +47,25 @@ const UserSelectionRowUsername = styled('span')`
     flex-grow: 1;
 `
 
-function UserSelectionRow(
-    // lmao
-    props: Exclude<Awaited<ReturnType<typeof api.moderation.users.get>>['data'], null>[number]
-) {
+const UserSelectionRowPermissions = styled('span')`
+    width: fit-content;
+`
+
+type ManageUser = Exclude<Awaited<ReturnType<typeof api.moderation.users.get>>['data'], null>[number]
+
+function UserSelectionRow(props: ManageUser) {
     return (
         <UserSelectionRowContainer>
             <UserSelectionRowId>{props.id}</UserSelectionRowId>
             <UserSelectionRowUsername>{props.username}</UserSelectionRowUsername>
+            <UserSelectionRowPermissions>
+                <For each={PERMISSION_KEYS}>
+                    {perm => {
+                        const Icon = PERM_ICON_MAP[perm]
+                        return <Icon color={props.permissions[perm] ? 'black' : 'gray'} size={18} stroke-width={1.5} />
+                    }}
+                </For>
+            </UserSelectionRowPermissions>
         </UserSelectionRowContainer>
     )
 }
@@ -53,7 +75,9 @@ export default function ManageUsers() {
         redirectTo: '/manage'
     });
 
-    const [users, refetch] = createResource(() => api.moderation.users.get().then(({ data }) => data ?? null))
+    const [search, setSearch] = createSignal('');
+
+    const [users] = createResource(() => api.moderation.users.get().then(({ data }) => data ?? null))
 
     return (
         <Show when={canAccess()}>
@@ -63,12 +87,13 @@ export default function ManageUsers() {
             <AuthForm>
                 <UserSelectionTable>
                     <Show when={users()}>
-                        <For each={users() ?? []}>
+                        <For each={users()?.filter(user => user.username.toUpperCase().includes(search().toUpperCase())) ?? []}>
                             {user => <UserSelectionRow {...user} />}
                         </For>
                     </Show>
                 </UserSelectionTable>
                 <ThinDivider />
+                <input type="text" value={search()} onInput={e => setSearch(e.target.value)} placeholder="search" />
                 <Link href="/manage">[ BACK ]</Link>
             </AuthForm>
             <Footer>Select user to manage.</Footer>
