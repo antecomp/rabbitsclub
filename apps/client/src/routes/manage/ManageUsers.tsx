@@ -27,14 +27,18 @@ const UserSelectionTable = styled('div')`
 
 const UserSelectionRowContainer = styled('div')`
     width: 100%;
-    gap: 5px;
+    gap: 2px;
     display: flex;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
 
     span {
         background: lightgray;
         color: black;
         padding: 2px;
+    }
+
+    &:nth-of-type(even) span {
+        background: #aaa;
     }
 `
 
