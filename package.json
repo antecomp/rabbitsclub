@@ -12,5 +12,8 @@
   },
   "overrides": {
     "@sinclair/typebox": "0.34.49"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.6"
   }
 }
