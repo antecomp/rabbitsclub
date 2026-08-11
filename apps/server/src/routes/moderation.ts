@@ -46,6 +46,15 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         if (!target) return status(404, { message: "User not found" });
         if (target.is_banned) return status(409, { message: "User is already banned" });
 
+        // admins can never be banned
+        if(target.is_admin) return status(422, {message: "admins cannot be banned"});
+
+        // these users cannot be banned, unless by an admin
+        if(!user.is_admin) {
+            const targetPermissions = actions.moderation.getUserPermissions(target.id);
+            if(targetPermissions?.can_ban_users) return status(422, {message: "cannot ban another moderator with ban permissions"});
+        }
+
         const banned = actions.moderation.banUser(targetId, user.id, body?.reason);
         if (!banned) return status(500, { message: "Unable to ban user" });
 
@@ -61,6 +70,7 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
             400: ErrorSchema,
             404: ErrorSchema,
             409: ErrorSchema,
+            422: ErrorSchema,
             500: ErrorSchema
         }
     })
