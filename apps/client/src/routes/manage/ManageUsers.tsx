@@ -8,8 +8,8 @@ import { createResource, createSignal, For, Show } from "solid-js";
 import { styled } from "solid-styled-components";
 import { type UserPermissions } from "~/schemas/moderation.schema";
 
-const PERMISSION_KEYS = ['can_ban_users', 'can_delete_messages', 'can_leave_notes', 'can_manage_invites'] as const
-
+// idk why I have to split it like this but whatever
+const PERMISSION_KEYS = ['can_ban_users', 'can_delete_messages', 'can_leave_notes', 'can_manage_invites'] as const satisfies (keyof UserPermissions)[]
 const PERM_ICON_MAP: Record<typeof PERMISSION_KEYS[number], LucideIcon> = {
     'can_ban_users': HammerIcon,
     'can_delete_messages': TrashIcon,
