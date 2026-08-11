@@ -10,6 +10,7 @@ export default function ManageIndex() {
         <Divider />
         <AuthForm>
             <Link href="/manage/invites">[ INVITES ]</Link>
+            <Link href="/manage/users">[ USERS ]</Link>
             <Link href="/">[ BACK ]</Link>
         </AuthForm>
         <Footer>I trust you know what you're doing...</Footer>
