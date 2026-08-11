@@ -13,7 +13,8 @@ export default {
             can_delete_messages: schema.userPermissions.can_delete_messages,
             can_leave_notes:     schema.userPermissions.can_leave_notes,
             can_manage_invites:  schema.userPermissions.can_manage_invites
-        }
+        },
+        is_banned: schema.users.is_banned
     })
         .from(schema.users)
         .leftJoin(

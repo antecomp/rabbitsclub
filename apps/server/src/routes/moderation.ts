@@ -46,7 +46,8 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
             permissions: mapObject(
                 target.permissions ?? createUserPermissions(),
                 permission => target.is_admin || permission
-            )
+            ),
+            is_banned: target.is_banned
         })), {
         usePermission: 'can_ban_users',
         response: {
