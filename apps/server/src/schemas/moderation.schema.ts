@@ -12,5 +12,13 @@ export const UpdateUserPermissionsSchema = t.Partial(
     { minProperties: 1 }
 );
 
+export const ModerationUserSchema = t.Object({
+    id:          model.select.users.id,
+    username:    model.select.users.username,
+    is_admin:    model.select.users.is_admin,
+    permissions: UserPermissionsSchema
+});
+
 export type UserPermissions = typeof UserPermissionsSchema['static'];
 export type UpdateUserPermissions = typeof UpdateUserPermissionsSchema['static'];
+export type ModerationUser = typeof ModerationUserSchema['static'];

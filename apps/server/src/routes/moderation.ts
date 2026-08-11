@@ -5,7 +5,7 @@ import { toClientMessage } from '~/schemas/messages.schema';
 import { MAX_MESSAGE_LENGTH } from '#config';
 import { ErrorSchema, RequestResultSchema } from '~/schemas/generic.schema';
 import { actions } from '~/db/actions';
-import { UserPermissionsSchema, type UserPermissions } from '~/schemas/moderation.schema';
+import { ModerationUserSchema, UserPermissionsSchema, type UserPermissions } from '~/schemas/moderation.schema';
 import { mapObject } from '~/util/mapObject';
 import { Value } from '@sinclair/typebox/value';
 
@@ -36,6 +36,21 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         useAuth: true,
         response: {
             200: UserPermissionsSchema
+        }
+    })
+    .get('/users', () => actions.moderation.listUsersWithPermissions()
+        .map(target => ({
+            id:       target.id,
+            username: target.username,
+            is_admin: target.is_admin,
+            permissions: mapObject(
+                target.permissions ?? createUserPermissions(),
+                permission => target.is_admin || permission
+            )
+        })), {
+        usePermission: 'can_ban_users',
+        response: {
+            200: t.Array(ModerationUserSchema)
         }
     })
     .post('/users/:id/ban', ({ params, user, body, status }) => {
