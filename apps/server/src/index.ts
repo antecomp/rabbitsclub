@@ -8,8 +8,10 @@ import { profileRoutes } from './routes/profile';
 import { moderationRoutes } from './routes/moderation';
 import { messageRoutes } from './routes/messages';
 import { inviteRoutes } from './routes/invites';
+import openapi from '@elysia/openapi';
 
 const app = new Elysia()
+    .use(openapi())
     .use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }))
     .use(authRoutes)
     .use(chatRoutes)
