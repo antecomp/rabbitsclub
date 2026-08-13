@@ -1,15 +1,15 @@
-import { api } from "@/api/backend";
-import { createDefaultAvatar, toAvatarData } from "@/avatar/avatar.const";
-import { AvatarData } from "@/avatar/avatar.types";
-import { AvatarCanvas } from "@/avatar/AvatarCanvas";
-import usePermissionGuard from "@/hooks/usePermissionGuard";
-import { AuthForm, Divider, Subtitle, Title } from "@/styled/shared.styles";
-import { useParams } from "@solidjs/router";
-import { createResource, Show, Suspense } from "solid-js";
-import { type ModerationUser } from "~/schemas/moderation.schema";
-import { AvatarContainer, ManageUserGrid, ManageUserMenu } from "./ManageUser.styles";
-import Footer from "@/components/Footer";
-import Link from "@/components/Link";
+import { api } from '@/api/backend';
+import { createDefaultAvatar, toAvatarData } from '@/avatar/avatar.const';
+import { AvatarData } from '@/avatar/avatar.types';
+import { AvatarCanvas } from '@/avatar/AvatarCanvas';
+import usePermissionGuard from '@/hooks/usePermissionGuard';
+import { AuthForm, Divider, Subtitle, Title } from '@/styled/shared.styles';
+import { useParams } from '@solidjs/router';
+import { createResource, Show, Suspense } from 'solid-js';
+import { type ModerationUser } from '~/schemas/moderation.schema';
+import { AvatarContainer, ManageUserGrid, ManageUserMenu } from './ManageUser.styles';
+import Footer from '@/components/Footer';
+import Link from '@/components/Link';
 
 export default function ManageUser() {
     const canAccess = usePermissionGuard('can_ban_users', {
@@ -30,13 +30,11 @@ export default function ManageUser() {
             // todo: replace this with a get by id when we change the support there
             const avatar = await api.profile({ username: main.username })
                 .get()
-                .then(({ data }) => toAvatarData(data) ?? createDefaultAvatar())
+                .then(({ data }) => toAvatarData(data) ?? createDefaultAvatar());
 
             return { ...main, avatar };
         }
     );
-
-
 
 
     return (

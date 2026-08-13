@@ -120,7 +120,7 @@ export default function Invite() {
                                 avatar={avatar}
                             />
                         </RegisterGrid>
-                        <Footer>Fill out input fields to register a new account. <br /> Avatar can be fully customized after regristration.</Footer>
+                        <Footer>Fill out input fields to register a new account. <br /> Avatar can be fully customized after registration.</Footer>
                     </Container>
                 )}
             </Show>

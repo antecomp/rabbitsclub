@@ -1,5 +1,5 @@
 import cbr from '@/assets/ui/c_br.png?url&no-inline';
-import { styled } from "solid-styled-components";
+import { styled } from 'solid-styled-components';
 
 export const ManageUserGrid = styled('div')`
     display: grid;
@@ -7,11 +7,11 @@ export const ManageUserGrid = styled('div')`
     align-items: center;
     gap: 10px;
     height: 220px;
-`
+`;
 
 export const ManageUserMenu = styled('div')`
     overflow: auto;
-`
+`;
 
 export const AvatarContainer = styled('div')`
     height: 100%;
@@ -50,4 +50,4 @@ export const AvatarContainer = styled('div')`
 
         clip-path: polygon(100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 0);
     }
-`
+`;
