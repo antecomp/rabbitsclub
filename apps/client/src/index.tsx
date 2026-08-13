@@ -17,6 +17,7 @@ import Invite from './routes/Invite';
 import AuthGuard from './components/AuthGuard';
 import LoggedOut from './routes/LoggedOut';
 import ManageUsers from './routes/manage/ManageUsers';
+import ManageUser from './routes/manage/ManageUser';
 
 function AppRoot(props: RouteSectionProps) {
     return (
@@ -55,6 +56,7 @@ render(
                     <Route path="/" component={ManageIndex} />
                     <Route path="/invites" component={ManageInvites} />
                     <Route path="/users" component={ManageUsers} />
+                    <Route path="/user/:id" component={ManageUser} />
                 </Route>
                 <Route path="/about" component={About} />
                 <Route path="/avatar" component={() => (

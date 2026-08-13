@@ -3,19 +3,21 @@ import { eq, sql } from 'drizzle-orm';
 import { db } from '..';
 import { TIME_FORMAT } from '../time';
 
+const moderationUserSelection = {
+    id:          schema.users.id,
+    username:    schema.users.username,
+    is_admin:    schema.users.is_admin,
+    permissions: {
+        can_ban_users:       schema.userPermissions.can_ban_users,
+        can_delete_messages: schema.userPermissions.can_delete_messages,
+        can_leave_notes:     schema.userPermissions.can_leave_notes,
+        can_manage_invites:  schema.userPermissions.can_manage_invites
+    },
+    is_banned: schema.users.is_banned
+};
+
 export default {
-    listUsersWithPermissions: () => db.select({
-        id:          schema.users.id,
-        username:    schema.users.username,
-        is_admin:    schema.users.is_admin,
-        permissions: {
-            can_ban_users:       schema.userPermissions.can_ban_users,
-            can_delete_messages: schema.userPermissions.can_delete_messages,
-            can_leave_notes:     schema.userPermissions.can_leave_notes,
-            can_manage_invites:  schema.userPermissions.can_manage_invites
-        },
-        is_banned: schema.users.is_banned
-    })
+    listUsersWithPermissions: () => db.select(moderationUserSelection)
         .from(schema.users)
         .leftJoin(
             schema.userPermissions,
@@ -23,6 +25,15 @@ export default {
         )
         .orderBy(schema.users.id)
         .all(),
+
+    getUserWithPermissions: (id: number) => db.select(moderationUserSelection)
+        .from(schema.users)
+        .leftJoin(
+            schema.userPermissions,
+            eq(schema.userPermissions.user_id, schema.users.id)
+        )
+        .where(eq(schema.users.id, id))
+        .get(),
 
     getUserPermissions: (user_id: number) => db.select()
         .from(schema.userPermissions)

@@ -1,4 +1,5 @@
 import { t } from 'elysia';
+import type { actions } from '~/db/actions';
 import { model } from '~/db/model';
 
 // Custom type because we're swaying the SQL numbers to booleans + omitting info
@@ -11,6 +12,10 @@ export const UpdateUserPermissionsSchema = t.Partial(
     UserPermissionsSchema,
     { minProperties: 1 }
 );
+
+export type ModerationUserRow = ReturnType<
+    typeof actions.moderation.listUsersWithPermissions
+>[number];
 
 export const ModerationUserSchema = t.Object({
     id:          model.select.users.id,

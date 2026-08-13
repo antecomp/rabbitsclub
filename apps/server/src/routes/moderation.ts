@@ -5,7 +5,7 @@ import { toClientMessage } from '~/schemas/messages.schema';
 import { MAX_MESSAGE_LENGTH } from '#config';
 import { ErrorSchema, RequestResultSchema } from '~/schemas/generic.schema';
 import { actions } from '~/db/actions';
-import { ModerationUserSchema, UserPermissionsSchema, type UserPermissions } from '~/schemas/moderation.schema';
+import { type ModerationUserRow, ModerationUserSchema, UserPermissionsSchema, type ModerationUser, type UserPermissions } from '~/schemas/moderation.schema';
 import { mapObject } from '~/util/mapObject';
 import { Value } from '@sinclair/typebox/value';
 
@@ -15,6 +15,17 @@ import { Value } from '@sinclair/typebox/value';
 // everyone instead of using this, or come up with some hacky override.
 export const createUserPermissions = (): UserPermissions =>
     Value.Create(UserPermissionsSchema);
+
+const toModerationUser = (target: ModerationUserRow): ModerationUser => ({
+    id:       target.id,
+    username: target.username,
+    is_admin: target.is_admin,
+    permissions: mapObject(
+        target.permissions ?? createUserPermissions(),
+        permission => target.is_admin || permission
+    ),
+    is_banned: target.is_banned
+});
 
 export const moderationRoutes = new Elysia({ prefix: '/moderation' })
     .use(authMiddleware)
@@ -39,19 +50,26 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         }
     })
     .get('/users', () => actions.moderation.listUsersWithPermissions()
-        .map(target => ({
-            id:       target.id,
-            username: target.username,
-            is_admin: target.is_admin,
-            permissions: mapObject(
-                target.permissions ?? createUserPermissions(),
-                permission => target.is_admin || permission
-            ),
-            is_banned: target.is_banned
-        })), {
+        .map(toModerationUser), {
         usePermission: 'can_ban_users',
         response: {
             200: t.Array(ModerationUserSchema)
+        }
+    })
+    .get('/user/:id', ({ params, status }) => {
+        const targetId = Number(params.id);
+        if (!targetId) return status(400, { message: 'Invalid target user' });
+
+        const target = actions.moderation.getUserWithPermissions(targetId);
+        if (!target) return status(404, { message: 'User not found' });
+
+        return toModerationUser(target);
+    }, {
+        usePermission: 'can_ban_users',
+        response: {
+            200: ModerationUserSchema,
+            400: ErrorSchema,
+            404: ErrorSchema
         }
     })
     .post('/users/:id/ban', ({ params, user, body, status }) => {

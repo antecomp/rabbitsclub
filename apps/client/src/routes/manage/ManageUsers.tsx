@@ -23,6 +23,9 @@ const UserSelectionTable = styled('div')`
     overflow-y: auto;
     display: block;
     scrollbar-width: none;
+
+    --cut: 10px;
+    clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
 `
 
 const UserSelectionRowContainer = styled('div')`
