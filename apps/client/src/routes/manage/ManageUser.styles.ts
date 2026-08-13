@@ -6,7 +6,7 @@ export const ManageUserGrid = styled('div')`
     grid-template-columns: 1fr 2fr;
     align-items: center;
     gap: 10px;
-    height: 200px;
+    height: 220px;
 `
 
 export const ManageUserMenu = styled('div')`

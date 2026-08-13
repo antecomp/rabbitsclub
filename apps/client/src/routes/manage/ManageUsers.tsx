@@ -11,6 +11,7 @@ import type { LucideIcon } from "lucide-solid";
 import { createResource, createSignal, For, Show } from "solid-js";
 import { styled } from "solid-styled-components";
 import { type UserPermissions } from "~/schemas/moderation.schema";
+import { useNavigate } from "@solidjs/router";
 
 // idk why I have to split it like this but whatever
 const PERMISSION_KEYS = ['can_ban_users', 'can_delete_messages', 'can_leave_notes', 'can_manage_invites'] as const satisfies (keyof UserPermissions)[]
@@ -37,6 +38,11 @@ const UserSelectionRowContainer = styled('div')`
     gap: 2px;
     display: flex;
     margin-bottom: 3px;
+
+    &:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
 
     span {
         background: lightgray;
@@ -65,8 +71,10 @@ const UserSelectionRowPermissions = styled('span')`
 type ManageUser = Exclude<Awaited<ReturnType<typeof api.moderation.users.get>>['data'], null>[number]
 
 function UserSelectionRow(props: ManageUser) {
+    const navigate = useNavigate();
+
     return (
-        <UserSelectionRowContainer>
+        <UserSelectionRowContainer onClick={() => navigate(`/manage/user/${props.id}`)}>
             <UserSelectionRowId>{props.id}</UserSelectionRowId>
             <UserSelectionRowUsername>{props.username}</UserSelectionRowUsername>
             <UserSelectionRowPermissions>
