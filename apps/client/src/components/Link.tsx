@@ -5,7 +5,8 @@ export default function Link(props: AnchorProps) {
     const [local, rest] = splitProps(props, ['class']);
 
     return <A 
-        {...rest} 
+        {...rest}
+        tabindex='0' 
         class={`link-button${local.class ? ` ${local.class}` : ''}`}
     />;
 }

@@ -6,11 +6,12 @@ export const ManageUserGrid = styled('div')`
     grid-template-columns: 1fr 2fr;
     align-items: center;
     gap: 10px;
-    height: 220px;
+    min-height: 220px;
 `;
 
 export const ManageUserMenu = styled('div')`
     overflow: auto;
+    align-self: self-start;
 `;
 
 export const AvatarContainer = styled('div')`
@@ -30,9 +31,9 @@ export const AvatarContainer = styled('div')`
 
         clip-path: polygon(
             var(--bevel) 0,
-            calc(100% - var(--bevel)) 0,
+            100% 0,
             100% var(--bevel),
-            100% calc(100% - var(--bevel)),
+            100% 100%,
             calc(100% - var(--bevel)) 100%,
             var(--bevel) 100%,
             0 calc(100% - var(--bevel)),

@@ -72,7 +72,7 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
             404: ErrorSchema
         }
     })
-    .post('/users/:id/ban', ({ params, user, body, status }) => {
+    .post('/user/:id/ban', ({ params, user, body, status }) => {
         const targetId = Number(params.id);
         if (!targetId) return status(400, { message: 'Invalid target user' });
 

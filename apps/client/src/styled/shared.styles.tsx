@@ -108,4 +108,20 @@ export const AuthForm = styled('form')`
         outline: none;
         cursor: pointer;
     }
+
+    textarea {
+        border: none;
+        outline: none;
+        width: 70%;
+        padding: 4px;
+        scrollbar-width: none;
+        background-color: #ddd;
+        clip-path: polygon(
+            100% 0, 
+            100% calc(100% - 10px), 
+            calc(100% - 10px) 100%, 
+            0 100%, 
+            0 0
+        );
+    }
 `;
