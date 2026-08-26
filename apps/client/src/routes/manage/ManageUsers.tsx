@@ -172,7 +172,7 @@ export default function ManageUsers() {
                 </UserSelectionTable>
                 <ThinDivider />
                 <UserFilterContainer>
-                    <input type="text" value={search()} onInput={e => setSearch(e.target.value)} placeholder="search" />
+                    <input tabindex='1' type="text" value={search()} onInput={e => setSearch(e.target.value)} placeholder="search" />
                     <div>
                         {toggle}
                     </div>

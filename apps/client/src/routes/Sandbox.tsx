@@ -1,4 +1,5 @@
 import Footer from '@/components/Footer';
+import Link from '@/components/Link';
 import createFlatToggle from '@/components/toggles/FlatToggle';
 import createStackedToggle from '@/components/toggles/StackedToggle';
 import { Container, Divider, Subtitle, Title } from '@/styled/shared.styles';
@@ -26,7 +27,10 @@ export default function Sandbox() {
                 Testing the flat toggle. You selected {sel2()}
                 {horiz}
             </SandboxContent>
-            <Footer>Temporary workspace for testing UI components.</Footer>
+            <Footer>
+                Temporary workspace for testing UI components. <br />
+                <Link href="/">[ HOME ]</Link>
+            </Footer>
         </Container>
     );
 }
