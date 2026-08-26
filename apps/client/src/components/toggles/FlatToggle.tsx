@@ -15,8 +15,9 @@ const ToggleContainer = styled('div')`
         color: #555;
     }
 
-    button.active {
-        /* font-weight: bold; */
+    button.active,
+    button.active:hover,
+    button.active:focus {
         color: black;
     }
 
@@ -63,7 +64,7 @@ export default function createFlatToggle<
                     return (<>
                         <button
                             classList={{ active: option === value() }}
-                            onClick={() => setValue(() => option)}
+                            onClick={(e) => {e.preventDefault(); setValue(() => option)}}
                         >
                             {option}
                         </button>

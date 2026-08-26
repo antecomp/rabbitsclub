@@ -13,6 +13,7 @@ import { styled } from 'solid-styled-components';
 import { type UserPermissions } from '~/schemas/moderation.schema';
 import { useNavigate } from '@solidjs/router';
 import partition from '@/util/partition';
+import createFlatToggle from '@/components/toggles/FlatToggle';
 
 // idk why I have to split it like this but whatever
 const PERMISSION_KEYS = ['can_ban_users', 'can_delete_messages', 'can_leave_notes', 'can_manage_invites'] as const satisfies (keyof UserPermissions)[];
@@ -54,6 +55,20 @@ const UserSelectionRowContainer = styled('div')`
     &:nth-of-type(even) span {
         background: #aaa;
     }
+
+    &.admin {
+        color: green;
+        span {
+            color: green;
+        }
+    }
+
+    &.banned {
+        color: red;
+        span {
+            color: red;
+        }
+    }
 `;
 
 const UserSelectionRowId = styled('span')`
@@ -69,20 +84,40 @@ const UserSelectionRowPermissions = styled('span')`
     width: fit-content;
 `;
 
+const UserFilterContainer = styled('div')`
+    display: grid;
+    grid-template-columns: 15fr 8fr;
+    width: 100%;
+
+    .toggle-container {
+        font-size: 13px;
+        button {
+            font-size: 13px;
+        }
+    }
+`
+
 type ManageUser = Exclude<Awaited<ReturnType<typeof api.moderation.users.get>>['data'], null>[number];
 
-function UserSelectionRow(props: ManageUser) {
+function UserSelectionRow(user: ManageUser) {
     const navigate = useNavigate();
 
     return (
-        <UserSelectionRowContainer onClick={() => navigate(`/manage/user/${props.id}`)}>
-            <UserSelectionRowId>{props.id}</UserSelectionRowId>
-            <UserSelectionRowUsername>{props.username}</UserSelectionRowUsername>
+        <UserSelectionRowContainer
+            // solid-styled overrides classList
+            class={[
+                user.is_banned && 'banned',
+                user.is_admin && 'admin'
+            ].filter(Boolean).join(' ')}
+            onClick={() => navigate(`/manage/user/${user.id}`)}
+        >
+            <UserSelectionRowId>{user.id}</UserSelectionRowId>
+            <UserSelectionRowUsername>{user.username}</UserSelectionRowUsername>
             <UserSelectionRowPermissions>
                 <For each={PERMISSION_KEYS}>
                     {perm => {
                         const Icon = PERM_ICON_MAP[perm];
-                        return <Icon color={props.permissions[perm] ? 'black' : 'gray'} size={18} stroke-width={1.5} />;
+                        return <Icon color={user.permissions[perm] ? 'black' : 'gray'} size={18} stroke-width={1.5} />;
                     }}
                 </For>
             </UserSelectionRowPermissions>
@@ -99,6 +134,8 @@ export default function ManageUsers() {
 
     const [users] = createResource(() => api.moderation.users.get().then(({ data }) => data ?? null));
 
+    const [toggle, filterSelection] = createFlatToggle(['all', 'banned', 'unbanned'], 'show who?');
+
     const userList = () => {
         const all = users();
         if (!all) return [];
@@ -110,8 +147,14 @@ export default function ManageUsers() {
 
         const [banned, unbanned] = partition(filtered, u => Boolean(u.is_banned));
 
-        // todo add another toggle to filter by ban status
-        return [...unbanned, ...banned];
+        switch (filterSelection()) {
+            case 'all':
+                return [...unbanned, ...banned];
+            case 'banned':
+                return banned;
+            case 'unbanned':
+                return unbanned;
+        }
     }
 
     return (
@@ -119,7 +162,7 @@ export default function ManageUsers() {
             <Title>manage</Title>
             <Subtitle>User management</Subtitle>
             <Divider />
-            <AuthForm>
+            <AuthForm as='div'>
                 <UserSelectionTable>
                     <Show when={users()}>
                         <For each={userList()}>
@@ -128,7 +171,12 @@ export default function ManageUsers() {
                     </Show>
                 </UserSelectionTable>
                 <ThinDivider />
-                <input type="text" value={search()} onInput={e => setSearch(e.target.value)} placeholder="search" />
+                <UserFilterContainer>
+                    <input type="text" value={search()} onInput={e => setSearch(e.target.value)} placeholder="search" />
+                    <div>
+                        {toggle}
+                    </div>
+                </UserFilterContainer>
                 <Link href="/manage">[ BACK ]</Link>
             </AuthForm>
             <Footer>Select user to manage.</Footer>
