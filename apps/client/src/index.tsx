@@ -18,6 +18,7 @@ import AuthGuard from './components/AuthGuard';
 import LoggedOut from './routes/LoggedOut';
 import ManageUsers from './routes/manage/ManageUsers';
 import ManageUser from './routes/manage/ManageUser';
+import Sandbox from './routes/Sandbox';
 
 function AppRoot(props: RouteSectionProps) {
     return (
@@ -63,6 +64,7 @@ render(
                     <Avatar />
                 )} />
                 <Route path="/logged-out" component={LoggedOut}/>
+                <Route path="/sandbox" component={Sandbox} />
             </Router>
         </PreferencesProvider>
     ),
