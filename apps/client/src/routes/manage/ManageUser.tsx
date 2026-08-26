@@ -91,6 +91,7 @@ export default function ManageUser() {
                                         </>
                                     )} />
                                     <Route path="/ban" component={() => {
+                                        // todo: extract this and make it redirect back out on success!
                                         const [banReason, setBanReason] = createSignal('');
                                         return (<>
                                             <textarea style={{ height: '60px' }} value={banReason()} onInput={e => setBanReason(e.target.value)} maxlength={60} placeholder='Reason' /> <br />

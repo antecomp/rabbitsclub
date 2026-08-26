@@ -12,6 +12,7 @@ import { createResource, createSignal, For, Show } from 'solid-js';
 import { styled } from 'solid-styled-components';
 import { type UserPermissions } from '~/schemas/moderation.schema';
 import { useNavigate } from '@solidjs/router';
+import partition from '@/util/partition';
 
 // idk why I have to split it like this but whatever
 const PERMISSION_KEYS = ['can_ban_users', 'can_delete_messages', 'can_leave_notes', 'can_manage_invites'] as const satisfies (keyof UserPermissions)[];
@@ -98,6 +99,21 @@ export default function ManageUsers() {
 
     const [users] = createResource(() => api.moderation.users.get().then(({ data }) => data ?? null));
 
+    const userList = () => {
+        const all = users();
+        if (!all) return [];
+
+        const filtered = all.filter(user =>
+            user.username.toUpperCase()
+                .includes(search().toUpperCase())
+        );
+
+        const [banned, unbanned] = partition(filtered, u => Boolean(u.is_banned));
+
+        // todo add another toggle to filter by ban status
+        return [...unbanned, ...banned];
+    }
+
     return (
         <Show when={canAccess()}>
             <Title>manage</Title>
@@ -106,7 +122,7 @@ export default function ManageUsers() {
             <AuthForm>
                 <UserSelectionTable>
                     <Show when={users()}>
-                        <For each={users()?.filter(user => user.username.toUpperCase().includes(search().toUpperCase())) ?? []}>
+                        <For each={userList()}>
                             {user => <UserSelectionRow {...user} />}
                         </For>
                     </Show>
