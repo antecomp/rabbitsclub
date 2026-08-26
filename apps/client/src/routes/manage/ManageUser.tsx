@@ -10,7 +10,6 @@ import { type ModerationUser } from '~/schemas/moderation.schema';
 import { AvatarContainer, ManageUserGrid, ManageUserMenu } from './ManageUser.styles';
 import Footer from '@/components/Footer';
 import Link from '@/components/Link';
-import { MAX_MESSAGE_LENGTH } from '#config';
 
 function InternalHashLink(props: ParentProps<{ href: string }>) {
     const navigate = useNavigate();
