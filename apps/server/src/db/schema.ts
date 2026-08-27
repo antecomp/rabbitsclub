@@ -21,7 +21,7 @@ export const users = sqliteTable('users', {
     banned_at:     text('banned_at'),
     banned_by:     integer('banned_by').references((): AnySQLiteColumn => users.id),
     
-    unbanned_by: text('unbanned_by').references((): AnySQLiteColumn => users.id),
+    unbanned_by: integer('unbanned_by').references((): AnySQLiteColumn => users.id),
     unbanned_at: text('unbanned_at'),
     unbanned_reason: text('unbanned_reason'),
 

@@ -56,7 +56,7 @@ export default {
     // Banning
     banUser: (userId: number, bannedBy: number, reason?: string) => db.update(schema.users)
         .set({
-            is_banned: 1,
+            is_banned: true,
             banned_reason: reason ?? null,
             banned_by: bannedBy,
             banned_at: sql`(strftime(${TIME_FORMAT}, 'now'))`,
@@ -66,12 +66,13 @@ export default {
         .returning()
         .get(),
 
-    unbanUser: (userId: number) => db.update(schema.users)
+    unbanUser: (userId: number, unbannedBy: number, reason?: string) => db.update(schema.users)
         .set({
-            is_banned: 0,
-            banned_reason: null,
-            banned_by: null,
-            banned_at: null
+            is_banned: false,
+            // preserve ban history, don't undo banned notes.
+            unbanned_at: sql`(strftime(${TIME_FORMAT}, 'now'))`,
+            unbanned_by: unbannedBy,
+            unbanned_reason: reason
         })
         .where(eq(schema.users.id, userId))
         .returning()

@@ -61,6 +61,15 @@ export default function ManageUser() {
         }
     }
 
+    async function unbanUser(reason: string) {
+        setErrorDisplay('');
+        const { error } = await api.moderation.user({ id: params.id }).unban.post({ reason });
+
+        if(error?.value.message) {
+            setErrorDisplay(error.value.message);
+        }
+    }
+
 
     return (
         <Show when={canAccess()}>
@@ -85,6 +94,7 @@ export default function ManageUser() {
                                     <Route path="/" component={() => (
                                         <>
                                             <InternalHashLink href="/ban">[ BAN ]</InternalHashLink> <br />
+                                            <InternalHashLink href="/unban">[ UNBAN ]</InternalHashLink> <br />
                                             <InternalHashLink href="/roles">[ ROLES ]</InternalHashLink> <br />
                                             <button onClick={() => outerNavigate('/manage/users')}>[ BACK ]</button>
                                         </>
@@ -96,7 +106,15 @@ export default function ManageUser() {
                                             <textarea style={{ height: '60px' }} value={banReason()} onInput={e => setBanReason(e.target.value)} maxlength={60} placeholder='Reason' /> <br />
                                             <button type='button' onClick={() => banUser(banReason())}>[ BAN ]</button> <br />
                                             <InternalHashLink href="/">[ BACK ]</InternalHashLink> <br />
-                                        </>)
+                                        </>);
+                                    }} />
+                                    <Route path="/unban" component={() => {
+                                        const [unbanReason, setUnbanReason] = createSignal('');
+                                        return (<>
+                                            <textarea style={{ height: '60px' }} value={unbanReason()} onInput={e => setUnbanReason(e.target.value)} maxlength={60} placeholder='Reason' /> <br />
+                                            <button type='button' onClick={() => unbanUser(unbanReason())}>[ UNBAN ]</button> <br />
+                                            <InternalHashLink href="/">[ BACK ]</InternalHashLink> <br />
+                                        </>);
                                     }} />
                                     <Route path="/roles" component={() =>
                                         <>

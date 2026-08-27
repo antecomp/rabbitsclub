@@ -17,7 +17,7 @@ export const createUserPermissions = (): UserPermissions =>
     Value.Create(UserPermissionsSchema);
 
 const toModerationUser = (target: ModerationUserRow): ModerationUser => ({
-    id:       target.id,
+    id: target.id,
     username: target.username,
     is_admin: target.is_admin,
     permissions: mapObject(
@@ -81,12 +81,12 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         if (target.is_banned) return status(409, { message: 'User is already banned' });
 
         // admins can never be banned
-        if(target.is_admin) return status(422, { message: 'admins cannot be banned' });
+        if (target.is_admin) return status(422, { message: 'admins cannot be banned' });
 
         // these users cannot be banned, unless by an admin
-        if(!user.is_admin) {
+        if (!user.is_admin) {
             const targetPermissions = actions.moderation.getUserPermissions(target.id);
-            if(targetPermissions?.can_ban_users) return status(422, { message: 'cannot ban another moderator with ban permissions' });
+            if (targetPermissions?.can_ban_users) return status(422, { message: 'cannot ban another moderator with ban permissions' });
         }
 
         const banned = actions.moderation.banUser(targetId, user.id, body?.reason);
@@ -105,6 +105,31 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
             404: ErrorSchema,
             409: ErrorSchema,
             422: ErrorSchema,
+            500: ErrorSchema
+        }
+    })
+    .post('/user/:id/unban', ({ params, user, body, status }) => {
+        const targetId = Number(params.id);
+        if (!targetId) return status(400, { message: 'Invalid target user' });
+
+        const target = actions.users.getUserById(targetId);
+        if (!target) return status(404, { message: 'User not found' });
+        if (!target.is_banned) return status(409, { message: 'User is not banned' });
+
+        const restored = actions.moderation.unbanUser(targetId, user.id, body?.reason);
+        if (!restored) return status(500, { message: 'Unable to unban user' });
+
+        return { success: true };
+    }, {
+        usePermission: 'can_ban_users',
+        body: t.Optional(t.Object({
+            reason: t.Optional(t.String({ maxLength: MAX_MESSAGE_LENGTH }))
+        })),
+        response: {
+            200: RequestResultSchema,
+            400: ErrorSchema,
+            404: ErrorSchema,
+            409: ErrorSchema,
             500: ErrorSchema
         }
     })
