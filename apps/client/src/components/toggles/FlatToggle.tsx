@@ -21,6 +21,11 @@ const ToggleContainer = styled('div')`
         color: black;
     }
 
+    button:hover,
+    button:focus {
+        color: #333;
+    }
+
     &:after {
         content: attr(data-caption);
         position: absolute;
