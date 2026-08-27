@@ -12,7 +12,7 @@ const SandboxContent = styled('main')`
 `;
 
 export default function Sandbox() {
-    const [stacked, sel] = createStackedToggle(['first', 'second', 'third'])
+    const [stacked, sel] = createStackedToggle(['first', 'second', 'third']);
     const [horiz, sel2] = createFlatToggle(['rabbit', 'bunny', 'hare'], 'caption here');
 
     return (

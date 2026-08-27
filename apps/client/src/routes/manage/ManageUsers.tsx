@@ -95,7 +95,7 @@ const UserFilterContainer = styled('div')`
             font-size: 13px;
         }
     }
-`
+`;
 
 type ManageUser = Exclude<Awaited<ReturnType<typeof api.moderation.users.get>>['data'], null>[number];
 
@@ -155,7 +155,7 @@ export default function ManageUsers() {
             case 'unbanned':
                 return unbanned;
         }
-    }
+    };
 
     return (
         <Show when={canAccess()}>

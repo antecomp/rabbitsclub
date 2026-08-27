@@ -20,7 +20,7 @@ const Gapper = styled('span')`
       height: 1px;
       border-top: dashed gray 2px;
       margin: 0 10px;
-`
+`;
 
 export default function Settings() {
     const navigate = useNavigate();

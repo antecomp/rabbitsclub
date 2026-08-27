@@ -1,5 +1,5 @@
-import { createSignal, For } from "solid-js";
-import { styled } from "solid-styled-components";
+import { createSignal, For } from 'solid-js';
+import { styled } from 'solid-styled-components';
 
 const ToggleContainer = styled('div')`
     gap: 2px;
@@ -30,7 +30,7 @@ const ToggleContainer = styled('div')`
         font-size: 12px;
         color: #888;
     }
-`
+`;
 /**
  * Horizontal stacked set of radio options. E.g
  * 
@@ -64,14 +64,14 @@ export default function createFlatToggle<
                     return (<>
                         <button
                             classList={{ active: option === value() }}
-                            onClick={(e) => {e.preventDefault(); setValue(() => option)}}
+                            onClick={e => {e.preventDefault(); setValue(() => option);}}
                         >
                             {option}
                         </button>
                         <span>
                             {i() >= options.length - 1 ? '' : ' / '}
                         </span>
-                    </>)
+                    </>);
                 }}
             </For>
             &nbsp;]

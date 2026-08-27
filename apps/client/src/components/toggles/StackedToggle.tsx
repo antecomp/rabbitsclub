@@ -1,5 +1,5 @@
-import { createSignal, For } from "solid-js";
-import { styled } from "solid-styled-components";
+import { createSignal, For } from 'solid-js';
+import { styled } from 'solid-styled-components';
 
 const StackedToggleContainer = styled('div')`
     display: flex;
@@ -16,7 +16,7 @@ const StackedToggleContainer = styled('div')`
         /* font-weight: bold; */
         color: black;
     }
-`
+`;
 /**
  * Vertical stacked set of radio options. E.g
  * 
@@ -52,7 +52,7 @@ export default function createStackedToggle<
                         >
                             ( {option} )
                         </button>
-                    )
+                    );
                 }}
             </For>
         </StackedToggleContainer>
