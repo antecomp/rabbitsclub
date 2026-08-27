@@ -145,7 +145,7 @@ export default function ManageUsers() {
                 .includes(search().toUpperCase())
         );
 
-        const [banned, unbanned] = partition(filtered, u => Boolean(u.is_banned));
+        const [banned, unbanned] = partition(filtered, u => u.is_banned);
 
         switch (filterSelection()) {
             case 'all':
