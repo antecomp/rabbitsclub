@@ -25,7 +25,12 @@ const toModerationUser = (target: ModerationUserRow): ModerationUser => ({
         permission => target.is_admin || permission
     ),
     is_banned: target.is_banned,
-    banned_reason: target.banned_reason
+    banned_reason: target.banned_reason,
+    banned_by: target.banned_by,
+    banned_at: target.banned_at,
+    unbanned_by: target.unbanned_by,
+    unbanned_at: target.unbanned_at,
+    unbanned_reason: target.unbanned_reason
 });
 
 export const moderationRoutes = new Elysia({ prefix: '/moderation' })

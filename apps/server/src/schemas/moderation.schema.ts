@@ -18,12 +18,17 @@ export type ModerationUserRow = ReturnType<
 >[number];
 
 export const ModerationUserSchema = t.Object({
-    id:          model.select.users.id,
-    username:    model.select.users.username,
-    is_admin:    model.select.users.is_admin,
-    permissions: UserPermissionsSchema,
-    is_banned: model.select.users.is_banned,
-    banned_reason: model.select.users.banned_reason
+    id:                 model.select.users.id,
+    username:           model.select.users.username,
+    is_admin:           model.select.users.is_admin,
+    permissions:        UserPermissionsSchema,
+    is_banned:          model.select.users.is_banned,
+    banned_reason:      model.select.users.banned_reason,
+    banned_by:          model.select.users.banned_by,
+    banned_at:          model.select.users.banned_at,
+    unbanned_by:        model.select.users.unbanned_by,
+    unbanned_reason:    model.select.users.unbanned_reason,
+    unbanned_at:        model.select.users.unbanned_at
 });
 
 export type UserPermissions = typeof UserPermissionsSchema['static'];

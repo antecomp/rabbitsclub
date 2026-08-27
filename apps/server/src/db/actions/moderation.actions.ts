@@ -3,6 +3,8 @@ import { eq, sql } from 'drizzle-orm';
 import { db } from '..';
 import { TIME_FORMAT } from '../time';
 
+// I hate that this is cloned in moderation.schema.ts and moderation.ts
+// see if there's a cleaner way to unify these automatically.
 const moderationUserSelection = {
     id:          schema.users.id,
     username:    schema.users.username,
@@ -14,7 +16,12 @@ const moderationUserSelection = {
         can_manage_invites:  schema.userPermissions.can_manage_invites
     },
     is_banned: schema.users.is_banned,
-    banned_reason: schema.users.banned_reason
+    banned_reason: schema.users.banned_reason,
+    banned_by: schema.users.banned_by,
+    banned_at: schema.users.banned_at,
+    unbanned_by: schema.users.unbanned_by,
+    unbanned_reason: schema.users.unbanned_reason,
+    unbanned_at: schema.users.unbanned_at
 };
 
 export default {

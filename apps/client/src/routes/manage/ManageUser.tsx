@@ -10,6 +10,7 @@ import { type ModerationUser } from '~/schemas/moderation.schema';
 import { AvatarContainer, ManageUserGrid, ManageUserMenu } from './ManageUser.styles';
 import Footer from '@/components/Footer';
 import Link from '@/components/Link';
+import { format } from 'date-fns';
 import { styled } from 'solid-styled-components';
 
 const StandingList = styled('div')`
@@ -54,7 +55,7 @@ export default function ManageUser() {
     const outerNavigate = useNavigate();
     const params = useParams<{ id: string }>();
 
-    const [selectedUser] = createResource<ModerationUser & { avatar: AvatarData } | null>(
+    const [selectedUser, {refetch: refetchUser}] = createResource<ModerationUser & { avatar: AvatarData } | null>(
         async () => {
             const id = Number(params.id);
             if (!id) return null;
@@ -81,6 +82,7 @@ export default function ManageUser() {
             return false;
         }
 
+        refetchUser()
         return true;
     }
 
@@ -93,6 +95,7 @@ export default function ManageUser() {
             return false;
         }
 
+        refetchUser()
         return true;
     }
 
@@ -117,24 +120,54 @@ export default function ManageUser() {
                             </AvatarContainer>
                             <ManageUserMenu>
                                 <HashRouter>
-                                    <Route path="/" component={() => (
-                                        <>
-                                            <StandingList>
+                                    <Route path="/" component={() => {
+
+                                        const bannedContext = () => {
+                                            const user = selectedUser();
+                                            if (!user) return null;
+
+                                            // my back hurts.
+                                            const context = {
+                                                bannedBy: user.banned_by, // TODO: lookup username
+                                                unbannedBy: user.unbanned_by,
+                                                bannedAt: user.banned_at ? format(new Date(user.banned_at), 'dd.MM.yy') : null,
+                                                unbannedAt: user.unbanned_at ? format(new Date(user.unbanned_at), 'dd.MM.yy') : null,
+                                                banReason: user.banned_reason,
+                                                unbanReason: user.unbanned_reason,
+                                            }
+
+                                            // no context
+                                            if (Object.values(context).every(value => value == null)) return null;
+
+                                            return context;
+                                        }
+
+                                        return (
+                                            <>
+                                                <StandingList>
                                                     <span>admin:</span>
                                                     <span>{String(selectedUser()?.is_admin)}</span>
                                                     <span>banned:</span>
                                                     <span>
                                                         {String(selectedUser()?.is_banned)}
-                                                        {selectedUser()?.banned_reason && (<><br/> ban_reason:  {selectedUser()?.banned_reason}</>)}
+                                                        <Show when={bannedContext()}>
+                                                            <br />
+                                                            Ban by {bannedContext()?.bannedBy ?? '???'} at {bannedContext()?.bannedAt} because: {bannedContext()?.banReason ?? 'none'}
+                                                            <Show when={bannedContext()?.unbannedAt}>
+                                                                <br />
+                                                                Unbanned by {bannedContext()?.unbannedBy ?? '???'} at {bannedContext()?.unbannedAt ?? '???'} because {bannedContext()?.unbanReason ?? 'none'}
+                                                            </Show>
+                                                        </Show>
                                                     </span>
-                                            </StandingList>
-                                            <ThinDivider color='gray' style={{ 'margin': '5px 0px' }} />
-                                            <InternalHashLink href="/ban">[ BAN ]</InternalHashLink> <br />
-                                            <InternalHashLink href="/unban">[ UNBAN ]</InternalHashLink> <br />
-                                            <InternalHashLink href="/roles">[ ROLES ]</InternalHashLink> <br />
-                                            <button onClick={() => outerNavigate('/manage/users')}>[ BACK ]</button>
-                                        </>
-                                    )} />
+                                                </StandingList>
+                                                <ThinDivider color='gray' style={{ 'margin': '5px 0px' }} />
+                                                <InternalHashLink href="/ban">[ BAN ]</InternalHashLink> <br />
+                                                <InternalHashLink href="/unban">[ UNBAN ]</InternalHashLink> <br />
+                                                <InternalHashLink href="/roles">[ ROLES ]</InternalHashLink> <br />
+                                                <button onClick={() => outerNavigate('/manage/users')}>[ BACK ]</button>
+                                            </>
+                                        )
+                                    }} />
                                     <Route path="/ban" component={() => {
                                         const navigate = useNavigate();
                                         const [banReason, setBanReason] = createSignal('');
