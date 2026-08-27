@@ -13,7 +13,8 @@ const moderationUserSelection = {
         can_leave_notes:     schema.userPermissions.can_leave_notes,
         can_manage_invites:  schema.userPermissions.can_manage_invites
     },
-    is_banned: schema.users.is_banned
+    is_banned: schema.users.is_banned,
+    banned_reason: schema.users.banned_reason
 };
 
 export default {

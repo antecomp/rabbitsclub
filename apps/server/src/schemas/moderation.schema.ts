@@ -22,7 +22,8 @@ export const ModerationUserSchema = t.Object({
     username:    model.select.users.username,
     is_admin:    model.select.users.is_admin,
     permissions: UserPermissionsSchema,
-    is_banned: model.select.users.is_banned
+    is_banned: model.select.users.is_banned,
+    banned_reason: model.select.users.banned_reason
 });
 
 export type UserPermissions = typeof UserPermissionsSchema['static'];

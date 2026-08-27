@@ -3,13 +3,33 @@ import { createDefaultAvatar, toAvatarData } from '@/avatar/avatar.const';
 import { AvatarData } from '@/avatar/avatar.types';
 import { AvatarCanvas } from '@/avatar/AvatarCanvas';
 import usePermissionGuard from '@/hooks/usePermissionGuard';
-import { AuthForm, Divider, Subtitle, Title } from '@/styled/shared.styles';
+import { AuthForm, Divider, Subtitle, ThinDivider, Title } from '@/styled/shared.styles';
 import { HashRouter, Route, useNavigate, useParams } from '@solidjs/router';
 import { createResource, createSignal, Show, Suspense, type ParentProps } from 'solid-js';
 import { type ModerationUser } from '~/schemas/moderation.schema';
 import { AvatarContainer, ManageUserGrid, ManageUserMenu } from './ManageUser.styles';
 import Footer from '@/components/Footer';
 import Link from '@/components/Link';
+import { styled } from 'solid-styled-components';
+
+const StandingList = styled('div')`
+    font-size: 13px;
+    color: #222;
+    border: solid #555 1px;
+    background: #dadada;
+    padding: 3px;
+    border-radius: 2px;
+    display: grid;
+    grid-template-columns: max-content auto;
+
+    span:nth-of-type(odd) {
+        text-align: right;
+    }
+
+    span:nth-of-type(even) {
+        padding-left: 10px;
+    }
+`
 
 function InternalHashLink(props: ParentProps<{ href: string }>) {
     const navigate = useNavigate();
@@ -56,7 +76,7 @@ export default function ManageUser() {
         setErrorDisplay('');
         const { error } = await api.moderation.user({ id: params.id }).ban.post({ reason });
 
-        if(error) {
+        if (error) {
             setErrorDisplay(error.value.message);
             return false;
         }
@@ -68,7 +88,7 @@ export default function ManageUser() {
         setErrorDisplay('');
         const { error } = await api.moderation.user({ id: params.id }).unban.post({ reason });
 
-        if(error) {
+        if (error) {
             setErrorDisplay(error.value.message ?? 'unknown error');
             return false;
         }
@@ -99,6 +119,16 @@ export default function ManageUser() {
                                 <HashRouter>
                                     <Route path="/" component={() => (
                                         <>
+                                            <StandingList>
+                                                    <span>admin:</span>
+                                                    <span>{String(selectedUser()?.is_admin)}</span>
+                                                    <span>banned:</span>
+                                                    <span>
+                                                        {String(selectedUser()?.is_banned)}
+                                                        {selectedUser()?.banned_reason && (<><br/> ban_reason:  {selectedUser()?.banned_reason}</>)}
+                                                    </span>
+                                            </StandingList>
+                                            <ThinDivider color='gray' style={{ 'margin': '5px 0px' }} />
                                             <InternalHashLink href="/ban">[ BAN ]</InternalHashLink> <br />
                                             <InternalHashLink href="/unban">[ UNBAN ]</InternalHashLink> <br />
                                             <InternalHashLink href="/roles">[ ROLES ]</InternalHashLink> <br />
