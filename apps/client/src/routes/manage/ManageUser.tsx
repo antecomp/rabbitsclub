@@ -58,16 +58,22 @@ export default function ManageUser() {
 
         if(error) {
             setErrorDisplay(error.value.message);
+            return false;
         }
+
+        return true;
     }
 
     async function unbanUser(reason: string) {
         setErrorDisplay('');
         const { error } = await api.moderation.user({ id: params.id }).unban.post({ reason });
 
-        if(error?.value.message) {
-            setErrorDisplay(error.value.message);
+        if(error) {
+            setErrorDisplay(error.value.message ?? 'unknown error');
+            return false;
         }
+
+        return true;
     }
 
 
@@ -100,19 +106,24 @@ export default function ManageUser() {
                                         </>
                                     )} />
                                     <Route path="/ban" component={() => {
-                                        // todo: extract this and make it redirect back out on success!
+                                        const navigate = useNavigate();
                                         const [banReason, setBanReason] = createSignal('');
                                         return (<>
                                             <textarea style={{ height: '60px' }} value={banReason()} onInput={e => setBanReason(e.target.value)} maxlength={60} placeholder='Reason' /> <br />
-                                            <button type='button' onClick={() => banUser(banReason())}>[ BAN ]</button> <br />
+                                            <button type='button' onClick={async () => {
+                                                if (await banUser(banReason())) navigate('/');
+                                            }}>[ BAN ]</button> <br />
                                             <InternalHashLink href="/">[ BACK ]</InternalHashLink> <br />
                                         </>);
                                     }} />
                                     <Route path="/unban" component={() => {
+                                        const navigate = useNavigate();
                                         const [unbanReason, setUnbanReason] = createSignal('');
                                         return (<>
                                             <textarea style={{ height: '60px' }} value={unbanReason()} onInput={e => setUnbanReason(e.target.value)} maxlength={60} placeholder='Reason' /> <br />
-                                            <button type='button' onClick={() => unbanUser(unbanReason())}>[ UNBAN ]</button> <br />
+                                            <button type='button' onClick={async () => {
+                                                if (await unbanUser(unbanReason())) navigate('/');
+                                            }}>[ UNBAN ]</button> <br />
                                             <InternalHashLink href="/">[ BACK ]</InternalHashLink> <br />
                                         </>);
                                     }} />
