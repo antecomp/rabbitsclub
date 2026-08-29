@@ -8,7 +8,7 @@ import authActions from './auth.actions';
 export const actions = {
     messages:       messagesActions,
     moderation:     moderationActions,
-    users:           userActions,
+    users:          userActions,
     invites:        invitesActions,
     profiles:       profileActions,
     auth:           authActions
