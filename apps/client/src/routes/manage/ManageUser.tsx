@@ -126,10 +126,10 @@ export default function ManageUser() {
                                             const user = selectedUser();
                                             if (!user) return null;
 
-                                            // my back hurts.
+                                            // TODO CLEAN UP THIS DISASTER.
                                             const context = {
-                                                bannedBy: user.banned_by, // TODO: lookup username
-                                                unbannedBy: user.unbanned_by,
+                                                bannedBy: user.banned_by_username,
+                                                unbannedBy: user.unbanned_by_username,
                                                 bannedAt: user.banned_at ? format(new Date(user.banned_at), 'dd.MM.yy') : null,
                                                 unbannedAt: user.unbanned_at ? format(new Date(user.unbanned_at), 'dd.MM.yy') : null,
                                                 banReason: user.banned_reason,
