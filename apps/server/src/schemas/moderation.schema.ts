@@ -1,6 +1,8 @@
 import { t } from 'elysia';
 import type { actions } from '~/db/actions';
 import { model } from '~/db/model';
+import { spread } from '~/db/utils';
+import { UserSchema, type User } from './users.schema';
 
 // Custom type because we're swaying the SQL numbers to booleans + omitting info
 export const UserPermissionsSchema = t.Omit(
@@ -17,18 +19,28 @@ export type ModerationUserRow = ReturnType<
     typeof actions.moderation.listUsersWithPermissions
 >[number];
 
+/** Direct fields on `UserSchema` we want to 
+ * extract for {@link ModerationUserSchema} (and related logic).
+*/
+export const moderationUserFields = [
+    'id',
+    'username',
+    'is_admin',
+    'is_banned',
+    'banned_reason',
+    'banned_by',
+    'banned_at',
+    'unbanned_by',
+    'unbanned_reason',
+    'unbanned_at',
+] as const satisfies (keyof User)[];
+
 export const ModerationUserSchema = t.Object({
-    id:                 model.select.users.id,
-    username:           model.select.users.username,
-    is_admin:           model.select.users.is_admin,
-    permissions:        UserPermissionsSchema,
-    is_banned:          model.select.users.is_banned,
-    banned_reason:      model.select.users.banned_reason,
-    banned_by:          model.select.users.banned_by,
-    banned_at:          model.select.users.banned_at,
-    unbanned_by:        model.select.users.unbanned_by,
-    unbanned_reason:    model.select.users.unbanned_reason,
-    unbanned_at:        model.select.users.unbanned_at
+    ...spread(t.Pick(UserSchema, moderationUserFields)),
+    permissions: UserPermissionsSchema,
+    // (TODO):
+    // banned_by_username: t.Nullable(t.String()),
+    // unbanned_by_username: t.Nullable(t.String())
 });
 
 export type UserPermissions = typeof UserPermissionsSchema['static'];
