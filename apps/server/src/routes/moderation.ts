@@ -34,11 +34,8 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         const dbPermissions =
             actions.moderation.getUserPermissions(user.id);
 
-        const { user_id: _userId, ...permissions } =
-            dbPermissions ?? {
-                user_id: user.id,
-                ...createUserPermissions()
-            };
+        const permissions =
+            dbPermissions ?? createUserPermissions()
 
         return mapObject(
             permissions,

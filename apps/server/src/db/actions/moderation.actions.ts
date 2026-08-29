@@ -5,6 +5,7 @@ import { TIME_FORMAT } from '../time';
 import { pickFields } from '~/util/pickFields';
 import { moderationUserFields } from '~/schemas/moderation.fields';
 import { alias } from 'drizzle-orm/sqlite-core';
+import { userPermissionColumns } from '~/schemas/permissions.schema';
 
 const userColumns = getTableColumns(schema.users);
 const moderationUserColumns = pickFields(
@@ -21,12 +22,7 @@ const moderationUserSelection = {
 
     // I imagine you can refactor this into another
     // nice permissions list to pick by later, too.
-    permissions: {
-        can_ban_users: schema.userPermissions.can_ban_users,
-        can_delete_messages: schema.userPermissions.can_delete_messages,
-        can_leave_notes: schema.userPermissions.can_leave_notes,
-        can_manage_invites: schema.userPermissions.can_manage_invites
-    },
+    permissions: userPermissionColumns,
 
     banned_by_username: banningUser.username,
     unbanned_by_username: unbanningUser.username
@@ -69,7 +65,7 @@ export default {
     listModerationUsers,
     getModerationUser,
 
-    getUserPermissions: (user_id: number) => db.select()
+    getUserPermissions: (user_id: number) => db.select(userPermissionColumns)
         .from(schema.userPermissions)
         .where(eq(schema.userPermissions.user_id, user_id))
         .get(),
@@ -84,7 +80,7 @@ export default {
             target: schema.userPermissions.user_id,
             set: permissions
         })
-        .returning()
+        .returning(userPermissionColumns)
         .get(),
 
 
