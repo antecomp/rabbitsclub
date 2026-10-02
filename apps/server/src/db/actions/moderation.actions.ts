@@ -20,8 +20,8 @@ const unbanningUser = alias(schema.users, 'unbanning_user');
 const moderationUserSelection = {
     ...moderationUserColumns,
 
-    // I imagine you can refactor this into another
-    // nice permissions list to pick by later, too.
+    // currently will just return all permissions.
+    // change to an allowlist, if ever needed, akin to moderationUserColumns
     permissions: userPermissionColumns,
 
     banned_by_username: banningUser.username,

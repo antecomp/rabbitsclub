@@ -4,8 +4,6 @@ import { spread } from '~/db/utils';
 import { UserSchema } from './users.schema';
 import { moderationUserFields } from './moderation.fields';
 
-// Custom type because we're swaying the SQL numbers to booleans + omitting info 
-// TODO: consider refactoring!!! see moderation.actions.ts
 export const UserPermissionsSchema = t.Omit(
     t.Object(model.select.userPermissions),
     ['user_id']
