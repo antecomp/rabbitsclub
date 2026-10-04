@@ -5,7 +5,8 @@ import { toClientMessage } from '~/schemas/messages.schema';
 import { MAX_MESSAGE_LENGTH } from '#config';
 import { ErrorSchema, RequestResultSchema } from '~/schemas/generic.schema';
 import { actions } from '~/db/actions';
-import { type ModerationUserRow, ModerationUserSchema, UserPermissionsSchema, type ModerationUser, type UserPermissions } from '~/schemas/moderation.schema';
+import { ModerationUserSchema, UserPermissionsSchema, type ModerationUser, type UserPermissions } from '~/schemas/moderation.schema';
+import { type ModerationUserRow } from '~/db/actions/moderation.actions';
 import { mapObject } from '~/util/mapObject';
 import { Value } from '@sinclair/typebox/value';
 
@@ -13,24 +14,18 @@ import { Value } from '@sinclair/typebox/value';
 // NOTE, ONE WARNING: this constructor defaults to `false` (irregardless of db default)
 // if any permission becomes a default true, you'll need to ensure theres a db row for
 // everyone instead of using this, or come up with some hacky override.
+// TODO -- CONSIDER CHANGING THIS
 export const createUserPermissions = (): UserPermissions =>
     Value.Create(UserPermissionsSchema);
 
-const toModerationUser = (target: ModerationUserRow): ModerationUser => ({
-    id: target.id,
-    username: target.username,
-    is_admin: target.is_admin,
+const toModerationUser = (
+    target: ModerationUserRow
+): ModerationUser => ({
+    ...target,
     permissions: mapObject(
         target.permissions ?? createUserPermissions(),
         permission => target.is_admin || permission
-    ),
-    is_banned: target.is_banned,
-    banned_reason: target.banned_reason,
-    banned_by: target.banned_by,
-    banned_at: target.banned_at,
-    unbanned_by: target.unbanned_by,
-    unbanned_at: target.unbanned_at,
-    unbanned_reason: target.unbanned_reason
+    )
 });
 
 export const moderationRoutes = new Elysia({ prefix: '/moderation' })
@@ -39,11 +34,8 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         const dbPermissions =
             actions.moderation.getUserPermissions(user.id);
 
-        const { user_id: _userId, ...permissions } =
-            dbPermissions ?? {
-                user_id: user.id,
-                ...createUserPermissions()
-            };
+        const permissions =
+            dbPermissions ?? createUserPermissions();
 
         return mapObject(
             permissions,
@@ -55,7 +47,7 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
             200: UserPermissionsSchema
         }
     })
-    .get('/users', () => actions.moderation.listUsersWithPermissions()
+    .get('/users', () => actions.moderation.listModerationUsers()
         .map(toModerationUser), {
         usePermission: 'can_ban_users',
         response: {
@@ -66,7 +58,7 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         const targetId = Number(params.id);
         if (!targetId) return status(400, { message: 'Invalid target user' });
 
-        const target = actions.moderation.getUserWithPermissions(targetId);
+        const target = actions.moderation.getModerationUser(targetId);
         if (!target) return status(404, { message: 'User not found' });
 
         return toModerationUser(target);

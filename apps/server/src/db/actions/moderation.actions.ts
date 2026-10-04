@@ -1,49 +1,71 @@
 import * as schema from '../schema';
-import { eq, sql } from 'drizzle-orm';
+import { eq, getTableColumns, sql } from 'drizzle-orm';
 import { db } from '..';
 import { TIME_FORMAT } from '../time';
+import { pickFields } from '~/util/pickFields';
+import { moderationUserFields } from '~/schemas/moderation.fields';
+import { alias } from 'drizzle-orm/sqlite-core';
+import { userPermissionColumns } from '~/schemas/permissions.schema';
 
-// I hate that this is cloned in moderation.schema.ts and moderation.ts
-// see if there's a cleaner way to unify these automatically.
+const userColumns = getTableColumns(schema.users);
+const moderationUserColumns = pickFields(
+    userColumns,
+    moderationUserFields
+);
+
+// alias for self-joining.
+const banningUser = alias(schema.users, 'banning_user');
+const unbanningUser = alias(schema.users, 'unbanning_user');
+
 const moderationUserSelection = {
-    id:          schema.users.id,
-    username:    schema.users.username,
-    is_admin:    schema.users.is_admin,
-    permissions: {
-        can_ban_users:       schema.userPermissions.can_ban_users,
-        can_delete_messages: schema.userPermissions.can_delete_messages,
-        can_leave_notes:     schema.userPermissions.can_leave_notes,
-        can_manage_invites:  schema.userPermissions.can_manage_invites
-    },
-    is_banned: schema.users.is_banned,
-    banned_reason: schema.users.banned_reason,
-    banned_by: schema.users.banned_by,
-    banned_at: schema.users.banned_at,
-    unbanned_by: schema.users.unbanned_by,
-    unbanned_reason: schema.users.unbanned_reason,
-    unbanned_at: schema.users.unbanned_at
+    ...moderationUserColumns,
+
+    // currently will just return all permissions.
+    // change to an allowlist, if ever needed, akin to moderationUserColumns
+    permissions: userPermissionColumns,
+
+    banned_by_username: banningUser.username,
+    unbanned_by_username: unbanningUser.username
 };
 
-export default {
-    listUsersWithPermissions: () => db.select(moderationUserSelection)
+function moderationUsersQuery() {
+    return db
+        .select(moderationUserSelection)
         .from(schema.users)
         .leftJoin(
             schema.userPermissions,
             eq(schema.userPermissions.user_id, schema.users.id)
         )
+        .leftJoin(
+            banningUser,
+            eq(banningUser.id, schema.users.banned_by)
+        )
+        .leftJoin(
+            unbanningUser,
+            eq(unbanningUser.id, schema.users.unbanned_by)
+        );
+}
+
+export function listModerationUsers() {
+    return moderationUsersQuery()
         .orderBy(schema.users.id)
-        .all(),
+        .all();
+}
 
-    getUserWithPermissions: (id: number) => db.select(moderationUserSelection)
-        .from(schema.users)
-        .leftJoin(
-            schema.userPermissions,
-            eq(schema.userPermissions.user_id, schema.users.id)
-        )
+export function getModerationUser(id: number) {
+    return moderationUsersQuery()
         .where(eq(schema.users.id, id))
-        .get(),
+        .get();
+}
 
-    getUserPermissions: (user_id: number) => db.select()
+export type ModerationUserRow =
+    NonNullable<ReturnType<typeof getModerationUser>>;
+
+export default {
+    listModerationUsers,
+    getModerationUser,
+
+    getUserPermissions: (user_id: number) => db.select(userPermissionColumns)
         .from(schema.userPermissions)
         .where(eq(schema.userPermissions.user_id, user_id))
         .get(),
@@ -58,10 +80,10 @@ export default {
             target: schema.userPermissions.user_id,
             set: permissions
         })
-        .returning()
+        .returning(userPermissionColumns)
         .get(),
 
-    // Banning
+
     banUser: (userId: number, bannedBy: number, reason?: string) => db.update(schema.users)
         .set({
             is_banned: true,

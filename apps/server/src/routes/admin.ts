@@ -22,11 +22,7 @@ export const adminRoutes = new Elysia({ prefix: '/admin' })
         const dbPermissions =
             actions.moderation.getUserPermissions(targetid);
 
-        const { user_id: _userId, ...permissions } =
-            dbPermissions ?? {
-                user_id: targetid,
-                ...createUserPermissions()
-            };
+        const permissions = dbPermissions ?? createUserPermissions();
 
         return mapObject(
             permissions,
@@ -52,9 +48,7 @@ export const adminRoutes = new Elysia({ prefix: '/admin' })
         const updated = actions.moderation.upsertUserPermissions(targetid, permissions);
         if (!updated) return status(500, { message: 'Unable to update permissions' });
 
-        // Only surface permissions in schema rep for resp
-        const { user_id, ...storedPermissions } = updated;
-        return storedPermissions;
+        return updated;
     }, {
         useAdmin: true,
         body: UpdateUserPermissionsSchema,

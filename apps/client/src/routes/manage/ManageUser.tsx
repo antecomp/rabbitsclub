@@ -10,8 +10,8 @@ import { type ModerationUser } from '~/schemas/moderation.schema';
 import { AvatarContainer, ManageUserGrid, ManageUserMenu } from './ManageUser.styles';
 import Footer from '@/components/Footer';
 import Link from '@/components/Link';
-import { format } from 'date-fns';
 import { styled } from 'solid-styled-components';
+import { toModerationSummary } from './moderationSummary';
 
 const StandingList = styled('div')`
     font-size: 13px;
@@ -30,7 +30,7 @@ const StandingList = styled('div')`
     span:nth-of-type(even) {
         padding-left: 10px;
     }
-`
+`;
 
 function InternalHashLink(props: ParentProps<{ href: string }>) {
     const navigate = useNavigate();
@@ -55,7 +55,9 @@ export default function ManageUser() {
     const outerNavigate = useNavigate();
     const params = useParams<{ id: string }>();
 
-    const [selectedUser, {refetch: refetchUser}] = createResource<ModerationUser & { avatar: AvatarData } | null>(
+    const [selectedUser, { refetch: refetchUser }] = createResource<
+        ModerationUser & { avatar: AvatarData } | null
+    >(
         async () => {
             const id = Number(params.id);
             if (!id) return null;
@@ -73,6 +75,12 @@ export default function ManageUser() {
         }
     );
 
+    const [selectedUserSummary] = createResource(
+        // defers until we get selectedUser data, passes it to CB below...
+        () => selectedUser(),
+        user => toModerationSummary(user)
+    );
+
     async function banUser(reason: string) {
         setErrorDisplay('');
         const { error } = await api.moderation.user({ id: params.id }).ban.post({ reason });
@@ -82,7 +90,7 @@ export default function ManageUser() {
             return false;
         }
 
-        refetchUser()
+        refetchUser();
         return true;
     }
 
@@ -95,7 +103,7 @@ export default function ManageUser() {
             return false;
         }
 
-        refetchUser()
+        refetchUser();
         return true;
     }
 
@@ -120,54 +128,36 @@ export default function ManageUser() {
                             </AvatarContainer>
                             <ManageUserMenu>
                                 <HashRouter>
-                                    <Route path="/" component={() => {
-
-                                        const bannedContext = () => {
-                                            const user = selectedUser();
-                                            if (!user) return null;
-
-                                            // my back hurts.
-                                            const context = {
-                                                bannedBy: user.banned_by, // TODO: lookup username
-                                                unbannedBy: user.unbanned_by,
-                                                bannedAt: user.banned_at ? format(new Date(user.banned_at), 'dd.MM.yy') : null,
-                                                unbannedAt: user.unbanned_at ? format(new Date(user.unbanned_at), 'dd.MM.yy') : null,
-                                                banReason: user.banned_reason,
-                                                unbanReason: user.unbanned_reason,
-                                            }
-
-                                            // no context
-                                            if (Object.values(context).every(value => value == null)) return null;
-
-                                            return context;
-                                        }
-
-                                        return (
-                                            <>
-                                                <StandingList>
-                                                    <span>admin:</span>
-                                                    <span>{String(selectedUser()?.is_admin)}</span>
-                                                    <span>banned:</span>
-                                                    <span>
-                                                        {String(selectedUser()?.is_banned)}
-                                                        <Show when={bannedContext()}>
+                                    <Route path="/" component={() => (
+                                        <>
+                                            <StandingList>
+                                                <span>admin:</span>
+                                                <span>{String(selectedUser()?.is_admin)}</span>
+                                                <span>banned:</span>
+                                                <span>
+                                                    {String(selectedUser()?.is_banned)}
+                                                    <Show when={selectedUserSummary()?.ban.occurredAt}>
+                                                        <br />
+                                                        Ban by {selectedUserSummary()?.ban.actor ?? '???'} 
+                                                        &nbsp;at {selectedUserSummary()?.ban.occurredAt} 
+                                                        &nbsp;because: {selectedUserSummary()?.ban.reason ?? '???'}
+                                                        <Show when={selectedUserSummary()?.unban.occurredAt}>
                                                             <br />
-                                                            Ban by {bannedContext()?.bannedBy ?? '???'} at {bannedContext()?.bannedAt} because: {bannedContext()?.banReason ?? 'none'}
-                                                            <Show when={bannedContext()?.unbannedAt}>
-                                                                <br />
-                                                                Unbanned by {bannedContext()?.unbannedBy ?? '???'} at {bannedContext()?.unbannedAt ?? '???'} because {bannedContext()?.unbanReason ?? 'none'}
-                                                            </Show>
+                                                            Unbanned by {selectedUserSummary()?.unban.actor ?? '???'} 
+                                                            &nbsp;at {selectedUserSummary()?.unban.occurredAt ?? '???'} 
+                                                            &nbsp;because {selectedUserSummary()?.unban.reason ?? 'none'}
                                                         </Show>
-                                                    </span>
-                                                </StandingList>
-                                                <ThinDivider color='gray' style={{ 'margin': '5px 0px' }} />
-                                                <InternalHashLink href="/ban">[ BAN ]</InternalHashLink> <br />
-                                                <InternalHashLink href="/unban">[ UNBAN ]</InternalHashLink> <br />
-                                                <InternalHashLink href="/roles">[ ROLES ]</InternalHashLink> <br />
-                                                <button onClick={() => outerNavigate('/manage/users')}>[ BACK ]</button>
-                                            </>
-                                        )
-                                    }} />
+                                                    </Show>
+                                                </span>
+                                            </StandingList>
+                                            <ThinDivider color='gray' style={{ 'margin': '5px 0px' }} />
+                                            <InternalHashLink href="/ban">[ BAN ]</InternalHashLink> <br />
+                                            <InternalHashLink href="/unban">[ UNBAN ]</InternalHashLink> <br />
+                                            <InternalHashLink href="/roles">[ ROLES ]</InternalHashLink> <br />
+                                            <button onClick={() => outerNavigate('/manage/users')}>[ BACK ]</button>
+                                        </>
+                                    )
+                                    } />
                                     <Route path="/ban" component={() => {
                                         const navigate = useNavigate();
                                         const [banReason, setBanReason] = createSignal('');
