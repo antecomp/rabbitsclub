@@ -22,7 +22,7 @@ export const adminRoutes = new Elysia({ prefix: '/admin' })
         const dbPermissions =
             actions.moderation.getUserPermissions(targetid);
 
-        const permissions = dbPermissions ?? createUserPermissions()
+        const permissions = dbPermissions ?? createUserPermissions();
 
         return mapObject(
             permissions,

@@ -1,5 +1,5 @@
-import { format } from "date-fns";
-import { ModerationUser } from "~/schemas/moderation.schema";
+import { format } from 'date-fns';
+import { ModerationUser } from '~/schemas/moderation.schema';
 
 /** Presentation shape of moderation events (such as banning) */
 export interface ModerationEventSummary {
@@ -36,4 +36,4 @@ export const toModerationSummary = (user: ModerationUser): ModerationSummary => 
             reason: user.unbanned_reason
         }
     };
-}
+};

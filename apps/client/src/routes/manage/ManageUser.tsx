@@ -30,7 +30,7 @@ const StandingList = styled('div')`
     span:nth-of-type(even) {
         padding-left: 10px;
     }
-`
+`;
 
 function InternalHashLink(props: ParentProps<{ href: string }>) {
     const navigate = useNavigate();
@@ -78,8 +78,8 @@ export default function ManageUser() {
     const [selectedUserSummary] = createResource(
         // defers until we get selectedUser data, passes it to CB below...
         () => selectedUser(),
-        (user) => toModerationSummary(user)
-    )
+        user => toModerationSummary(user)
+    );
 
     async function banUser(reason: string) {
         setErrorDisplay('');
@@ -90,7 +90,7 @@ export default function ManageUser() {
             return false;
         }
 
-        refetchUser()
+        refetchUser();
         return true;
     }
 
@@ -103,7 +103,7 @@ export default function ManageUser() {
             return false;
         }
 
-        refetchUser()
+        refetchUser();
         return true;
     }
 
