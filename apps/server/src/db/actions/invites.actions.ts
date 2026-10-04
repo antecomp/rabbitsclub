@@ -1,5 +1,5 @@
 import { eq, and, isNull } from 'drizzle-orm';
-import type { AvatarData } from '~/schemas/profiles.schema';
+import type { AvatarSchemaData } from '~/schemas/profiles.schema';
 import { db } from '..';
 import * as schema from '../schema';
 
@@ -27,7 +27,7 @@ export default {
         ))
         .get(),
 
-    insertUserWithInvite: (username: string, password: string, code: string, avatar?: AvatarData) => db.transaction(tx => {
+    insertUserWithInvite: (username: string, password: string, code: string, avatar?: AvatarSchemaData) => db.transaction(tx => {
         const user = tx.insert(schema.users)
             .values({ username, password })
             .returning()

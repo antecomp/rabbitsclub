@@ -20,7 +20,7 @@ export const AccessorySlotSchema = t.Object({
 
 /**
  * Schema for the avatar appearance data used during registration and profile handling.
- * Extracted type: AvatarData
+ * Extracted type: AvatarSchemaData
  */
 export const AvatarDataSchema = t.Object({
     head: t.Number(),
@@ -32,4 +32,4 @@ export const AvatarDataSchema = t.Object({
     additionalProperties: false
 });
 
-export type AvatarData = typeof AvatarDataSchema['static'];
+export type AvatarSchemaData = typeof AvatarDataSchema['static'];

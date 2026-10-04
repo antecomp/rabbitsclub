@@ -1,7 +1,7 @@
-import { AvatarDataSchema, type AvatarData } from '~/schemas/profiles.schema';
+import { AvatarDataSchema, type AvatarSchemaData } from '~/schemas/profiles.schema';
 import { Value } from '@sinclair/typebox/value';
 
-export default function parseAvatarData(value: string | null): AvatarData | null {
+export default function parseAvatarData(value: string | null): AvatarSchemaData | null {
     if (!value) return null;
 
     try {
