@@ -1,17 +1,16 @@
 import { api } from '@/api/backend';
 import { createDefaultAvatar, toAvatarData } from '@/avatar/avatar.const';
-import { AvatarData } from '@/avatar/avatar.types';
 import { AvatarCanvas } from '@/avatar/AvatarCanvas';
 import usePermissionGuard from '@/hooks/usePermissionGuard';
 import { AuthForm, Divider, Subtitle, ThinDivider, Title } from '@/styled/shared.styles';
 import { HashRouter, Route, useNavigate, useParams } from '@solidjs/router';
 import { createResource, createSignal, Show, Suspense, type ParentProps } from 'solid-js';
-import { type ModerationUser } from '~/schemas/moderation.schema';
 import { AvatarContainer, ManageUserGrid, ManageUserMenu } from './ManageUser.styles';
 import Footer from '@/components/Footer';
 import Link from '@/components/Link';
 import { styled } from 'solid-styled-components';
 import { toModerationSummary } from './moderationSummary';
+import type { ManageUserPresentationModel } from './manageuser.types';
 
 const StandingList = styled('div')`
     font-size: 13px;
@@ -56,7 +55,7 @@ export default function ManageUser() {
     const params = useParams<{ id: string }>();
 
     const [selectedUser, { refetch: refetchUser }] = createResource<
-        ModerationUser & { avatar: AvatarData } | null
+        ManageUserPresentationModel | null
     >(
         async () => {
             const id = Number(params.id);
@@ -71,14 +70,12 @@ export default function ManageUser() {
                 .get()
                 .then(({ data }) => toAvatarData(data) ?? createDefaultAvatar());
 
-            return { ...main, avatar };
+            return { 
+                ...main,
+                avatar, 
+                moderation: toModerationSummary(main)
+            };
         }
-    );
-
-    const [selectedUserSummary] = createResource(
-        // defers until we get selectedUser data, passes it to CB below...
-        () => selectedUser(),
-        user => toModerationSummary(user)
     );
 
     async function banUser(reason: string) {
@@ -132,20 +129,20 @@ export default function ManageUser() {
                                         <>
                                             <StandingList>
                                                 <span>admin:</span>
-                                                <span>{String(selectedUser()?.is_admin)}</span>
+                                                <span>{String(selectedUser()?.moderation.isAdmin)}</span>
                                                 <span>banned:</span>
                                                 <span>
-                                                    {String(selectedUser()?.is_banned)}
-                                                    <Show when={selectedUserSummary()?.ban.occurredAt}>
+                                                    {String(selectedUser()?.moderation.isBanned)}
+                                                    <Show when={selectedUser()?.moderation.ban.occurredAt}>
                                                         <br />
-                                                        Ban by {selectedUserSummary()?.ban.actor ?? '???'} 
-                                                        &nbsp;at {selectedUserSummary()?.ban.occurredAt} 
-                                                        &nbsp;because: {selectedUserSummary()?.ban.reason ?? '???'}
-                                                        <Show when={selectedUserSummary()?.unban.occurredAt}>
+                                                        Ban by {selectedUser()?.moderation.ban.actor ?? '???'} 
+                                                        &nbsp;at {selectedUser()?.moderation.ban.occurredAt} 
+                                                        &nbsp;because: {selectedUser()?.moderation.ban.reason ?? '???'}
+                                                        <Show when={selectedUser()?.moderation.unban.occurredAt}>
                                                             <br />
-                                                            Unbanned by {selectedUserSummary()?.unban.actor ?? '???'} 
-                                                            &nbsp;at {selectedUserSummary()?.unban.occurredAt ?? '???'} 
-                                                            &nbsp;because {selectedUserSummary()?.unban.reason ?? 'none'}
+                                                            Unbanned by {selectedUser()?.moderation.unban.actor ?? '???'} 
+                                                            &nbsp;at {selectedUser()?.moderation.unban.occurredAt ?? '???'} 
+                                                            &nbsp;because {selectedUser()?.moderation.unban.reason ?? 'none'}
                                                         </Show>
                                                     </Show>
                                                 </span>
