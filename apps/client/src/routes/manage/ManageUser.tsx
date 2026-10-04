@@ -2,47 +2,16 @@ import { api } from '@/api/backend';
 import { createDefaultAvatar, toAvatarData } from '@/avatar/avatar.const';
 import { AvatarCanvas } from '@/avatar/AvatarCanvas';
 import usePermissionGuard from '@/hooks/usePermissionGuard';
-import { AuthForm, Divider, Subtitle, ThinDivider, Title } from '@/styled/shared.styles';
+import { AuthForm, Divider, Subtitle, Title } from '@/styled/shared.styles';
 import { HashRouter, Route, useNavigate, useParams } from '@solidjs/router';
-import { createResource, createSignal, Show, Suspense, type ParentProps } from 'solid-js';
+import { createResource, createSignal, Show, Suspense } from 'solid-js';
 import { AvatarContainer, ManageUserGrid, ManageUserMenu } from './ManageUser.styles';
 import Footer from '@/components/Footer';
 import Link from '@/components/Link';
-import { styled } from 'solid-styled-components';
 import { toModerationSummary } from './moderationSummary';
 import type { ManageUserPresentationModel } from './manageuser.types';
-
-const StandingList = styled('div')`
-    font-size: 13px;
-    color: #222;
-    border: solid #555 1px;
-    background: #dadada;
-    padding: 3px;
-    border-radius: 2px;
-    display: grid;
-    grid-template-columns: max-content auto;
-
-    span:nth-of-type(odd) {
-        text-align: right;
-    }
-
-    span:nth-of-type(even) {
-        padding-left: 10px;
-    }
-`;
-
-function InternalHashLink(props: ParentProps<{ href: string }>) {
-    const navigate = useNavigate();
-
-    return (
-        <Link href={props.href} onClick={event => {
-            event.preventDefault();
-            navigate(props.href);
-        }}>
-            {props.children}
-        </Link>
-    );
-}
+import { InternalHashLink } from './manage-user/InternalHashLink';
+import ManageUserOverview from './manage-user/ManageUserOverview';
 
 export default function ManageUser() {
     const [errorDisplay, setErrorDisplay] = createSignal('');
@@ -70,9 +39,9 @@ export default function ManageUser() {
                 .get()
                 .then(({ data }) => toAvatarData(data) ?? createDefaultAvatar());
 
-            return { 
+            return {
                 ...main,
-                avatar, 
+                avatar,
                 moderation: toModerationSummary(main)
             };
         }
@@ -125,36 +94,11 @@ export default function ManageUser() {
                             </AvatarContainer>
                             <ManageUserMenu>
                                 <HashRouter>
-                                    <Route path="/" component={() => (
-                                        <>
-                                            <StandingList>
-                                                <span>admin:</span>
-                                                <span>{String(selectedUser()?.moderation.isAdmin)}</span>
-                                                <span>banned:</span>
-                                                <span>
-                                                    {String(selectedUser()?.moderation.isBanned)}
-                                                    <Show when={selectedUser()?.moderation.ban.occurredAt}>
-                                                        <br />
-                                                        Ban by {selectedUser()?.moderation.ban.actor ?? '???'} 
-                                                        &nbsp;at {selectedUser()?.moderation.ban.occurredAt} 
-                                                        &nbsp;because: {selectedUser()?.moderation.ban.reason ?? '???'}
-                                                        <Show when={selectedUser()?.moderation.unban.occurredAt}>
-                                                            <br />
-                                                            Unbanned by {selectedUser()?.moderation.unban.actor ?? '???'} 
-                                                            &nbsp;at {selectedUser()?.moderation.unban.occurredAt ?? '???'} 
-                                                            &nbsp;because {selectedUser()?.moderation.unban.reason ?? 'none'}
-                                                        </Show>
-                                                    </Show>
-                                                </span>
-                                            </StandingList>
-                                            <ThinDivider color='gray' style={{ 'margin': '5px 0px' }} />
-                                            <InternalHashLink href="/ban">[ BAN ]</InternalHashLink> <br />
-                                            <InternalHashLink href="/unban">[ UNBAN ]</InternalHashLink> <br />
-                                            <InternalHashLink href="/roles">[ ROLES ]</InternalHashLink> <br />
-                                            <button onClick={() => outerNavigate('/manage/users')}>[ BACK ]</button>
-                                        </>
-                                    )
-                                    } />
+                                    <Route path="/"
+                                        component={() => <ManageUserOverview
+                                            {...selectedUser()!} onBack={() => outerNavigate('/manage/users')}
+                                        />}
+                                    />
                                     <Route path="/ban" component={() => {
                                         const navigate = useNavigate();
                                         const [banReason, setBanReason] = createSignal('');
