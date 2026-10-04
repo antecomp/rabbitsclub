@@ -10,7 +10,8 @@ import Footer from '@/components/Footer';
 import Link from '@/components/Link';
 import { toModerationSummary } from './moderationSummary';
 import type { ManageUserPresentationModel } from './manageuser.types';
-import { InternalHashLink } from './manage-user/InternalHashLink';
+import ManageUserActionForm from './manage-user/ManageUserActionForm';
+import ManageUserRoles from './manage-user/ManageUserRoles';
 import ManageUserOverview from './manage-user/ManageUserOverview';
 
 export default function ManageUser() {
@@ -99,34 +100,13 @@ export default function ManageUser() {
                                             {...selectedUser()!} onBack={() => outerNavigate('/manage/users')}
                                         />}
                                     />
-                                    <Route path="/ban" component={() => {
-                                        const navigate = useNavigate();
-                                        const [banReason, setBanReason] = createSignal('');
-                                        return (<>
-                                            <textarea style={{ height: '60px' }} value={banReason()} onInput={e => setBanReason(e.target.value)} maxlength={60} placeholder='Reason' /> <br />
-                                            <button type='button' onClick={async () => {
-                                                if (await banUser(banReason())) navigate('/');
-                                            }}>[ BAN ]</button> <br />
-                                            <InternalHashLink href="/">[ BACK ]</InternalHashLink> <br />
-                                        </>);
-                                    }} />
-                                    <Route path="/unban" component={() => {
-                                        const navigate = useNavigate();
-                                        const [unbanReason, setUnbanReason] = createSignal('');
-                                        return (<>
-                                            <textarea style={{ height: '60px' }} value={unbanReason()} onInput={e => setUnbanReason(e.target.value)} maxlength={60} placeholder='Reason' /> <br />
-                                            <button type='button' onClick={async () => {
-                                                if (await unbanUser(unbanReason())) navigate('/');
-                                            }}>[ UNBAN ]</button> <br />
-                                            <InternalHashLink href="/">[ BACK ]</InternalHashLink> <br />
-                                        </>);
-                                    }} />
-                                    <Route path="/roles" component={() =>
-                                        <>
-                                            Roles placeholder <br />
-                                            <InternalHashLink href="/">[ BACK ]</InternalHashLink> <br />
-                                        </>
-                                    } />
+                                    <Route path="/ban"
+                                        component={() => <ManageUserActionForm label="BAN" onSubmit={banUser} />}
+                                    />
+                                    <Route path="/unban"
+                                        component={() => <ManageUserActionForm label="UNBAN" onSubmit={unbanUser} />}
+                                    />
+                                    <Route path="/roles" component={() => <ManageUserRoles />} />
                                 </HashRouter>
                             </ManageUserMenu>
                         </ManageUserGrid>

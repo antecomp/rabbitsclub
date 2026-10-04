@@ -7,3 +7,8 @@ export interface ManageUserPresentationModel {
     avatar: AvatarData;
     moderation: ModerationSummary;
 }
+
+export interface ModerationActionProps {
+    label: string;
+    onSubmit: (reason: string) => Promise<boolean>;
+}
