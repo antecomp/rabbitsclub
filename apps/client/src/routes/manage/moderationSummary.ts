@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { ModerationUser } from '~/schemas/moderation.schema';
+import { type ModerationUser, type UserPermissions } from '~/schemas/moderation.schema';
 
 /** Presentation shape of moderation events (such as banning) */
 export interface ModerationEventSummary {
@@ -15,6 +15,7 @@ export interface ModerationSummary {
     isBanned: boolean;
     ban: ModerationEventSummary;
     unban: ModerationEventSummary;
+    permissions: UserPermissions
 }
 
 function formatModerationDate(value: string | null) {
@@ -34,6 +35,7 @@ export const toModerationSummary = (user: ModerationUser): ModerationSummary => 
             actor: user.unbanned_by_username,
             occurredAt: formatModerationDate(user.unbanned_at),
             reason: user.unbanned_reason
-        }
+        },
+        permissions: user.permissions
     };
 };

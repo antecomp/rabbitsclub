@@ -1,5 +1,5 @@
 import { eq, sql } from 'drizzle-orm';
-import type { AvatarData } from '~/schemas/profiles.schema';
+import type { AvatarSchemaData } from '~/schemas/profiles.schema';
 import parseAvatarData from '~/util/parseAvatarData';
 import { db } from '..';
 import * as schema from '../schema';
@@ -16,7 +16,7 @@ export default {
         return parseAvatarData(row.avatar);
     },
 
-    upsertProfile: (user_id: number, avatar: AvatarData) => db.insert(schema.profiles)
+    upsertProfile: (user_id: number, avatar: AvatarSchemaData) => db.insert(schema.profiles)
         .values({ user_id, avatar: JSON.stringify(avatar) })
         .onConflictDoUpdate({
             target: schema.profiles.user_id,

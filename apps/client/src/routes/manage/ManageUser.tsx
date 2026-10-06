@@ -1,49 +1,19 @@
 import { api } from '@/api/backend';
 import { createDefaultAvatar, toAvatarData } from '@/avatar/avatar.const';
-import { AvatarData } from '@/avatar/avatar.types';
 import { AvatarCanvas } from '@/avatar/AvatarCanvas';
 import usePermissionGuard from '@/hooks/usePermissionGuard';
-import { AuthForm, Divider, Subtitle, ThinDivider, Title } from '@/styled/shared.styles';
+import { AuthForm, Divider, Subtitle, Title } from '@/styled/shared.styles';
 import { HashRouter, Route, useNavigate, useParams } from '@solidjs/router';
-import { createResource, createSignal, Show, Suspense, type ParentProps } from 'solid-js';
-import { type ModerationUser } from '~/schemas/moderation.schema';
+import { createResource, createSignal, Show, Suspense } from 'solid-js';
 import { AvatarContainer, ManageUserGrid, ManageUserMenu } from './ManageUser.styles';
 import Footer from '@/components/Footer';
 import Link from '@/components/Link';
-import { styled } from 'solid-styled-components';
 import { toModerationSummary } from './moderationSummary';
-
-const StandingList = styled('div')`
-    font-size: 13px;
-    color: #222;
-    border: solid #555 1px;
-    background: #dadada;
-    padding: 3px;
-    border-radius: 2px;
-    display: grid;
-    grid-template-columns: max-content auto;
-
-    span:nth-of-type(odd) {
-        text-align: right;
-    }
-
-    span:nth-of-type(even) {
-        padding-left: 10px;
-    }
-`;
-
-function InternalHashLink(props: ParentProps<{ href: string }>) {
-    const navigate = useNavigate();
-
-    return (
-        <Link href={props.href} onClick={event => {
-            event.preventDefault();
-            navigate(props.href);
-        }}>
-            {props.children}
-        </Link>
-    );
-}
+import type { ManageUserPresentationModel } from './manageuser.types';
+import ManageUserActionForm from './manage-user/ManageUserActionForm';
+import ManageUserRoles from './manage-user/ManageUserRoles';
+import ManageUserOverview from './manage-user/ManageUserOverview';
+import { UserPermissions } from '~/schemas/moderation.schema';
 
 export default function ManageUser() {
     const [errorDisplay, setErrorDisplay] = createSignal('');
@@ -56,7 +26,7 @@ export default function ManageUser() {
     const params = useParams<{ id: string }>();
 
     const [selectedUser, { refetch: refetchUser }] = createResource<
-        ModerationUser & { avatar: AvatarData } | null
+        ManageUserPresentationModel | null
     >(
         async () => {
             const id = Number(params.id);
@@ -71,14 +41,12 @@ export default function ManageUser() {
                 .get()
                 .then(({ data }) => toAvatarData(data) ?? createDefaultAvatar());
 
-            return { ...main, avatar };
+            return {
+                ...main,
+                avatar,
+                moderation: toModerationSummary(main)
+            };
         }
-    );
-
-    const [selectedUserSummary] = createResource(
-        // defers until we get selectedUser data, passes it to CB below...
-        () => selectedUser(),
-        user => toModerationSummary(user)
     );
 
     async function banUser(reason: string) {
@@ -107,6 +75,17 @@ export default function ManageUser() {
         return true;
     }
 
+    async function updateUserPermissions(to: UserPermissions) {
+        setErrorDisplay('');
+        const { error } = await api.admin.users({ id: params.id }).permissions.patch(to);
+        if (error) {
+            setErrorDisplay(error.value.message ?? 'unknown error');
+            return false;
+        }
+        refetchUser();
+        return true;
+    }
+
 
     return (
         <Show when={canAccess()}>
@@ -128,64 +107,18 @@ export default function ManageUser() {
                             </AvatarContainer>
                             <ManageUserMenu>
                                 <HashRouter>
-                                    <Route path="/" component={() => (
-                                        <>
-                                            <StandingList>
-                                                <span>admin:</span>
-                                                <span>{String(selectedUser()?.is_admin)}</span>
-                                                <span>banned:</span>
-                                                <span>
-                                                    {String(selectedUser()?.is_banned)}
-                                                    <Show when={selectedUserSummary()?.ban.occurredAt}>
-                                                        <br />
-                                                        Ban by {selectedUserSummary()?.ban.actor ?? '???'} 
-                                                        &nbsp;at {selectedUserSummary()?.ban.occurredAt} 
-                                                        &nbsp;because: {selectedUserSummary()?.ban.reason ?? '???'}
-                                                        <Show when={selectedUserSummary()?.unban.occurredAt}>
-                                                            <br />
-                                                            Unbanned by {selectedUserSummary()?.unban.actor ?? '???'} 
-                                                            &nbsp;at {selectedUserSummary()?.unban.occurredAt ?? '???'} 
-                                                            &nbsp;because {selectedUserSummary()?.unban.reason ?? 'none'}
-                                                        </Show>
-                                                    </Show>
-                                                </span>
-                                            </StandingList>
-                                            <ThinDivider color='gray' style={{ 'margin': '5px 0px' }} />
-                                            <InternalHashLink href="/ban">[ BAN ]</InternalHashLink> <br />
-                                            <InternalHashLink href="/unban">[ UNBAN ]</InternalHashLink> <br />
-                                            <InternalHashLink href="/roles">[ ROLES ]</InternalHashLink> <br />
-                                            <button onClick={() => outerNavigate('/manage/users')}>[ BACK ]</button>
-                                        </>
-                                    )
-                                    } />
-                                    <Route path="/ban" component={() => {
-                                        const navigate = useNavigate();
-                                        const [banReason, setBanReason] = createSignal('');
-                                        return (<>
-                                            <textarea style={{ height: '60px' }} value={banReason()} onInput={e => setBanReason(e.target.value)} maxlength={60} placeholder='Reason' /> <br />
-                                            <button type='button' onClick={async () => {
-                                                if (await banUser(banReason())) navigate('/');
-                                            }}>[ BAN ]</button> <br />
-                                            <InternalHashLink href="/">[ BACK ]</InternalHashLink> <br />
-                                        </>);
-                                    }} />
-                                    <Route path="/unban" component={() => {
-                                        const navigate = useNavigate();
-                                        const [unbanReason, setUnbanReason] = createSignal('');
-                                        return (<>
-                                            <textarea style={{ height: '60px' }} value={unbanReason()} onInput={e => setUnbanReason(e.target.value)} maxlength={60} placeholder='Reason' /> <br />
-                                            <button type='button' onClick={async () => {
-                                                if (await unbanUser(unbanReason())) navigate('/');
-                                            }}>[ UNBAN ]</button> <br />
-                                            <InternalHashLink href="/">[ BACK ]</InternalHashLink> <br />
-                                        </>);
-                                    }} />
-                                    <Route path="/roles" component={() =>
-                                        <>
-                                            Roles placeholder <br />
-                                            <InternalHashLink href="/">[ BACK ]</InternalHashLink> <br />
-                                        </>
-                                    } />
+                                    <Route path="/"
+                                        component={() => <ManageUserOverview
+                                            {...selectedUser()!} onBack={() => outerNavigate('/manage/users')}
+                                        />}
+                                    />
+                                    <Route path="/ban"
+                                        component={() => <ManageUserActionForm label="BAN" onSubmit={banUser} />}
+                                    />
+                                    <Route path="/unban"
+                                        component={() => <ManageUserActionForm label="UNBAN" onSubmit={unbanUser} />}
+                                    />
+                                    <Route path="/roles" component={() => <ManageUserRoles {...selectedUser()!} update={updateUserPermissions} />} />
                                 </HashRouter>
                             </ManageUserMenu>
                         </ManageUserGrid>
