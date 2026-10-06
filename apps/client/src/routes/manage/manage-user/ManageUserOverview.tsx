@@ -1,8 +1,8 @@
-import { Show, VoidComponent } from "solid-js";
-import { ManageUserPresentationModel } from "../manageuser.types";
-import { styled } from "solid-styled-components";
-import { ThinDivider } from "@/styled/shared.styles";
-import { InternalHashLink } from "./InternalHashLink";
+import { Show, VoidComponent } from 'solid-js';
+import { ManageUserPresentationModel } from '../manageuser.types';
+import { styled } from 'solid-styled-components';
+import { ThinDivider } from '@/styled/shared.styles';
+import { InternalHashLink } from './InternalHashLink';
 
 export const StandingList = styled('div')`
     font-size: 13px;
@@ -25,7 +25,7 @@ export const StandingList = styled('div')`
 
 const ManageUserOverview: VoidComponent<
     ManageUserPresentationModel & { onBack: () => void }
-> = (props) => {
+> = props => {
     return <>
         <StandingList>
             <span>admin:</span>
@@ -52,7 +52,7 @@ const ManageUserOverview: VoidComponent<
         <InternalHashLink href="/unban">[ UNBAN ]</InternalHashLink> <br />
         <InternalHashLink href="/roles">[ ROLES ]</InternalHashLink> <br />
         <button onClick={props.onBack}>[ BACK ]</button>
-    </>
+    </>;
 };
 
 export default ManageUserOverview;

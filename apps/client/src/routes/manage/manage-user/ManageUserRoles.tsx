@@ -17,19 +17,19 @@ const RoleStack = styled('div')`
 const RoleManageRow = styled('div')`
     display: flex;
     gap: 5px;
-`
+`;
 
 const PERM_DISPLAY_NAMES: Record<keyof UserPermissions, string> = {
     can_ban_users: 'BAN',
     can_delete_messages: 'DELETE',
     can_leave_notes: 'NOTES',
     can_manage_invites: 'INVITES'
-}
+};
 
-const ManageUserRoles: VoidComponent<ManageUserPresentationModel & {update: (to: UserPermissions) => void}> = (props) => {
+const ManageUserRoles: VoidComponent<ManageUserPresentationModel & { update: (to: UserPermissions) => void }> = props => {
 
     // doesn't need to be reactive
-    const permConfig = props.moderation.permissions
+    const permConfig = props.moderation.permissions;
 
     return <>
         <Show
@@ -39,8 +39,7 @@ const ManageUserRoles: VoidComponent<ManageUserPresentationModel & {update: (to:
             <RoleStack>
                 <For each={Object.entries(PERM_ICON_MAP) as [keyof UserPermissions, LucideIcon][]}>
                     {([perm, Icon]) => {
-                        // Will likely need to update this iterator so this is reactive.
-                        const hasPerm = props.moderation.permissions[perm]
+                        const hasPerm = props.moderation.permissions[perm];
 
                         const [toggle, selection] = createFlatToggle(['on', 'off'], '', Number(!hasPerm));
 
@@ -56,10 +55,10 @@ const ManageUserRoles: VoidComponent<ManageUserPresentationModel & {update: (to:
                                     stroke-width={1.5}
                                 />
                                 <p>{PERM_DISPLAY_NAMES[perm]}</p>
-                                <span style={{'flex-grow': '1'}}></span>
+                                <span style={{ 'flex-grow': '1' }}></span>
                                 {toggle}
                             </RoleManageRow>
-                        )
+                        );
                     }}
                 </For>
             </RoleStack>
