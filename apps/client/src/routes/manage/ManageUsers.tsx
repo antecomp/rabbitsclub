@@ -15,9 +15,7 @@ import { useNavigate } from '@solidjs/router';
 import partition from '@/util/partition';
 import createFlatToggle from '@/components/toggles/FlatToggle';
 
-// idk why I have to split it like this but whatever
-const PERMISSION_KEYS = ['can_ban_users', 'can_delete_messages', 'can_leave_notes', 'can_manage_invites'] as const satisfies (keyof UserPermissions)[];
-const PERM_ICON_MAP: Record<typeof PERMISSION_KEYS[number], LucideIcon> = {
+export const PERM_ICON_MAP: Record<keyof UserPermissions, LucideIcon> = {
     'can_ban_users': HammerIcon,
     'can_delete_messages': TrashIcon,
     'can_leave_notes': NotebookIcon,
@@ -114,11 +112,14 @@ function UserSelectionRow(user: ManageUser) {
             <UserSelectionRowId>{user.id}</UserSelectionRowId>
             <UserSelectionRowUsername>{user.username}</UserSelectionRowUsername>
             <UserSelectionRowPermissions>
-                <For each={PERMISSION_KEYS}>
-                    {perm => {
-                        const Icon = PERM_ICON_MAP[perm];
-                        return <Icon color={user.permissions[perm] ? 'black' : 'gray'} size={18} stroke-width={1.5} />;
-                    }}
+                <For each={Object.entries(PERM_ICON_MAP) as [keyof UserPermissions, LucideIcon][]}>
+                    {([perm, Icon]) => (
+                        <Icon 
+                            color={user.permissions[perm] ? 'black' : 'gray'} 
+                            size={18} 
+                            stroke-width={1.5} 
+                        />
+                    )}
                 </For>
             </UserSelectionRowPermissions>
         </UserSelectionRowContainer>

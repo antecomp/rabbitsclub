@@ -106,7 +106,7 @@ export default function ManageUser() {
                                     <Route path="/unban"
                                         component={() => <ManageUserActionForm label="UNBAN" onSubmit={unbanUser} />}
                                     />
-                                    <Route path="/roles" component={() => <ManageUserRoles />} />
+                                    <Route path="/roles" component={() => <ManageUserRoles {...selectedUser()!} />} />
                                 </HashRouter>
                             </ManageUserMenu>
                         </ManageUserGrid>
