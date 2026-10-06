@@ -1,12 +1,11 @@
-import { For, Show, type VoidComponent } from 'solid-js';
+import { createEffect, For, Show, type VoidComponent } from 'solid-js';
 import { InternalHashLink } from './InternalHashLink';
 import { user } from '@/api/user';
-import { ManageUserPresentationModel, ModerationActionProps } from '../manageuser.types';
+import { ManageUserPresentationModel } from '../manageuser.types';
 import { styled } from 'solid-styled-components';
 import { PERM_ICON_MAP } from '../ManageUsers';
 import { type UserPermissions } from '~/schemas/moderation.schema';
 import { LucideIcon } from 'lucide-solid';
-import { permissions } from '@/api/permissions';
 import createFlatToggle from '@/components/toggles/FlatToggle';
 
 
@@ -27,7 +26,10 @@ const PERM_DISPLAY_NAMES: Record<keyof UserPermissions, string> = {
     can_manage_invites: 'INVITES'
 }
 
-const ManageUserRoles: VoidComponent<ManageUserPresentationModel> = (props) => {
+const ManageUserRoles: VoidComponent<ManageUserPresentationModel & {update: (to: UserPermissions) => void}> = (props) => {
+
+    // doesn't need to be reactive
+    const permConfig = props.moderation.permissions
 
     return <>
         <Show
@@ -40,7 +42,12 @@ const ManageUserRoles: VoidComponent<ManageUserPresentationModel> = (props) => {
                         // Will likely need to update this iterator so this is reactive.
                         const hasPerm = props.moderation.permissions[perm]
 
-                        const [toggle, selection] = createFlatToggle(['on', 'off'], '', Number(!hasPerm))
+                        const [toggle, selection] = createFlatToggle(['on', 'off'], '', Number(!hasPerm));
+
+                        createEffect(() => {
+                            permConfig[perm] = selection() === 'on';
+                            console.log(permConfig);
+                        });
 
                         return (
                             <RoleManageRow>
@@ -57,7 +64,7 @@ const ManageUserRoles: VoidComponent<ManageUserPresentationModel> = (props) => {
                 </For>
             </RoleStack>
             <br />
-            <button>[ SAVE ]</button> 
+            <button onClick={() => props.update(permConfig)}>[ SAVE ]</button> 
         </Show>
         <br />
         <InternalHashLink href="/">[ BACK ]</InternalHashLink> <br />

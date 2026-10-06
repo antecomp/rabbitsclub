@@ -13,6 +13,7 @@ import type { ManageUserPresentationModel } from './manageuser.types';
 import ManageUserActionForm from './manage-user/ManageUserActionForm';
 import ManageUserRoles from './manage-user/ManageUserRoles';
 import ManageUserOverview from './manage-user/ManageUserOverview';
+import { UserPermissions } from '~/schemas/moderation.schema';
 
 export default function ManageUser() {
     const [errorDisplay, setErrorDisplay] = createSignal('');
@@ -74,6 +75,17 @@ export default function ManageUser() {
         return true;
     }
 
+    async function updateUserPermissions(to: UserPermissions) {
+        setErrorDisplay('');
+        const { error } = await api.admin.users({ id: params.id }).permissions.patch(to);
+        if (error) {
+            setErrorDisplay(error.value.message ?? 'unknown error');
+            return false;
+        }
+        refetchUser();
+        return true;
+    }
+
 
     return (
         <Show when={canAccess()}>
@@ -106,7 +118,7 @@ export default function ManageUser() {
                                     <Route path="/unban"
                                         component={() => <ManageUserActionForm label="UNBAN" onSubmit={unbanUser} />}
                                     />
-                                    <Route path="/roles" component={() => <ManageUserRoles {...selectedUser()!} />} />
+                                    <Route path="/roles" component={() => <ManageUserRoles {...selectedUser()!} update={updateUserPermissions} />} />
                                 </HashRouter>
                             </ManageUserMenu>
                         </ManageUserGrid>
