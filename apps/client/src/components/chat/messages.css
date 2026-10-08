@@ -67,6 +67,8 @@
 
 .message .pfp {
 
+    padding-right: 5px;
+
     img {
         display: block;
         width: 100%;
@@ -92,8 +94,8 @@
 
     overflow-wrap: anywhere;
 
-    /* idk where this number is coming from */
-    max-width: calc(100% - var(--pfpsize) - 20px);
+    max-width: calc(100% - var(--pfpsize));
+    box-sizing: border-box;
 }
 
 .bubble::before {
