@@ -4,6 +4,8 @@
 .message {
     --border-color: #3a3a38;
     --fill-color: #e3e3e0;
+    --tag-fill-color: #aaa;
+    --tag-border-color: #4b4b4b;
     --border-width: 1px;
 
     --corner-cut: 10px;     /* size of the chamfered corners */
@@ -17,11 +19,17 @@
     --inner-corner-cut: calc(var(--corner-cut) - var(--border-width) * 0.586);
 
     --pfpsize: 60px;
+
+    --messagemargin: 10px;
+}
+
+.message-outgoing {
+    --fill-color: #f8f8f7;
 }
 
 /* Universal Sizing */
 .message {
-    margin-bottom: 20px;
+    margin-bottom: var(--messagemargin);
 
     position: relative;
     width: fit-content;
@@ -36,6 +44,8 @@
 .message-incoming {
     /* also try minmax(0, 1fr) if getting resizing issues */
     grid-template-columns: var(--pfpsize) 1fr;
+    
+    margin-top: calc(var(--tag-height) + var(--tag-gap) + var(--messagemargin));
 
     .pfp {
         grid-column: 1;
@@ -46,12 +56,17 @@
     grid-template-columns: 1fr var(--pfpsize);
     margin-left: auto;
 
+    .bubble {
+        justify-self: self-end;
+    }
+
     .pfp {
         grid-column: 2;
     }
 }
 
 .message .pfp {
+
     img {
         display: block;
         width: 100%;
@@ -62,21 +77,116 @@
     }
 }
 
+
+/* ----- bubble: outer shape = border color, ::before = fill, inset by the border width ----- */
+
 .bubble {
-    background-color: green;
     min-width: 100px;
     padding: 15px 10px;
+
+    position: relative;
+    background: var(--border-color);
+
+    /* Places above the bg psuedo-element */
+    isolation: isolate;
+
+    overflow-wrap: anywhere;
+
+    /* idk where this number is coming from */
+    max-width: calc(100% - var(--pfpsize) - 20px);
 }
 
-.message-tag {
-    font-size: 0.8em;
-
-    white-space: nowrap;
-
+.bubble::before {
+    content: '';
     position: absolute;
-    top: calc(-1 * (var(--tag-gap) + var(--tag-height)));
-    left: var(--pfpsize);
-    height: calc(var(--tag-height) + var(--corner-cut));
+    inset: var(--border-width);
+    z-index: -1;
+    background: var(--fill-color);
+}
 
+/* incoming: cut top-left and bottom-right (avatar on the left) */
+.message-incoming .bubble {
+    clip-path: polygon(
+        var(--corner-cut) 0, 
+        100% 0,
+        100% calc(100% - var(--corner-cut)),
+        calc(100% - var(--corner-cut)) 100%,
+        0 100%, 
+        0 var(--corner-cut)
+    );
+}
+
+.message-incoming .bubble::before {
+    clip-path: polygon(
+        var(--inner-corner-cut) 0, 
+        100% 0,
+        100% calc(100% - var(--inner-corner-cut)),
+        calc(100% - var(--inner-corner-cut)) 100%,
+        0 100%,
+        0 var(--inner-corner-cut)
+    );
+}
+
+/* outgoing: cut top-right and bottom-left (avatar on the right) */
+.message-outgoing .bubble {
+    clip-path: polygon(
+        0 0, 
+        calc(100% - var(--corner-cut)) 0,
+        100% var(--corner-cut),
+        100% 100%,
+        var(--corner-cut) 100%,
+        0 calc(100% - var(--corner-cut))
+    );
+}
+
+.message-outgoing .bubble::before {
+    clip-path: polygon(
+        0 0,
+        calc(100% - var(--inner-corner-cut)) 0,
+        100% var(--inner-corner-cut), 
+        100% 100%,
+        var(--inner-corner-cut) 100%,
+        0 calc(100% - var(--inner-corner-cut))
+    );
+}
+
+
+
+
+
+/* ----- nametag: its own bordered shape, floating above the bubble ----- */
+/* right end: full-height 45deg cut. bottom-left tail: parallel to the bubble's top-left cut. */
+
+.message-tag {
+    position: absolute;
+    left: var(--pfpsize);
+    top: calc(-1 * (var(--tag-gap) + var(--tag-height)));
+    isolation: isolate;
+    height: calc(var(--tag-height) + var(--corner-cut));
+    padding: 0 calc(var(--tag-height)) 0 0.6em;
     line-height: var(--tag-height);
+    font-size: 0.8em;
+    white-space: nowrap;
+    background: var(--tag-border-color);
+    clip-path: polygon(
+        0 0,
+        calc(100% - var(--tag-height)) 0,
+        100% var(--tag-height),
+        var(--corner-cut) var(--tag-height),
+        0 calc(var(--tag-height) + var(--corner-cut)));
+  }
+
+.message-tag::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--tag-fill-color);
+    clip-path:
+      polygon(
+        var(--border-width) var(--border-width),
+        calc(100% - var(--tag-height) - var(--border-width) * var(--sqrt2) + var(--border-width)) var(--border-width),
+        calc(100% - var(--border-width) * var(--sqrt2) - var(--border-width)) calc(var(--tag-height) - var(--border-width)),
+        calc(var(--corner-cut) - var(--border-width) * (var(--sqrt2) - 1)) calc(var(--tag-height) - var(--border-width)),
+        var(--border-width) calc(var(--corner-cut) + var(--tag-height) - var(--border-width) * var(--sqrt2) - var(--border-width)));
 }
