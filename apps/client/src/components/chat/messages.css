@@ -1,3 +1,82 @@
 /* fuck solid styled I want to LIVE */
 
-.message 
+/* General configuration for a message, nothing more */
+.message {
+    --border-color: #3a3a38;
+    --fill-color: #e3e3e0;
+    --border-width: 1px;
+
+    --corner-cut: 10px;     /* size of the chamfered corners */
+
+    --tag-height: 19px;     /* height of the nametag's flat part */
+    --tag-gap: 3px;         /* space between nametag and bubble */
+
+    /* derived, leave alone */
+    --sqrt2: 1.4142;
+    /* inner shape's corner cut, so the diagonal border is as thick as the straight ones */
+    --inner-corner-cut: calc(var(--corner-cut) - var(--border-width) * 0.586);
+
+    --pfpsize: 60px;
+}
+
+/* Universal Sizing */
+.message {
+    margin-bottom: 20px;
+
+    position: relative;
+    width: fit-content;
+
+    display: grid;
+
+    .pfp, .bubble {
+        grid-row: 1;
+    }
+}
+
+.message-incoming {
+    /* also try minmax(0, 1fr) if getting resizing issues */
+    grid-template-columns: var(--pfpsize) 1fr;
+
+    .pfp {
+        grid-column: 1;
+    }
+}
+
+.message-outgoing {
+    grid-template-columns: 1fr var(--pfpsize);
+    margin-left: auto;
+
+    .pfp {
+        grid-column: 2;
+    }
+}
+
+.message .pfp {
+    img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: contain;
+        -webkit-user-drag: none;
+        user-select: none;
+    }
+}
+
+.bubble {
+    background-color: green;
+    min-width: 100px;
+    padding: 15px 10px;
+}
+
+.message-tag {
+    font-size: 0.8em;
+
+    white-space: nowrap;
+
+    position: absolute;
+    top: calc(-1 * (var(--tag-gap) + var(--tag-height)));
+    left: var(--pfpsize);
+    height: calc(var(--tag-height) + var(--corner-cut));
+
+    line-height: var(--tag-height);
+}
