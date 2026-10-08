@@ -1,0 +1,140 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chamfer bubble, minimal</title>
+<style>
+  /* ---------- the component ---------- */
+
+  .message {
+    /* things you will want to change */
+    --border-color: #3a3a38;
+    --fill-color: #e3e3e0;
+    --border-width: 1px;
+    --corner-cut: 10px;
+    /* size of the chamfered corners */
+    --tag-height: 19px;
+    /* height of the nametag's flat part */
+    --tag-gap: 3px;
+    /* space between nametag and bubble */
+
+    /* derived, leave alone */
+    --sqrt2: 1.4142;
+    /* inner shape's corner cut, so the diagonal border is as thick as the straight ones */
+    --inner-corner-cut: calc(var(--corner-cut) - var(--border-width) * 0.586);
+
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .message--incoming {
+    margin-top: calc(var(--tag-height) + var(--tag-gap));
+  }
+
+  .message--outgoing {
+    --fill-color: #f8f8f7;
+    margin-left: auto;
+  }
+
+  /* ----- bubble: outer shape = border color, ::before = fill, inset by the border width ----- */
+
+  .message__bubble {
+    position: relative;
+    isolation: isolate;
+    min-width: 8em;
+    padding: 0.5em 1em 0.7em;
+    background: var(--border-color);
+  }
+
+  .message__bubble::before {
+    content: "";
+    position: absolute;
+    inset: var(--border-width);
+    z-index: -1;
+    background: var(--fill-color);
+  }
+
+  /* incoming: cut top-left and bottom-right (avatar on the left) */
+  .message--incoming .message__bubble {
+    clip-path: polygon(var(--corner-cut) 0, 100% 0,
+        100% calc(100% - var(--corner-cut)), calc(100% - var(--corner-cut)) 100%,
+        0 100%, 0 var(--corner-cut));
+  }
+
+  .message--incoming .message__bubble::before {
+    clip-path: polygon(var(--inner-corner-cut) 0, 100% 0,
+        100% calc(100% - var(--inner-corner-cut)), calc(100% - var(--inner-corner-cut)) 100%,
+        0 100%, 0 var(--inner-corner-cut));
+  }
+
+  /* outgoing: cut top-right and bottom-left (avatar on the right) */
+  .message--outgoing .message__bubble {
+    clip-path: polygon(0 0, calc(100% - var(--corner-cut)) 0,
+        100% var(--corner-cut), 100% 100%,
+        var(--corner-cut) 100%, 0 calc(100% - var(--corner-cut)));
+  }
+
+  .message--outgoing .message__bubble::before {
+    clip-path: polygon(0 0, calc(100% - var(--inner-corner-cut)) 0,
+        100% var(--inner-corner-cut), 100% 100%,
+        var(--inner-corner-cut) 100%, 0 calc(100% - var(--inner-corner-cut)));
+  }
+
+  /* ----- nametag: its own bordered shape, floating above the bubble ----- */
+  /* right end: full-height 45deg cut. bottom-left tail: parallel to the bubble's top-left cut. */
+
+  .message__tag {
+    position: absolute;
+    left: 0;
+    top: calc(-1 * (var(--tag-gap) + var(--tag-height)));
+    isolation: isolate;
+    height: calc(var(--tag-height) + var(--corner-cut));
+    padding: 0 calc(var(--tag-height)) 0 0.6em;
+    line-height: var(--tag-height);
+    font-size: 0.8em;
+    white-space: nowrap;
+    background: var(--border-color);
+    clip-path: polygon(0 0,
+        calc(100% - var(--tag-height)) 0,
+        100% var(--tag-height),
+        var(--corner-cut) var(--tag-height),
+        0 calc(var(--tag-height) + var(--corner-cut)));
+  }
+
+  .message__tag::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--fill-color);
+    clip-path:
+      polygon(var(--border-width) var(--border-width),
+        calc(100% - var(--tag-height) - var(--border-width) * var(--sqrt2) + var(--border-width)) var(--border-width),
+        calc(100% - var(--border-width) * var(--sqrt2) - var(--border-width)) calc(var(--tag-height) - var(--border-width)),
+        calc(var(--corner-cut) - var(--border-width) * (var(--sqrt2) - 1)) calc(var(--tag-height) - var(--border-width)),
+        var(--border-width) calc(var(--corner-cut) + var(--tag-height) - var(--border-width) * var(--sqrt2) - var(--border-width)));
+  }
+
+  /* ---------- demo only ---------- */
+  body {
+    font: 14px/1.4 ui-monospace, Menlo, Consolas, monospace;
+    background: #f5f5f3;
+    color: #0c0c0c;
+    padding: 24px 16px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .message {
+    margin-bottom: 20px;
+  }
+</style>
+
+<div class="message message--outgoing">
+  <div class="message__bubble">outgoing</div>
+</div>
+
+<div class="message message--incoming">
+  <div class="message__tag">omni</div>
+  <div class="message__bubble">incoming</div>
+</div>
