@@ -4,9 +4,9 @@ import { ChatMessage, UserChatMessage } from '@/types/message.type';
 import { playSoundOnce } from '@/util/playSound';
 import { createEffect, createSignal, on, onCleanup, onMount } from 'solid-js';
 
-import ping from '@/assets/sfx/ping.mp3';
-import enter from '@/assets/sfx/enter.mp3';
-import leave from '@/assets/sfx/leave.mp3';
+import ping from '@/assets/sfx/ping.wav';
+import enter from '@/assets/sfx/enter.wav';
+import leave from '@/assets/sfx/leave.wav';
 import { notifyAuthFailure } from '@/api/auth';
 import { createAuthAwareChatSocket } from '@/api/chatSocket';
 import { user } from '@/api/user';
