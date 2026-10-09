@@ -9,6 +9,7 @@
     --border-width: 1px;
 
     --corner-cut: 10px;     /* size of the chamfered corners */
+    --small-corner-cut: 3px; /* size of the cuts on the remaining corners */
 
     --tag-height: 19px;     /* height of the nametag's flat part */
     --tag-gap: 3px;         /* space between nametag and bubble */
@@ -17,6 +18,7 @@
     --sqrt2: 1.4142;
     /* inner shape's corner cut, so the diagonal border is as thick as the straight ones */
     --inner-corner-cut: calc(var(--corner-cut) - var(--border-width) * 0.586);
+    --inner-small-corner-cut: calc(var(--small-corner-cut) - var(--border-width) * 0.586);
 
     --pfpsize: 60px;
 
@@ -130,14 +132,16 @@
     background: var(--fill-color);
 }
 
-/* incoming: cut top-left and bottom-right (avatar on the left) */
+/* incoming: larger cuts at top-left and bottom-right (avatar on the left) */
 .message-incoming .bubble {
     clip-path: polygon(
         var(--corner-cut) 0, 
-        100% 0,
+        calc(100% - var(--small-corner-cut)) 0,
+        100% var(--small-corner-cut),
         100% calc(100% - var(--corner-cut)),
         calc(100% - var(--corner-cut)) 100%,
-        0 100%, 
+        var(--small-corner-cut) 100%,
+        0 calc(100% - var(--small-corner-cut)),
         0 var(--corner-cut)
     );
 }
@@ -145,34 +149,40 @@
 .message-incoming .bubble::before {
     clip-path: polygon(
         var(--inner-corner-cut) 0, 
-        100% 0,
+        calc(100% - var(--inner-small-corner-cut)) 0,
+        100% var(--inner-small-corner-cut),
         100% calc(100% - var(--inner-corner-cut)),
         calc(100% - var(--inner-corner-cut)) 100%,
-        0 100%,
+        var(--inner-small-corner-cut) 100%,
+        0 calc(100% - var(--inner-small-corner-cut)),
         0 var(--inner-corner-cut)
     );
 }
 
-/* outgoing: cut top-right and bottom-left (avatar on the right) */
+/* outgoing: larger cuts at top-right and bottom-left (avatar on the right) */
 .message-outgoing .bubble {
     clip-path: polygon(
-        0 0, 
+        var(--small-corner-cut) 0,
         calc(100% - var(--corner-cut)) 0,
         100% var(--corner-cut),
-        100% 100%,
+        100% calc(100% - var(--small-corner-cut)),
+        calc(100% - var(--small-corner-cut)) 100%,
         var(--corner-cut) 100%,
-        0 calc(100% - var(--corner-cut))
+        0 calc(100% - var(--corner-cut)),
+        0 var(--small-corner-cut)
     );
 }
 
 .message-outgoing .bubble::before {
     clip-path: polygon(
-        0 0,
+        var(--inner-small-corner-cut) 0,
         calc(100% - var(--inner-corner-cut)) 0,
         100% var(--inner-corner-cut), 
-        100% 100%,
+        100% calc(100% - var(--inner-small-corner-cut)),
+        calc(100% - var(--inner-small-corner-cut)) 100%,
         var(--inner-corner-cut) 100%,
-        0 calc(100% - var(--inner-corner-cut))
+        0 calc(100% - var(--inner-corner-cut)),
+        0 var(--inner-small-corner-cut)
     );
 }
 
