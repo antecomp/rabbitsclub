@@ -21,6 +21,10 @@
     --pfpsize: 60px;
 
     --messagemargin: 10px;
+
+    --message-inner-padding-lr: 10px;
+
+    --message-inner-padding-tb: 15px;
 }
 
 .message-outgoing {
@@ -79,12 +83,32 @@
     }
 }
 
+.message .bubble {
+
+    span {
+        position: absolute;
+        /* top: var(--message-inner-padding-tb); */
+        top: 2px;
+
+        font-size: 10px;
+        color: #707070;
+
+        visibility: hidden;
+    }
+}
+
+.message .bubble:hover {
+    span {
+        visibility: visible;
+    }
+}
+
 
 /* ----- bubble: outer shape = border color, ::before = fill, inset by the border width ----- */
 
-.bubble {
-    min-width: 100px;
-    padding: 15px 10px;
+.message .bubble {
+    min-width: 125px;
+    padding: var(--message-inner-padding-tb) var(--message-inner-padding-lr);
 
     position: relative;
     background: var(--border-color);
@@ -151,10 +175,6 @@
         0 calc(100% - var(--inner-corner-cut))
     );
 }
-
-
-
-
 
 /* ----- nametag: its own bordered shape, floating above the bubble ----- */
 /* right end: full-height 45deg cut. bottom-left tail: parallel to the bubble's top-left cut. */
