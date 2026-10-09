@@ -45,6 +45,8 @@
     .pfp, .bubble {
         grid-row: 1;
     }
+
+    max-width: calc(100% - var(--pfpsize));
 }
 
 .message-incoming {
@@ -85,9 +87,7 @@
     }
 }
 
-.message .bubble {
-
-    span {
+.message .bubble .timestamp span {
         position: absolute;
         /* top: var(--message-inner-padding-tb); */
         top: 2px;
@@ -96,13 +96,11 @@
         color: #707070;
 
         visibility: hidden;
-    }
 }
 
-.message .bubble:hover {
-    span {
+
+.message .bubble:hover .timestamp span {
         visibility: visible;
-    }
 }
 
 
@@ -120,7 +118,6 @@
 
     overflow-wrap: anywhere;
 
-    max-width: calc(100% - var(--pfpsize));
     box-sizing: border-box;
 }
 

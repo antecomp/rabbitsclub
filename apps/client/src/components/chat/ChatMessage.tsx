@@ -40,6 +40,10 @@ export default function ChatMessage(props: MessageProps) {
                 <div class="timestamp">
                     <span>{fullDate}</span>
                 </div>
+                <Show when={props.moderation_note}>
+                    <span style={{color: 'red'}}>[ {props.moderation_note} ]</span>
+                    <br />
+                </Show>
                 {props.content}
             </div>
         </div>
