@@ -111,7 +111,7 @@
 /* ----- bubble: outer shape = border color, ::before = fill, inset by the border width ----- */
 
 .message .bubble {
-    min-width: 125px;
+    min-width: 150px;
     padding: var(--message-inner-padding-tb) var(--message-inner-padding-lr);
 
     position: relative;

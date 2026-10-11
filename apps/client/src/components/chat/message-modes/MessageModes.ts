@@ -2,6 +2,7 @@ import { Component } from "solid-js";
 import { MessageProps } from "../Message";
 import EditMessage from "./EditMessage";
 import { permissions } from "@/api/permissions";
+import DeleteMessage from "./DeleteMessage";
 
 export type MessageActionComponent = Component<MessageProps & {closeSelf: () => void}>
 
@@ -14,7 +15,7 @@ export const ACTIONS = {
     delete: {
         name: "DLT",
         condition: p => p.isOwn && !p.is_deleted,
-        component: EditMessage
+        component: DeleteMessage
     },
     mod: {
         name: 'MOD',
