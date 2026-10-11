@@ -2,9 +2,10 @@ import createFlatToggle from "@/components/toggles/FlatToggle";
 import { MessageActionComponent } from "./MessageModes";
 import { styled } from "solid-styled-components";
 import Link from "@/components/Link";
-import { createSignal } from "solid-js";
+import { createMemo, createSignal } from "solid-js";
 import { MAX_MESSAGE_LENGTH } from "#config";
 import { api } from "@/api/backend";
+import { hasPermission } from "@/api/permissions";
 
 const ModerateConfirmationMenu = styled('div')`
     display: flex;
@@ -16,8 +17,13 @@ const ModerateConfirmationMenu = styled('div')`
 
 const ModerateMessage: MessageActionComponent = (props) => {
 
-    // TODO: Filter this by what perms the user actually has.
-    const [actionToggler, currentAction] = createFlatToggle(['WARN', 'DELETE']);
+    const actionToggle = createMemo(() => {
+        const [first, ...rest] = (['WARN', 'DELETE'] as const).filter(action =>
+            hasPermission(action === 'WARN' ? 'can_leave_notes' : 'can_delete_messages')
+        );
+        return first === undefined ? undefined : createFlatToggle([first, ...rest]);
+    });
+    const currentAction = () => actionToggle()?.[1]();
 
     const [reason, setReason] = createSignal('');
 
@@ -30,6 +36,8 @@ const ModerateMessage: MessageActionComponent = (props) => {
             case 'WARN':
                 api.moderation.messages({ id: props.id }).patch({ note: reason() })
                 break;
+            default:
+                return;
         }
         props.closeSelf();
     }
@@ -39,7 +47,7 @@ const ModerateMessage: MessageActionComponent = (props) => {
             <div class='header'>
                 <span>MODERATE</span>
             </div>
-            {actionToggler}
+            {actionToggle()?.[0]}
             <form onSubmit={applyAction}>
                 For: <input 
                     type="text" 
@@ -52,7 +60,7 @@ const ModerateMessage: MessageActionComponent = (props) => {
                     <Link href={`/manage/user/${props.sender_id}`} style={{'font-size': '12px'}}>[MANAGE USER ↗]</Link>
                     <span style={{"flex-grow": 1}}/>
                     <button type="button" onClick={props.closeSelf}>[ CANCEL ]</button>
-                    <button type="submit" >[ APPLY ]</button>
+                    <button type="submit" disabled={!currentAction()} >[ APPLY ]</button>
                 </ModerateConfirmationMenu>
             </form>
         </div>
