@@ -1,7 +1,6 @@
 import { For, Show } from 'solid-js';
 import { MAX_MESSAGE_LENGTH } from '#config';
 import { user } from '../api/user';
-import Message from '../components/chat/Message';
 import SystemMessage from '../components/chat/SystemMessage';
 import Footer from '../components/Footer';
 import { Divider, Title } from '../styled/shared.styles';
