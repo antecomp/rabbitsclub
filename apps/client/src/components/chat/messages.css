@@ -219,3 +219,43 @@
         calc(var(--corner-cut) - var(--border-width) * (var(--sqrt2) - 1)) calc(var(--tag-height) - var(--border-width)),
         var(--border-width) calc(var(--corner-cut) + var(--tag-height) - var(--border-width) * var(--sqrt2) - var(--border-width)));
 }
+
+/* --------------------------------------------------------------------------- */
+
+.message .message-menu {
+    position: absolute;
+    padding: 2px;
+    font-size: 12px;
+    top: 0;
+
+    a {
+        cursor: pointer;
+    }
+
+    a:hover {
+        color: gray;
+    }
+
+    visibility: hidden;
+
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
+}
+
+.message:hover .message-menu,
+.message-menu:hover {
+    visibility: visible;
+}
+
+.message-outgoing .message-menu {
+    text-align: left;
+    transform: translateX(-100%);
+}
+
+.message-incoming .message-menu {
+    text-align: right;
+    right: 0;
+    transform: translateX(100%);
+}

@@ -5,14 +5,42 @@ import { loadAvatarForUser } from '@/avatar/avatarCache';
 
 import { type UserChatMessage } from "@/types/message.type";
 import { format } from "date-fns";
-import { createSignal, onMount, Show } from "solid-js";
+import { createSignal, For, onMount, Show } from "solid-js";
+import { ACTIONS, MessageAction } from './message-modes/MessageModes';
+import { Dynamic } from 'solid-js/web';
 
 export type MessageProps = UserChatMessage & { isOwn: boolean };
 
-export default function ChatMessage(props: MessageProps) {
+function MessageContent(props: MessageProps) {
     const createdAt = new Date(props.created_at);
 
     const fullDate = format(createdAt, 'dd.MM.yy HH:mm');
+
+    return (
+        <div class='bubble'>
+            <div class="timestamp">
+                <span>{fullDate}</span>
+            </div>
+            <Show when={props.moderation_note}>
+                <span style={{ color: 'red' }}>[ {props.moderation_note} ]</span>
+                <br />
+            </Show>
+            {props.content}
+        </div>
+    )
+}
+
+export default function ChatMessage(props: MessageProps) {
+
+    const [mode, setMode] = createSignal<MessageAction | null>(null);
+
+    const activeAction = () => {
+        const key = mode();
+        if (key === null) return undefined;
+
+        const action = ACTIONS[key];
+        return action.condition(props) ? action : undefined;
+    }
 
     const [avatarSrc, setAvatarSrc] = createSignal(pfp_placeholder);
     onMount(async () => {
@@ -21,7 +49,7 @@ export default function ChatMessage(props: MessageProps) {
     });
 
     return (
-        <div 
+        <div
             classList={{
                 'message': true,
                 'message-incoming': !props.isOwn,
@@ -36,15 +64,36 @@ export default function ChatMessage(props: MessageProps) {
             <div class="pfp">
                 <img src={avatarSrc()} />
             </div>
-            <div class='bubble'>
-                <div class="timestamp">
-                    <span>{fullDate}</span>
-                </div>
-                <Show when={props.moderation_note}>
-                    <span style={{color: 'red'}}>[ {props.moderation_note} ]</span>
-                    <br />
-                </Show>
-                {props.content}
+            <Show
+                when={activeAction()}
+                keyed
+                fallback={<MessageContent {...props}></MessageContent>}
+            >
+                {(action) => (
+                    <Dynamic
+                        component={action.component}
+                        {...props}
+                        closeSelf={() => setMode(null)}
+                    />
+                )}
+            </Show>
+            <div class='message-menu'>
+                <For each={
+                    Object.entries(ACTIONS)
+                        .filter(
+                            ([, { condition }]) => condition(props)
+                        ) as [MessageAction, typeof ACTIONS[MessageAction]][]
+                }>
+                    {([key, act]) =>
+                        <a
+                            onClick={() => setMode(
+                                prev => prev === key ? null : key
+                            )}
+                        >
+                            [ {act.name} ]
+                        </a>
+                    }
+                </For>
             </div>
         </div>
     )
