@@ -4,7 +4,8 @@
     }
 
     .bubble.delete-msg .header,
-    .bubble.edit-msg .header {
+    .bubble.edit-msg .header,
+    .bubble.mod-msg .header {
         --stripe-width: 5px;
         --stripe-height: 12px;
         height: var(--stripe-height);
@@ -58,9 +59,26 @@
         border-bottom: solid #595959 1px;
         margin-bottom: 5px;
     }
+
+    .bubble.mod-msg {
+        --stripe-color: rgb(228, 133, 18);
+        background: var(--stripe-color);
+
+        .header {
+            background: repeating-linear-gradient(135deg,
+            var(--stripe-color) 0 var(--stripe-width),
+            transparent var(--stripe-width) calc(var(--stripe-width) * 2));
+
+            --header-label-color: var(--stripe-color);
+
+            span {
+                padding-left: 12px;
+            }
+        }
+    }
 }
 
-.message-row.a-edit, .message-row.a-delete {
+.message-row.a-edit, .message-row.a-delete, .message-row.a-mod {
     .message { width: 100% }
     .bubble  { width: 100% }
 }

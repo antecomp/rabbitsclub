@@ -3,6 +3,7 @@ import { MessageProps } from "../Message";
 import EditMessage from "./EditMessage";
 import { permissions } from "@/api/permissions";
 import DeleteMessage from "./DeleteMessage";
+import ModerateMessage from "./ModerateMessage";
 
 export type MessageActionComponent = Component<MessageProps & {closeSelf: () => void}>
 
@@ -23,7 +24,7 @@ export const ACTIONS = {
             const perms = permissions();
             return Boolean(perms?.can_leave_notes || perms?.can_delete_messages)
         },
-        component: EditMessage
+        component: ModerateMessage
     }
 } as const satisfies Record<string, {
     name: string;
