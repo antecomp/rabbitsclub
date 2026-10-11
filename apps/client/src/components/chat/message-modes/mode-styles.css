@@ -45,4 +45,13 @@
         --stripe-color: #6a6a6a;
         --header-label-color: #7c7c7c;
     }
+
+    .bubble.edit-msg input {
+        background: transparent;
+        border: none;
+        outline: none;
+        text-wrap-mode: wrap;
+        border-bottom: solid #595959 1px;
+        margin-bottom: 5px;
+    }
 }

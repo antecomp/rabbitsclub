@@ -1,16 +1,27 @@
 import './mode-styles.css';
-import { createSignal } from 'solid-js';
+import { createSignal, onMount, Show } from 'solid-js';
 import { MAX_MESSAGE_LENGTH } from '#config';
 import { api } from '@/api/backend';
 import { MessageActionComponent } from './MessageModes';
 
 const EditMessage: MessageActionComponent = props => {
+    let editInput: HTMLInputElement | undefined;
     const [content, setContent] = createSignal(props.content);
     const [saving, setSaving] = createSignal(false);
 
+    onMount(() => editInput?.focus());
+
+    const formTooltip = () => {
+        if (content().length >= MAX_MESSAGE_LENGTH * 0.80) {
+            return `( ${content().length} / ${MAX_MESSAGE_LENGTH} )`;
+        }
+    };
+
+    const canSubmit = () => !saving() && !!content().trim() && content().length <= MAX_MESSAGE_LENGTH;
+
     const editMessage = async (event: SubmitEvent) => {
         event.preventDefault();
-        if (saving() || !content().trim()) return;
+        if (!canSubmit()) return;
 
         setSaving(true);
         try {
@@ -34,17 +45,28 @@ const EditMessage: MessageActionComponent = props => {
             </div>
             <form onSubmit={editMessage}>
                 <input
+                    ref={editInput}
                     type="text"
                     aria-label="Message content"
                     value={content()}
-                    onInput={event => setContent(event.currentTarget.value)}
+                    onInput={event => {
+                        const value = event.currentTarget.value.slice(0, MAX_MESSAGE_LENGTH);
+                        event.currentTarget.value = value;
+                        setContent(value);
+                    }}
                     maxlength={MAX_MESSAGE_LENGTH}
                     disabled={saving()}
                     style={{ width: '100%', 'box-sizing': 'border-box' }}
                 />
-                <div style={{ 'text-align': 'right' }}>
+                <div style={{ display: 'flex', 'align-items': 'center' }}>
+                    <Show when={formTooltip()}>
+                        <span style={{ 'font-size': '8px', color: '#2d2d2d' }}>
+                            {formTooltip()}
+                        </span>
+                    </Show>
+                    <span style={{ 'flex-grow': 1 }} />
                     <button type="button" onClick={props.closeSelf}>[ CANCEL ]</button>
-                    <button type="submit" disabled={saving() || !content().trim()}>[ EDIT ]</button>
+                    <button type="submit" disabled={!canSubmit()}>[ EDIT ]</button>
                 </div>
             </form>
         </div>
