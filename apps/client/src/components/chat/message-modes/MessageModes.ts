@@ -1,20 +1,20 @@
-import { Component } from "solid-js";
-import { MessageProps } from "../Message";
-import EditMessage from "./EditMessage";
-import { permissions } from "@/api/permissions";
-import DeleteMessage from "./DeleteMessage";
-import ModerateMessage from "./ModerateMessage";
+import { Component } from 'solid-js';
+import { MessageProps } from '../Message';
+import EditMessage from './EditMessage';
+import { permissions } from '@/api/permissions';
+import DeleteMessage from './DeleteMessage';
+import ModerateMessage from './ModerateMessage';
 
-export type MessageActionComponent = Component<MessageProps & {closeSelf: () => void}>
+export type MessageActionComponent = Component<MessageProps & { closeSelf: () => void }>;
 
 export const ACTIONS = {
     edit: {
-        name: "EDT",
+        name: 'EDT',
         condition: p => p.isOwn && !p.is_deleted,
         component: EditMessage
     },
     delete: {
-        name: "DLT",
+        name: 'DLT',
         condition: p => p.isOwn && !p.is_deleted,
         component: DeleteMessage
     },
@@ -22,7 +22,7 @@ export const ACTIONS = {
         name: 'MOD',
         condition() {
             const perms = permissions();
-            return Boolean(perms?.can_leave_notes || perms?.can_delete_messages)
+            return Boolean(perms?.can_leave_notes || perms?.can_delete_messages);
         },
         component: ModerateMessage
     }

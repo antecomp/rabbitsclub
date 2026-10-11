@@ -9,7 +9,7 @@ const EditConfirmationMenu = styled('div')`
     display: flex;
     align-items: center;
     transform: translateY(10px);
-`
+`;
 
 const EditMessage: MessageActionComponent = props => {
     let editInput: HTMLInputElement | undefined;

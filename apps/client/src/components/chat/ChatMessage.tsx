@@ -3,9 +3,9 @@ import './messages.css';
 
 import { loadAvatarForUser } from '@/avatar/avatarCache';
 
-import { type UserChatMessage } from "@/types/message.type";
-import { format } from "date-fns";
-import { createSignal, For, onMount, Show } from "solid-js";
+import { type UserChatMessage } from '@/types/message.type';
+import { format } from 'date-fns';
+import { createSignal, For, onMount, Show } from 'solid-js';
 import { ACTIONS, MessageAction } from './message-modes/MessageModes';
 import { Dynamic } from 'solid-js/web';
 
@@ -27,7 +27,7 @@ function MessageContent(props: MessageProps) {
             </Show>
             {props.content}
         </div>
-    )
+    );
 }
 
 export default function ChatMessage(props: MessageProps) {
@@ -40,7 +40,7 @@ export default function ChatMessage(props: MessageProps) {
 
         const action = ACTIONS[key];
         return action.condition(props) ? action : undefined;
-    }
+    };
 
     const [avatarSrc, setAvatarSrc] = createSignal(pfp_placeholder);
     onMount(async () => {
@@ -70,7 +70,7 @@ export default function ChatMessage(props: MessageProps) {
                     keyed
                     fallback={<MessageContent {...props}></MessageContent>}
                 >
-                    {(action) => (
+                    {action => (
                         <Dynamic
                             component={action.component}
                             {...props}
@@ -99,5 +99,5 @@ export default function ChatMessage(props: MessageProps) {
                 </div>
             </div>
         </div>
-    )
+    );
 }

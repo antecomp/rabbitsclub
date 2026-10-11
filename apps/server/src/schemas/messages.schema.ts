@@ -24,7 +24,7 @@ export const ClientMessageSchema = t.Object({
     deleted_reason: t.Union([t.String(), t.Null()]),
     created_at: t.String(),
     moderation_note: t.Union([t.String(), t.Null()]),
-    edited: t.Boolean(),
+    edited: t.Boolean()
 });
 export type ClientMessage = typeof ClientMessageSchema['static'];
 
