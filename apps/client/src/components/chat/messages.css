@@ -233,6 +233,7 @@
     top: 0;
 
     a {
+        position: relative;
         cursor: pointer;
     }
 
@@ -262,4 +263,21 @@
     text-align: right;
     right: 0;
     transform: translateX(100%);
+}
+
+.message-menu a.selected::before {
+    position: absolute;
+    top: calc(50% - 2px);
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.message-outgoing .message-menu a.selected::before {
+    content: '►';
+    right: calc(100% + 4px);
+}
+
+.message-incoming .message-menu a.selected::before {
+    content: '◄';
+    left: calc(100% + 4px);
 }

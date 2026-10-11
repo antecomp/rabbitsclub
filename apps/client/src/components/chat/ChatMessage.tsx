@@ -87,6 +87,7 @@ export default function ChatMessage(props: MessageProps) {
                     }>
                         {([key, act]) =>
                             <a
+                                classList={{ 'selected': mode() === key }}
                                 onClick={() => setMode(
                                     prev => prev === key ? null : key
                                 )}
