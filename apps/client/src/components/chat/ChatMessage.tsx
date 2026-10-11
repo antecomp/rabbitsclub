@@ -49,51 +49,53 @@ export default function ChatMessage(props: MessageProps) {
     });
 
     return (
-        <div
-            classList={{
-                'message': true,
-                'message-incoming': !props.isOwn,
-                'message-outgoing': props.isOwn
-            }}
-        >
-            <Show when={!props.isOwn}>
-                <div class='message-tag'>
-                    {props.username}
-                </div>
-            </Show>
-            <div class="pfp">
-                <img src={avatarSrc()} />
-            </div>
-            <Show
-                when={activeAction()}
-                keyed
-                fallback={<MessageContent {...props}></MessageContent>}
+        <div class="message-row">
+            <div
+                classList={{
+                    'message': true,
+                    'message-incoming': !props.isOwn,
+                    'message-outgoing': props.isOwn
+                }}
             >
-                {(action) => (
-                    <Dynamic
-                        component={action.component}
-                        {...props}
-                        closeSelf={() => setMode(null)}
-                    />
-                )}
-            </Show>
-            <div class='message-menu'>
-                <For each={
-                    Object.entries(ACTIONS)
-                        .filter(
-                            ([, { condition }]) => condition(props)
-                        ) as [MessageAction, typeof ACTIONS[MessageAction]][]
-                }>
-                    {([key, act]) =>
-                        <a
-                            onClick={() => setMode(
-                                prev => prev === key ? null : key
-                            )}
-                        >
-                            [ {act.name} ]
-                        </a>
-                    }
-                </For>
+                <Show when={!props.isOwn}>
+                    <div class='message-tag'>
+                        {props.username}
+                    </div>
+                </Show>
+                <div class="pfp">
+                    <img src={avatarSrc()} />
+                </div>
+                <Show
+                    when={activeAction()}
+                    keyed
+                    fallback={<MessageContent {...props}></MessageContent>}
+                >
+                    {(action) => (
+                        <Dynamic
+                            component={action.component}
+                            {...props}
+                            closeSelf={() => setMode(null)}
+                        />
+                    )}
+                </Show>
+                <div class='message-menu'>
+                    <For each={
+                        Object.entries(ACTIONS)
+                            .filter(
+                                ([, { condition }]) => condition(props)
+                            ) as [MessageAction, typeof ACTIONS[MessageAction]][]
+                    }>
+                        {([key, act]) =>
+                            <a
+                                onClick={() => setMode(
+                                    prev => prev === key ? null : key
+                                )}
+                            >
+                                [ {act.name} ]
+                            </a>
+                        }
+                    </For>
+                </div>
             </div>
         </div>
     )

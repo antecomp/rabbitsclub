@@ -34,6 +34,10 @@
 }
 
 /* Universal Sizing */
+.message-row {
+    display: flow-root;
+}
+
 .message {
     margin-bottom: var(--messagemargin);
 
@@ -99,7 +103,7 @@
 }
 
 
-.message .bubble:hover .timestamp span {
+.message-row:hover .timestamp span {
         visibility: visible;
 }
 
@@ -244,8 +248,8 @@
     height: 100%;
 }
 
-.message:hover .message-menu,
-.message-menu:hover {
+.message-row:hover .message-menu,
+.message-row:focus-within .message-menu {
     visibility: visible;
 }
 
