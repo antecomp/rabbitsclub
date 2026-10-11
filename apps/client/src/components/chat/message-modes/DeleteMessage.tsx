@@ -8,13 +8,16 @@ const DeleteConfirmationMenu = styled('div')`
     button { font-size: 12px; }
 
     text-align: right;
+
+    display: flex;
+
+    transform: translateY(10px);
 `
 
 const DeleteConfirmationMessage = styled('i')`
     font-size: 8px;
     font-style: italic;
     text-align: right;
-    width: 100%;
     display: block;
 `
 
@@ -37,8 +40,9 @@ const DeleteMessage: MessageActionComponent = (props) => {
                     {props.content}
                 </span>
                 <br/>
-                <DeleteConfirmationMessage>This action cannot be undone.</DeleteConfirmationMessage>
                 <DeleteConfirmationMenu>
+                    <DeleteConfirmationMessage>This action cannot be undone.</DeleteConfirmationMessage>
+                    <span style={{'flex-grow': '1'}}></span>
                     <button onClick={props.closeSelf}>[ CANCEL ]</button>
                     <button onClick={deleteMessage}>[ DELETE ]</button>
                 </DeleteConfirmationMenu>

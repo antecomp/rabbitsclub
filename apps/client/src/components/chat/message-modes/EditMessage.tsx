@@ -3,6 +3,13 @@ import { createSignal, onMount, Show } from 'solid-js';
 import { MAX_MESSAGE_LENGTH } from '#config';
 import { api } from '@/api/backend';
 import { MessageActionComponent } from './MessageModes';
+import { styled } from 'solid-styled-components';
+
+const EditConfirmationMenu = styled('div')`
+    display: flex;
+    align-items: center;
+    transform: translateY(10px);
+`
 
 const EditMessage: MessageActionComponent = props => {
     let editInput: HTMLInputElement | undefined;
@@ -58,7 +65,7 @@ const EditMessage: MessageActionComponent = props => {
                     disabled={saving()}
                     style={{ width: '100%', 'box-sizing': 'border-box' }}
                 />
-                <div style={{ display: 'flex', 'align-items': 'center' }}>
+                <EditConfirmationMenu>
                     <Show when={formTooltip()}>
                         <span style={{ 'font-size': '8px', color: '#2d2d2d' }}>
                             {formTooltip()}
@@ -67,7 +74,7 @@ const EditMessage: MessageActionComponent = props => {
                     <span style={{ 'flex-grow': 1 }} />
                     <button type="button" onClick={props.closeSelf}>[ CANCEL ]</button>
                     <button type="submit" disabled={!canSubmit()}>[ EDIT ]</button>
-                </div>
+                </EditConfirmationMenu>
             </form>
         </div>
     );

@@ -49,7 +49,7 @@ export default function ChatMessage(props: MessageProps) {
     });
 
     return (
-        <div class="message-row">
+        <div class={`message-row a-${mode() ?? 'normal'}`}>
             <div
                 classList={{
                     'message': true,
