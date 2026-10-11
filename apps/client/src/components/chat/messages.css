@@ -235,6 +235,7 @@
     a {
         position: relative;
         cursor: pointer;
+        user-select: none;
     }
 
     a:hover {
