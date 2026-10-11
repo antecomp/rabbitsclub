@@ -3,41 +3,8 @@
         background: #f2490f;
     }
 
-    .bubble.delete-msg .header {
-        --stripe-color: #f2490f;
-        --stripe-width: 5px;
-        --stripe-height: 12px;
-        height: var(--stripe-height);
-        background: repeating-linear-gradient(135deg,
-                var(--stripe-color) 0 var(--stripe-width),
-                transparent var(--stripe-width) calc(var(--stripe-width) * 2));
-
-        inset: 0;
-        width: 100%;
-        position: absolute;
-
-        font-size: 10px;
-        display: flex;
-        align-items: center;
-
-        span {
-            background: var(--stripe-color);
-            height: 100%;
-            min-width: 45px;
-            padding: 1px 5px;
-            padding-right: 20px;
-            box-sizing: border-box;
-            clip-path: polygon(
-                0 0, 
-                100% 0, 
-                calc(100% - var(--stripe-height)) 100%, 
-                0% 100%
-            );
-        }
-    }
-
+    .bubble.delete-msg .header,
     .bubble.edit-msg .header {
-        --stripe-color: #6a6a6a;
         --stripe-width: 5px;
         --stripe-height: 12px;
         height: var(--stripe-height);
@@ -52,7 +19,7 @@
         align-items: center;
 
         span {
-            background: #7c7c7c;
+            background: var(--header-label-color, var(--stripe-color));
             height: 100%;
             min-width: 45px;
             padding: 1px 5px;
@@ -65,5 +32,17 @@
                 0% 100%
             );
         }
+    }
+
+    .bubble.delete-msg .header {
+        --stripe-color: #f2490f;
+        background: repeating-linear-gradient(135deg,
+                var(--stripe-color) 0 var(--stripe-width),
+                transparent var(--stripe-width) calc(var(--stripe-width) * 2));
+    }
+
+    .bubble.edit-msg .header {
+        --stripe-color: #6a6a6a;
+        --header-label-color: #7c7c7c;
     }
 }
