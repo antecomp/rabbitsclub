@@ -51,7 +51,7 @@ const ManageUserOverview: VoidComponent<
         <InternalHashLink href="/ban">[ BAN ]</InternalHashLink> <br />
         <InternalHashLink href="/unban">[ UNBAN ]</InternalHashLink> <br />
         <InternalHashLink href="/roles">[ ROLES ]</InternalHashLink> <br />
-        <button onClick={props.onBack}>[ BACK ]</button>
+        <button type="button" onClick={props.onBack}>[ BACK ]</button>
     </>;
 };
 

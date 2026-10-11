@@ -3,7 +3,7 @@ import { createDefaultAvatar, toAvatarData } from '@/avatar/avatar.const';
 import { AvatarCanvas } from '@/avatar/AvatarCanvas';
 import usePermissionGuard from '@/hooks/usePermissionGuard';
 import { AuthForm, Divider, Subtitle, Title } from '@/styled/shared.styles';
-import { HashRouter, Route, useNavigate, useParams } from '@solidjs/router';
+import { HashRouter, Route, useLocation, useNavigate, useParams } from '@solidjs/router';
 import { createResource, createSignal, Show, Suspense } from 'solid-js';
 import { AvatarContainer, ManageUserGrid, ManageUserMenu } from './ManageUser.styles';
 import Footer from '@/components/Footer';
@@ -24,6 +24,10 @@ export default function ManageUser() {
 
     const outerNavigate = useNavigate();
     const params = useParams<{ id: string }>();
+    // Capture the origin before the nested HashRouter updates navigation state.
+    const origin = useLocation<{ origin?: string }>().state?.origin;
+    const backTo = origin?.startsWith('/') && !origin.startsWith('//') && !origin.includes('\\')
+        ? origin : '/manage/users';
 
     const [selectedUser, { refetch: refetchUser }] = createResource<
         ManageUserPresentationModel | null
@@ -96,7 +100,7 @@ export default function ManageUser() {
                 <Show when={selectedUser()} fallback={
                     <AuthForm>
                         <div>user not found</div>
-                        <Link href={'/manage/users'}>[ BACK ]</Link>
+                        <Link href={backTo} replace>[ BACK ]</Link>
                     </AuthForm>
                 }>
                     <AuthForm>
@@ -109,7 +113,7 @@ export default function ManageUser() {
                                 <HashRouter>
                                     <Route path="/"
                                         component={() => <ManageUserOverview
-                                            {...selectedUser()!} onBack={() => outerNavigate('/manage/users')}
+                                            {...selectedUser()!} onBack={() => outerNavigate(backTo, { replace: true })}
                                         />}
                                     />
                                     <Route path="/ban"

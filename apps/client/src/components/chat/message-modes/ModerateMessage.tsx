@@ -6,6 +6,7 @@ import { createMemo, createSignal } from "solid-js";
 import { MAX_MESSAGE_LENGTH } from "#config";
 import { api } from "@/api/backend";
 import { hasPermission } from "@/api/permissions";
+import { useLocation } from "@solidjs/router";
 
 const ModerateConfirmationMenu = styled('div')`
     display: flex;
@@ -16,6 +17,7 @@ const ModerateConfirmationMenu = styled('div')`
 `
 
 const ModerateMessage: MessageActionComponent = (props) => {
+    const location = useLocation();
 
     const actionToggle = createMemo(() => {
         const [first, ...rest] = (['WARN', 'DELETE'] as const).filter(action =>
@@ -57,7 +59,7 @@ const ModerateMessage: MessageActionComponent = (props) => {
                     style={{'background': 'transparent', 'outline': 'none', 'border': 'none', 'border-bottom': 'solid 1px black'}}
                 />
                 <ModerateConfirmationMenu>
-                    <Link href={`/manage/user/${props.sender_id}`} style={{'font-size': '12px'}}>[MANAGE USER ↗]</Link>
+                    <Link href={`/manage/user/${props.sender_id}`} state={{ origin: location.pathname + location.search }} style={{'font-size': '12px'}}>[MANAGE USER ↗]</Link>
                     <span style={{"flex-grow": 1}}/>
                     <button type="button" onClick={props.closeSelf}>[ CANCEL ]</button>
                     <button type="submit" disabled={!currentAction()} >[ APPLY ]</button>
