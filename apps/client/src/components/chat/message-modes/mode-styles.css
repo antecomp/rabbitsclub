@@ -75,10 +75,18 @@
                 padding-left: 12px;
             }
         }
+
+        .toggle-container button, .toggle-container {
+            font-size: 12px;
+        }
     }
 }
 
 .message-row.a-edit, .message-row.a-delete, .message-row.a-mod {
     .message { width: 100% }
     .bubble  { width: 100% }
+}
+
+.message-row.a-mod .message-tag:before {
+    background: rgb(228, 133, 18);
 }
