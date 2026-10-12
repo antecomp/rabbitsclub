@@ -15,6 +15,7 @@ import Glee from '../assets/avatars/eyes/glee.png';
 import Square from '../assets/avatars/eyes/square.png';
 import Gleam from '@/assets/avatars/eyes/gleam.png';
 import Shock from '@/assets/avatars/eyes/shockalt.png';
+import Crescent from '@/assets/avatars/eyes/crescent.png';
 
 import WedgeLeft from '../assets/avatars/eyes/wedge left.png';
 import WedgeRight from '../assets/avatars/eyes/wedge right.png';
@@ -24,6 +25,10 @@ import CurlLeft from '../assets/avatars/eyes/curl left.png';
 import CurlRight from '../assets/avatars/eyes/curl right.png';
 import ClenchLeft from '@/assets/avatars/eyes/clench left.png';
 import ClenchRight from '@/assets/avatars/eyes/clench right.png';
+import SpiderLeft from '@/assets/avatars/eyes/spiderL.png';
+import PoxLeft from '@/assets/avatars/eyes/poxL.png';
+import SpiderRight from '@/assets/avatars/eyes/spiderR.png';
+import PoxRight from '@/assets/avatars/eyes/poxR.png';
 
 import Bow from '../assets/avatars/accessories/bow.png';
 import Glasses from '../assets/avatars/accessories/glasses.png';
@@ -41,19 +46,22 @@ const DEFAULT_TOPHAT_OFFSET = { x: 0, y: -65 };
 
 
 export const eyes = {
-    bead:    { src: Bead,                     defaultOffset: DEFAULT_EYE_OFFSET },
-    circle:  { src: Circle,                   defaultOffset: DEFAULT_EYE_OFFSET },
-    cross:   { src: Cross,                    defaultOffset: DEFAULT_EYE_OFFSET },
-    dash:    { src: Dash,                     defaultOffset: DEFAULT_EYE_OFFSET },
-    diamond: { src: Diamond,                  defaultOffset: DEFAULT_EYE_OFFSET },
-    glee:    { src: Glee,                     defaultOffset: DEFAULT_EYE_OFFSET },
-    square:  { src: Square,                   defaultOffset: DEFAULT_EYE_OFFSET },
-    gleam:   { src: Gleam,                    defaultOffset: DEFAULT_EYE_OFFSET },
-    shock:   { src: Shock,                     defaultOffset: DEFAULT_EYE_OFFSET },
-    wedge:   { src: [WedgeLeft, WedgeRight],  defaultOffset: DEFAULT_EYE_OFFSET },
-    lazy:    { src: [LazyLeft,  LazyRight],   defaultOffset: DEFAULT_EYE_OFFSET },
-    curl:    { src: [CurlLeft,  CurlRight],   defaultOffset: DEFAULT_EYE_OFFSET },
-    clench:  { src: [ClenchLeft, ClenchRight], defaultOffset: DEFAULT_EYE_OFFSET }
+    bead:     { src: Bead,                      defaultOffset: DEFAULT_EYE_OFFSET },
+    circle:   { src: Circle,                    defaultOffset: DEFAULT_EYE_OFFSET },
+    cross:    { src: Cross,                     defaultOffset: DEFAULT_EYE_OFFSET },
+    dash:     { src: Dash,                      defaultOffset: DEFAULT_EYE_OFFSET },
+    diamond:  { src: Diamond,                   defaultOffset: DEFAULT_EYE_OFFSET },
+    glee:     { src: Glee,                      defaultOffset: DEFAULT_EYE_OFFSET },
+    square:   { src: Square,                    defaultOffset: DEFAULT_EYE_OFFSET },
+    gleam:    { src: Gleam,                     defaultOffset: DEFAULT_EYE_OFFSET },
+    shock:    { src: Shock,                     defaultOffset: DEFAULT_EYE_OFFSET },
+    wedge:    { src: [WedgeLeft, WedgeRight],   defaultOffset: DEFAULT_EYE_OFFSET },
+    lazy:     { src: [LazyLeft,  LazyRight],    defaultOffset: DEFAULT_EYE_OFFSET },
+    curl:     { src: [CurlLeft,  CurlRight],    defaultOffset: DEFAULT_EYE_OFFSET },
+    clench:   { src: [ClenchLeft, ClenchRight], defaultOffset: DEFAULT_EYE_OFFSET },
+    crescent: { src: Crescent, 	                defaultOffset: DEFAULT_EYE_OFFSET },
+    pox:      { src: [PoxLeft, PoxRight],       defaultOffset: DEFAULT_EYE_OFFSET },
+    spider:   { src: [SpiderLeft, SpiderRight], defaultOffset: {x: 85, y: 75} }
 } satisfies Record<string, { src: string | [string, string]; defaultOffset: { x: number; y: number } }>;
 
 export const accessories = {
