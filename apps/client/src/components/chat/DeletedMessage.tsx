@@ -1,9 +1,9 @@
-import { Match, Switch } from "solid-js";
-import { MessageProps } from "./Message";
+import { Match, Switch } from 'solid-js';
+import { MessageProps } from './Message';
 
 export default function DeletedMessage(props: MessageProps) {
     return (
-        <div class='deleted-message' classList={{'outgoing': props.isOwn, 'incoming': !props.isOwn}}>
+        <div class='deleted-message' classList={{ 'outgoing': props.isOwn, 'incoming': !props.isOwn }}>
             <Switch>
                 <Match when={props.deleted_kind == 'moderator'}>
                     MESSAGE REMOVED BY MODERATOR
@@ -14,5 +14,5 @@ export default function DeletedMessage(props: MessageProps) {
                 </Match>
             </Switch>
         </div>
-    )
+    );
 }

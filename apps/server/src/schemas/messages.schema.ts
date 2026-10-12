@@ -25,7 +25,7 @@ export const ClientMessageSchema = t.Object({
     created_at: t.String(),
     moderation_note: t.Union([t.String(), t.Null()]),
     edited: t.Boolean(),
-    deleted_kind: t.Nullable(t.Enum({user: 'user', moderator: 'moderator'}))
+    deleted_kind: t.Nullable(t.Enum({ user: 'user', moderator: 'moderator' }))
 });
 export type ClientMessage = typeof ClientMessageSchema['static'];
 

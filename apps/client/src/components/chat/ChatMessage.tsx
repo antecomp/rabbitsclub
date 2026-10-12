@@ -49,7 +49,7 @@ export default function ChatMessage(props: MessageProps) {
         setAvatarSrc(url);
     });
 
-    const deletedState = () => props.is_deleted && props.deleted_kind
+    const deletedState = () => props.is_deleted && props.deleted_kind;
 
     return (
         <Show when={!deletedState()} fallback={<DeletedMessage {...props} />}>
