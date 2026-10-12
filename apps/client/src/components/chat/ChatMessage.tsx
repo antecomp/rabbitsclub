@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import { createSignal, For, onMount, Show } from 'solid-js';
 import { ACTIONS, MessageAction } from './message-modes/MessageModes';
 import { Dynamic } from 'solid-js/web';
+import DeletedMessage from './DeletedMessage';
 
 export type MessageProps = UserChatMessage & { isOwn: boolean };
 
@@ -48,56 +49,60 @@ export default function ChatMessage(props: MessageProps) {
         setAvatarSrc(url);
     });
 
+    const deletedState = () => props.is_deleted && props.deleted_kind
+
     return (
-        <div class={`message-row a-${mode() ?? 'normal'}`}>
-            <div
-                classList={{
-                    'message': true,
-                    'message-incoming': !props.isOwn,
-                    'message-outgoing': props.isOwn
-                }}
-            >
-                <Show when={!props.isOwn}>
-                    <div class='message-tag'>
-                        {props.username}
-                    </div>
-                </Show>
-                <div class="pfp">
-                    <img src={avatarSrc()} />
-                </div>
-                <Show
-                    when={activeAction()}
-                    keyed
-                    fallback={<MessageContent {...props}></MessageContent>}
+        <Show when={!deletedState()} fallback={<DeletedMessage {...props} />}>
+            <div class={`message-row a-${mode() ?? 'normal'}`}>
+                <div
+                    classList={{
+                        'message': true,
+                        'message-incoming': !props.isOwn,
+                        'message-outgoing': props.isOwn
+                    }}
                 >
-                    {action => (
-                        <Dynamic
-                            component={action.component}
-                            {...props}
-                            closeSelf={() => setMode(null)}
-                        />
-                    )}
-                </Show>
-                <div class='message-menu'>
-                    <For each={
-                        Object.entries(ACTIONS)
-                            .filter(
-                                ([, { condition }]) => condition(props)
-                            ) as [MessageAction, typeof ACTIONS[MessageAction]][]
-                    }>
-                        {([key, act]) =>
-                            <a
-                                classList={{ 'selected': mode() === key }}
-                                onClick={() => setMode(
-                                    prev => prev === key ? null : key
-                                )}
-                            >
-                                [ {act.name} ]
-                            </a>
-                        }
-                    </For>
+                    <Show when={!props.isOwn}>
+                        <div class='message-tag'>
+                            {props.username}
+                        </div>
+                    </Show>
+                    <div class="pfp">
+                        <img src={avatarSrc()} />
+                    </div>
+                    <Show
+                        when={activeAction()}
+                        keyed
+                        fallback={<MessageContent {...props}></MessageContent>}
+                    >
+                        {action => (
+                            <Dynamic
+                                component={action.component}
+                                {...props}
+                                closeSelf={() => setMode(null)}
+                            />
+                        )}
+                    </Show>
+                    <div class='message-menu'>
+                        <For each={
+                            Object.entries(ACTIONS)
+                                .filter(
+                                    ([, { condition }]) => condition(props)
+                                ) as [MessageAction, typeof ACTIONS[MessageAction]][]
+                        }>
+                            {([key, act]) =>
+                                <a
+                                    classList={{ 'selected': mode() === key }}
+                                    onClick={() => setMode(
+                                        prev => prev === key ? null : key
+                                    )}
+                                >
+                                    [ {act.name} ]
+                                </a>
+                            }
+                        </For>
+                    </div>
                 </div>
             </div>
-        </div>
+        </Show>
     );
 }

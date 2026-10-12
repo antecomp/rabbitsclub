@@ -282,3 +282,16 @@
     content: '◄';
     left: calc(100% + 4px);
 }
+
+/* ----------------------------------------------------------------- */
+.deleted-message {
+    font-size: 10px;
+    color: rgb(219, 92, 92);
+    margin-bottom: 10px;
+    padding: 5px;
+    font-style: italic;
+}
+
+.deleted-message.outgoing {
+    text-align: right;
+}
