@@ -1,1 +1,0 @@
-export const PFP_SIZE = '60px';

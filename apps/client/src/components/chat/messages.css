@@ -1,6 +1,10 @@
-/* fuck solid styled I want to LIVE */
+/* Shared message sizing */
+.message,
+.system-message {
+    --pfpsize: 60px;
+}
 
-/* General configuration for a message, nothing more */
+/* Message configuration, avatars, bubbles, and action menu */
 .message {
     --border-color: #3a3a38;
     --fill-color: #e3e3e0;
@@ -8,188 +12,221 @@
     --tag-border-color: #4b4b4b;
     --border-width: 1px;
 
-    --corner-cut: 10px;     /* size of the chamfered corners */
+    --corner-cut: 10px;      /* size of the chamfered corners */
     --small-corner-cut: 3px; /* size of the cuts on the remaining corners */
 
-    --tag-height: 19px;     /* height of the nametag's flat part */
-    --tag-gap: 3px;         /* space between nametag and bubble */
+    --tag-height: 19px;      /* height of the nametag's flat part */
+    --tag-gap: 3px;          /* space between nametag and bubble */
 
-    /* derived, leave alone */
+    /* Derived values keep diagonal borders as thick as straight borders. */
     --sqrt2: 1.4142;
-    /* inner shape's corner cut, so the diagonal border is as thick as the straight ones */
     --inner-corner-cut: calc(var(--corner-cut) - var(--border-width) * 0.586);
     --inner-small-corner-cut: calc(var(--small-corner-cut) - var(--border-width) * 0.586);
 
-    --pfpsize: 60px;
-
     --messagemargin: 10px;
-
     --message-inner-padding-lr: 10px;
-
     --message-inner-padding-tb: 15px;
-}
 
-.message-outgoing {
-    --fill-color: #f8f8f7;
-}
-
-/* Universal Sizing */
-.message-row {
-    display: flow-root;
-}
-
-.message {
     margin-bottom: var(--messagemargin);
-
     position: relative;
     width: fit-content;
-
     display: grid;
+    max-width: calc(100% - var(--pfpsize));
 
-    .pfp, .bubble {
+    .pfp,
+    .bubble {
         grid-row: 1;
     }
 
-    max-width: calc(100% - var(--pfpsize));
+    .pfp {
+        padding: 0 3px;
+
+        img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: contain;
+            -webkit-user-drag: none;
+            user-select: none;
+        }
+    }
+
+    .bubble {
+        min-width: 150px;
+        padding: var(--message-inner-padding-tb) var(--message-inner-padding-lr);
+
+        position: relative;
+        background: var(--border-color);
+
+        /* Places content above the background pseudo-element */
+        isolation: isolate;
+
+        overflow-wrap: anywhere;
+
+        box-sizing: border-box;
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset: var(--border-width);
+            z-index: -1;
+            background: var(--fill-color);
+        }
+
+        .timestamp span {
+            position: absolute;
+            top: 2px;
+            font-size: 10px;
+            color: #707070;
+            visibility: hidden;
+        }
+    }
+
+    .message-menu {
+        position: absolute;
+        padding: 2px;
+        font-size: 12px;
+        top: 0;
+
+        visibility: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        a {
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+
+            &:hover {
+                color: gray;
+            }
+
+            &.selected::before {
+                position: absolute;
+                top: calc(50% - 2px);
+                transform: translateY(-50%);
+                pointer-events: none;
+            }
+        }
+    }
 }
 
+.message-row {
+    display: flow-root;
+
+    &:hover {
+        .timestamp span {
+            visibility: visible;
+        }
+    }
+
+    /* TODO: Consider also just having the 
+       menu visible always when action active */
+    &:hover,
+    &:focus-within {
+        .message-menu {
+            visibility: visible;
+        }
+    }
+}
+
+/* Incoming: larger cuts at top-left and bottom-right (avatar on the left) */
 .message-incoming {
-    /* also try minmax(0, 1fr) if getting resizing issues */
     grid-template-columns: var(--pfpsize) 1fr;
-    
     margin-top: calc(var(--tag-height) + var(--tag-gap) + var(--messagemargin));
 
     .pfp {
         grid-column: 1;
     }
-}
-
-.message-outgoing {
-    grid-template-columns: 1fr var(--pfpsize);
-    margin-left: auto;
 
     .bubble {
-        justify-self: self-end;
+        clip-path: polygon(
+            var(--corner-cut) 0,
+            calc(100% - var(--small-corner-cut)) 0,
+            100% var(--small-corner-cut),
+            100% calc(100% - var(--corner-cut)),
+            calc(100% - var(--corner-cut)) 100%,
+            var(--small-corner-cut) 100%,
+            0 calc(100% - var(--small-corner-cut)),
+            0 var(--corner-cut)
+        );
+
+        &::before {
+            clip-path: polygon(
+                var(--inner-corner-cut) 0,
+                calc(100% - var(--inner-small-corner-cut)) 0,
+                100% var(--inner-small-corner-cut),
+                100% calc(100% - var(--inner-corner-cut)),
+                calc(100% - var(--inner-corner-cut)) 100%,
+                var(--inner-small-corner-cut) 100%,
+                0 calc(100% - var(--inner-small-corner-cut)),
+                0 var(--inner-corner-cut)
+            );
+        }
     }
+
+    .message-menu {
+        text-align: right;
+        right: 0;
+        transform: translateX(100%);
+
+        a.selected::before {
+            content: '◄';
+            left: calc(100% + 4px);
+        }
+    }
+}
+
+/* Outgoing: larger cuts at top-right and bottom-left (avatar on the right) */
+.message-outgoing {
+    --fill-color: #f8f8f7;
+    grid-template-columns: 1fr var(--pfpsize);
+    margin-left: auto;
 
     .pfp {
         grid-column: 2;
     }
-}
 
-.message .pfp {
+    .bubble {
+        justify-self: self-end;
+        clip-path: polygon(
+            var(--small-corner-cut) 0,
+            calc(100% - var(--corner-cut)) 0,
+            100% var(--corner-cut),
+            100% calc(100% - var(--small-corner-cut)),
+            calc(100% - var(--small-corner-cut)) 100%,
+            var(--corner-cut) 100%,
+            0 calc(100% - var(--corner-cut)),
+            0 var(--small-corner-cut)
+        );
 
-    padding: 0px 3px;
+        &::before {
+            clip-path: polygon(
+                var(--inner-small-corner-cut) 0,
+                calc(100% - var(--inner-corner-cut)) 0,
+                100% var(--inner-corner-cut),
+                100% calc(100% - var(--inner-small-corner-cut)),
+                calc(100% - var(--inner-small-corner-cut)) 100%,
+                var(--inner-corner-cut) 100%,
+                0 calc(100% - var(--inner-corner-cut)),
+                0 var(--inner-small-corner-cut)
+            );
+        }
+    }
 
-    img {
-        display: block;
-        width: 100%;
-        aspect-ratio: 1;
-        object-fit: contain;
-        -webkit-user-drag: none;
-        user-select: none;
+    .message-menu {
+        text-align: left;
+        transform: translateX(-100%);
+
+        a.selected::before {
+            content: '►';
+            right: calc(100% + 4px);
+        }
     }
 }
 
-.message .bubble .timestamp span {
-        position: absolute;
-        /* top: var(--message-inner-padding-tb); */
-        top: 2px;
-
-        font-size: 10px;
-        color: #707070;
-
-        visibility: hidden;
-}
-
-
-.message-row:hover .timestamp span {
-        visibility: visible;
-}
-
-
-/* ----- bubble: outer shape = border color, ::before = fill, inset by the border width ----- */
-
-.message .bubble {
-    min-width: 150px;
-    padding: var(--message-inner-padding-tb) var(--message-inner-padding-lr);
-
-    position: relative;
-    background: var(--border-color);
-
-    /* Places above the bg psuedo-element */
-    isolation: isolate;
-
-    overflow-wrap: anywhere;
-
-    box-sizing: border-box;
-}
-
-.bubble::before {
-    content: '';
-    position: absolute;
-    inset: var(--border-width);
-    z-index: -1;
-    background: var(--fill-color);
-}
-
-/* incoming: larger cuts at top-left and bottom-right (avatar on the left) */
-.message-incoming .bubble {
-    clip-path: polygon(
-        var(--corner-cut) 0, 
-        calc(100% - var(--small-corner-cut)) 0,
-        100% var(--small-corner-cut),
-        100% calc(100% - var(--corner-cut)),
-        calc(100% - var(--corner-cut)) 100%,
-        var(--small-corner-cut) 100%,
-        0 calc(100% - var(--small-corner-cut)),
-        0 var(--corner-cut)
-    );
-}
-
-.message-incoming .bubble::before {
-    clip-path: polygon(
-        var(--inner-corner-cut) 0, 
-        calc(100% - var(--inner-small-corner-cut)) 0,
-        100% var(--inner-small-corner-cut),
-        100% calc(100% - var(--inner-corner-cut)),
-        calc(100% - var(--inner-corner-cut)) 100%,
-        var(--inner-small-corner-cut) 100%,
-        0 calc(100% - var(--inner-small-corner-cut)),
-        0 var(--inner-corner-cut)
-    );
-}
-
-/* outgoing: larger cuts at top-right and bottom-left (avatar on the right) */
-.message-outgoing .bubble {
-    clip-path: polygon(
-        var(--small-corner-cut) 0,
-        calc(100% - var(--corner-cut)) 0,
-        100% var(--corner-cut),
-        100% calc(100% - var(--small-corner-cut)),
-        calc(100% - var(--small-corner-cut)) 100%,
-        var(--corner-cut) 100%,
-        0 calc(100% - var(--corner-cut)),
-        0 var(--small-corner-cut)
-    );
-}
-
-.message-outgoing .bubble::before {
-    clip-path: polygon(
-        var(--inner-small-corner-cut) 0,
-        calc(100% - var(--inner-corner-cut)) 0,
-        100% var(--inner-corner-cut), 
-        100% calc(100% - var(--inner-small-corner-cut)),
-        calc(100% - var(--inner-small-corner-cut)) 100%,
-        var(--inner-corner-cut) 100%,
-        0 calc(100% - var(--inner-corner-cut)),
-        0 var(--inner-small-corner-cut)
-    );
-}
-
-/* ----- nametag: its own bordered shape, floating above the bubble ----- */
-/* right end: full-height 45deg cut. bottom-left tail: parallel to the bubble's top-left cut. */
-
+/* Nametag: bordered shape floating above the bubble */
 .message-tag {
     position: absolute;
     left: var(--pfpsize);
@@ -201,97 +238,65 @@
     font-size: 0.8em;
     white-space: nowrap;
     background: var(--tag-border-color);
+    
     clip-path: polygon(
         0 0,
         calc(100% - var(--tag-height)) 0,
         100% var(--tag-height),
         var(--corner-cut) var(--tag-height),
         0 calc(var(--tag-height) + var(--corner-cut)));
-  }
 
-.message-tag::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: var(--tag-fill-color);
-    clip-path:
-      polygon(
-        var(--border-width) var(--border-width),
-        calc(100% - var(--tag-height) - var(--border-width) * var(--sqrt2) + var(--border-width)) var(--border-width),
-        calc(100% - var(--border-width) * var(--sqrt2) - var(--border-width)) calc(var(--tag-height) - var(--border-width)),
-        calc(var(--corner-cut) - var(--border-width) * (var(--sqrt2) - 1)) calc(var(--tag-height) - var(--border-width)),
-        var(--border-width) calc(var(--corner-cut) + var(--tag-height) - var(--border-width) * var(--sqrt2) - var(--border-width)));
-}
-
-/* --------------------------------------------------------------------------- */
-
-.message .message-menu {
-    position: absolute;
-    padding: 2px;
-    font-size: 12px;
-    top: 0;
-
-    a {
-        position: relative;
-        cursor: pointer;
-        user-select: none;
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: var(--tag-fill-color);
+        clip-path: polygon(
+            var(--border-width) var(--border-width),
+            calc(100% - var(--tag-height) - var(--border-width) * var(--sqrt2) + var(--border-width)) var(--border-width),
+            calc(100% - var(--border-width) * var(--sqrt2) - var(--border-width)) calc(var(--tag-height) - var(--border-width)),
+            calc(var(--corner-cut) - var(--border-width) * (var(--sqrt2) - 1)) calc(var(--tag-height) - var(--border-width)),
+            var(--border-width) calc(var(--corner-cut) + var(--tag-height) - var(--border-width) * var(--sqrt2) - var(--border-width)));
     }
-
-    a:hover {
-        color: gray;
-    }
-
-    visibility: hidden;
-
-    display: flex;
-    flex-direction: column;
-
-    height: 100%;
 }
 
-.message-row:hover .message-menu,
-.message-row:focus-within .message-menu {
-    visibility: visible;
+/* Moderation notes and deleted messages */
+.message-moderation-note {
+    color: red;
 }
 
-.message-outgoing .message-menu {
-    text-align: left;
-    transform: translateX(-100%);
-}
-
-.message-incoming .message-menu {
-    text-align: right;
-    right: 0;
-    transform: translateX(100%);
-}
-
-.message-menu a.selected::before {
-    position: absolute;
-    top: calc(50% - 2px);
-    transform: translateY(-50%);
-    pointer-events: none;
-}
-
-.message-outgoing .message-menu a.selected::before {
-    content: '►';
-    right: calc(100% + 4px);
-}
-
-.message-incoming .message-menu a.selected::before {
-    content: '◄';
-    left: calc(100% + 4px);
-}
-
-/* ----------------------------------------------------------------- */
 .deleted-message {
     font-size: 10px;
     color: rgb(219, 92, 92);
     margin-bottom: 10px;
     padding: 5px;
     font-style: italic;
+
+    &.outgoing {
+        text-align: right;
+    }
 }
 
-.deleted-message.outgoing {
-    text-align: right;
+/* System messages */
+.system-message {
+    margin: 15px auto;
+    max-width: calc(100% - var(--pfpsize));
+    box-sizing: border-box;
+    color: #5b5b5b;
+    text-align: center;
+    overflow-wrap: anywhere;
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+
+    span {
+        flex-grow: 1;
+        height: 1px;
+        background-color: #5b5b5b;
+    }
+
+    p {
+        margin: 0 5px;
+    }
 }

@@ -1,92 +1,139 @@
+/* Action colors and mode-specific inputs */
 .message {
-    .bubble.delete-msg {
-        background: #f2490f;
-    }
+    --moderation-color: rgb(228, 133, 18);
 
-    .bubble.delete-msg .header,
-    .bubble.edit-msg .header,
-    .bubble.mod-msg .header {
-        --stripe-width: 5px;
-        --stripe-height: 12px;
-        height: var(--stripe-height);
-        background: var(--stripe-color);
+    .bubble {
+        &.edit-msg {
+            --stripe-color: #6a6a6a;
+            --header-label-color: #7c7c7c;
 
-        inset: 0;
-        width: 100%;
-        position: absolute;
-
-        font-size: 10px;
-        display: flex;
-        align-items: center;
-
-        span {
-            background: var(--header-label-color, var(--stripe-color));
-            height: 100%;
-            min-width: 45px;
-            padding: 1px 5px;
-            padding-right: 20px;
-            box-sizing: border-box;
-            clip-path: polygon(
-                0 0, 
-                100% 0, 
-                calc(100% - var(--stripe-height)) 100%, 
-                0% 100%
-            );
-        }
-    }
-
-    .bubble.delete-msg .header {
-        --stripe-color: #f2490f;
-        background: repeating-linear-gradient(135deg,
-                var(--stripe-color) 0 var(--stripe-width),
-                transparent var(--stripe-width) calc(var(--stripe-width) * 2));
-    }
-
-    .bubble.edit-msg .header {
-        --stripe-color: #6a6a6a;
-        --header-label-color: #7c7c7c;
-    }
-
-    .bubble.edit-msg button {
-        font-size: 12px;
-    }
-
-    .bubble.edit-msg input {
-        background: transparent;
-        border: none;
-        outline: none;
-        text-wrap-mode: wrap;
-        border-bottom: solid #595959 1px;
-        margin-bottom: 5px;
-    }
-
-    .bubble.mod-msg {
-        --stripe-color: rgb(228, 133, 18);
-        background: var(--stripe-color);
-
-        .header {
-            background: repeating-linear-gradient(135deg,
-            var(--stripe-color) 0 var(--stripe-width),
-            transparent var(--stripe-width) calc(var(--stripe-width) * 2));
-
-            --header-label-color: var(--stripe-color);
-
-            span {
-                padding-left: 12px;
+            .message-mode-input {
+                width: 100%;
+                box-sizing: border-box;
+                text-wrap-mode: wrap;
+                border-bottom: solid #595959 1px;
+                margin-bottom: 5px;
             }
         }
 
-        .toggle-container button, .toggle-container {
-            font-size: 12px;
+        &.delete-msg {
+            --stripe-color: #f2490f;
+            background: var(--stripe-color);
+        }
+
+        &.mod-msg {
+            --stripe-color: var(--moderation-color);
+            --header-label-color: var(--stripe-color);
+            background: var(--stripe-color);
+
+            .message-mode-input {
+                border-bottom: solid 1px black;
+            }
+
+            .toggle-container {
+                font-size: 12px;
+            }
         }
     }
 }
 
-.message-row.a-edit, .message-row.a-delete, .message-row.a-mod {
-    .message { width: 100% }
-    .bubble  { width: 100% }
+/* Shared action layout */
+.message-row--action {
+    .message,
+    .bubble {
+        width: 100%;
+    }
 }
 
-.message-row.a-mod .message-tag:before, .message-row.a-mod .message-tag {
-    background: rgb(228, 133, 18);
+.message-row--moderating {
+    .message {
+        --tag-border-color: var(--moderation-color);
+        --tag-fill-color: var(--moderation-color);
+    }
+}
+
+.message-mode {
+    button {
+        font-size: 12px;
+    }
+}
+
+/* Mode headers */
+.message-mode-header {
+    --stripe-width: 5px;
+    --stripe-height: 12px;
+    height: var(--stripe-height);
+    background: var(--stripe-color);
+    inset: 0;
+    width: 100%;
+    position: absolute;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+
+    span {
+        background: var(--header-label-color, var(--stripe-color));
+        height: 100%;
+        min-width: 45px;
+        padding: 1px 20px 1px 12px;
+        box-sizing: border-box;
+        clip-path: polygon(
+            0 0,
+            100% 0,
+            calc(100% - var(--stripe-height)) 100%,
+            0% 100%
+        );
+    }
+
+    &.message-mode-header--striped {
+        background: repeating-linear-gradient(135deg,
+            var(--stripe-color) 0 var(--stripe-width),
+            transparent var(--stripe-width) calc(var(--stripe-width) * 2));
+    }
+}
+
+/* Inputs and confirmation controls */
+.message-mode-input {
+    background: transparent;
+    border: none;
+    outline: none;
+}
+
+.message-confirmation-menu {
+    display: flex;
+    transform: translateY(10px);
+
+    &.message-confirmation-menu--centered {
+        align-items: center;
+    }
+
+    &.message-confirmation-menu--delete {
+        width: 100%;
+        text-align: right;
+    }
+}
+
+.message-action-spacer {
+    flex-grow: 1;
+}
+
+.message-edit-counter {
+    font-size: 8px;
+    color: #2d2d2d;
+}
+
+.message-delete-content {
+    text-decoration: line-through;
+    color: #910000;
+}
+
+.message-delete-warning {
+    font-size: 8px;
+    font-style: italic;
+    text-align: right;
+    display: block;
+}
+
+.message-manage-link {
+    font-size: 12px;
 }

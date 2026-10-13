@@ -3,13 +3,6 @@ import { createSignal, onMount, Show } from 'solid-js';
 import { MAX_MESSAGE_LENGTH } from '#config';
 import { api } from '@/api/backend';
 import { MessageActionComponent } from './MessageModes';
-import { styled } from 'solid-styled-components';
-
-const EditConfirmationMenu = styled('div')`
-    display: flex;
-    align-items: center;
-    transform: translateY(10px);
-`;
 
 const EditMessage: MessageActionComponent = props => {
     let editInput: HTMLInputElement | undefined;
@@ -46,8 +39,8 @@ const EditMessage: MessageActionComponent = props => {
     };
 
     return (
-        <div class="bubble edit-msg">
-            <div class="header">
+        <div class="bubble message-mode edit-msg">
+            <div class="message-mode-header">
                 <span>EDIT</span>
             </div>
             <form onSubmit={editMessage}>
@@ -63,18 +56,18 @@ const EditMessage: MessageActionComponent = props => {
                     }}
                     maxlength={MAX_MESSAGE_LENGTH}
                     disabled={saving()}
-                    style={{ width: '100%', 'box-sizing': 'border-box' }}
+                    class="message-mode-input"
                 />
-                <EditConfirmationMenu>
+                <div class="message-confirmation-menu message-confirmation-menu--centered">
                     <Show when={formTooltip()}>
-                        <span style={{ 'font-size': '8px', color: '#2d2d2d' }}>
+                        <span class="message-edit-counter">
                             {formTooltip()}
                         </span>
                     </Show>
-                    <span style={{ 'flex-grow': 1 }} />
+                    <span class="message-action-spacer" />
                     <button type="button" onClick={props.closeSelf}>[ CANCEL ]</button>
                     <button type="submit" disabled={!canSubmit()}>[ EDIT ]</button>
-                </EditConfirmationMenu>
+                </div>
             </form>
         </div>
     );

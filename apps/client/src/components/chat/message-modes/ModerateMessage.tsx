@@ -1,20 +1,12 @@
+import './mode-styles.css';
 import createFlatToggle from '@/components/toggles/FlatToggle';
 import { MessageActionComponent } from './MessageModes';
-import { styled } from 'solid-styled-components';
 import Link from '@/components/Link';
 import { createMemo, createSignal } from 'solid-js';
 import { MAX_MESSAGE_LENGTH } from '#config';
 import { api } from '@/api/backend';
 import { hasPermission } from '@/api/permissions';
 import { useLocation } from '@solidjs/router';
-
-const ModerateConfirmationMenu = styled('div')`
-    display: flex;
-    align-items: center;
-    transform: translateY(10px);
-
-    button { font-size: 12px; }
-`;
 
 const ModerateMessage: MessageActionComponent = props => {
     const location = useLocation();
@@ -45,8 +37,8 @@ const ModerateMessage: MessageActionComponent = props => {
     }
 
     return (
-        <div class='bubble mod-msg'>
-            <div class='header'>
+        <div class='bubble message-mode mod-msg'>
+            <div class='message-mode-header message-mode-header--striped'>
                 <span>MODERATE</span>
             </div>
             {actionToggle()?.[0]}
@@ -56,14 +48,14 @@ const ModerateMessage: MessageActionComponent = props => {
                     value={reason()} 
                     onInput={e => setReason(e.target.value)} 
                     maxlength={MAX_MESSAGE_LENGTH} 
-                    style={{ 'background': 'transparent', 'outline': 'none', 'border': 'none', 'border-bottom': 'solid 1px black' }}
+                    class="message-mode-input"
                 />
-                <ModerateConfirmationMenu>
-                    <Link href={`/manage/user/${props.sender_id}`} state={{ origin: location.pathname + location.search }} style={{ 'font-size': '12px' }}>[MANAGE USER ↗]</Link>
-                    <span style={{ 'flex-grow': 1 }}/>
+                <div class="message-confirmation-menu message-confirmation-menu--centered">
+                    <Link href={`/manage/user/${props.sender_id}`} state={{ origin: location.pathname + location.search }} class="message-manage-link">[MANAGE USER ↗]</Link>
+                    <span class="message-action-spacer" />
                     <button type="button" onClick={props.closeSelf}>[ CANCEL ]</button>
                     <button type="submit" disabled={!currentAction()} >[ APPLY ]</button>
-                </ModerateConfirmationMenu>
+                </div>
             </form>
         </div>
     );

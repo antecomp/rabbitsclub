@@ -1,25 +1,6 @@
-import { styled } from 'solid-styled-components';
+import './mode-styles.css';
 import { MessageActionComponent } from './MessageModes';
 import { api } from '@/api/backend';
-
-const DeleteConfirmationMenu = styled('div')`
-    width: 100%;
-
-    button { font-size: 12px; }
-
-    text-align: right;
-
-    display: flex;
-
-    transform: translateY(10px);
-`;
-
-const DeleteConfirmationMessage = styled('i')`
-    font-size: 8px;
-    font-style: italic;
-    text-align: right;
-    display: block;
-`;
 
 const DeleteMessage: MessageActionComponent = props => {
     const deleteMessage = () => {
@@ -28,24 +9,20 @@ const DeleteMessage: MessageActionComponent = props => {
     };
 
     return (
-        <div class="bubble delete-msg">
-            <div class="header">
+        <div class="bubble message-mode delete-msg">
+            <div class="message-mode-header message-mode-header--striped">
                 <span>DELETE</span>
             </div>
-            <span 
-                style={{
-                    'text-decoration': 'line-through',
-                    'color': '#910000'
-                }}>
+            <span class="message-delete-content">
                 {props.content}
             </span>
             <br/>
-            <DeleteConfirmationMenu>
-                <DeleteConfirmationMessage>This action cannot be undone.</DeleteConfirmationMessage>
-                <span style={{ 'flex-grow': '1' }}></span>
+            <div class="message-confirmation-menu message-confirmation-menu--delete">
+                <i class="message-delete-warning">This action cannot be undone.</i>
+                <span class="message-action-spacer" />
                 <button onClick={props.closeSelf}>[ CANCEL ]</button>
                 <button onClick={deleteMessage}>[ DELETE ]</button>
-            </DeleteConfirmationMenu>
+            </div>
         </div>
     );
 };

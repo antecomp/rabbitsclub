@@ -23,7 +23,7 @@ function MessageContent(props: MessageProps) {
                 <span>{fullDate}</span>
             </div>
             <Show when={props.moderation_note}>
-                <span style={{ color: 'red' }}>[ {props.moderation_note} ]</span>
+                <span class="message-moderation-note">[ {props.moderation_note} ]</span>
                 <br />
             </Show>
             {props.content}
@@ -53,7 +53,13 @@ export default function ChatMessage(props: MessageProps) {
 
     return (
         <Show when={!deletedState()} fallback={<DeletedMessage {...props} />}>
-            <div class={`message-row a-${mode() ?? 'normal'}`}>
+            <div
+                class="message-row"
+                classList={{
+                    'message-row--action': mode() !== null,
+                    'message-row--moderating': mode() === 'mod'
+                }}
+            >
                 <div
                     classList={{
                         'message': true,
