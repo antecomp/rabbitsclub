@@ -1,5 +1,5 @@
 import { Component } from 'solid-js';
-import { MessageProps } from '../Message';
+import { MessageProps } from '../ChatMessage';
 import EditMessage from './EditMessage';
 import { permissions } from '@/api/permissions';
 import DeleteMessage from './DeleteMessage';

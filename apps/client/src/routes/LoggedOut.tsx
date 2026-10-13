@@ -1,6 +1,6 @@
 import Link from '@/components/Link';
 import { AuthForm, Container, Divider, Subtitle, Title } from '@/styled/shared.styles';
-import { Navigate, useLocation, useNavigate } from '@solidjs/router';
+import { Navigate, useLocation } from '@solidjs/router';
 import type { AuthErrorCode } from '~/schemas/auth.schema';
 
 const AUTH_ERROR_DESCRIPTIONS: Readonly<Record<AuthErrorCode, string>> = {
@@ -17,7 +17,6 @@ const AUTH_ERROR_DESCRIPTIONS: Readonly<Record<AuthErrorCode, string>> = {
 };
 export default function LoggedOut() {
     const location = useLocation<{ reason: AuthErrorCode }>();
-    const navigate = useNavigate();
     const reason = location.state?.reason;
 
     if (!reason) return <Navigate href="/" />;

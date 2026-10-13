@@ -1,5 +1,5 @@
 import { Match, Switch } from 'solid-js';
-import { MessageProps } from './Message';
+import { MessageProps } from './ChatMessage';
 
 export default function DeletedMessage(props: MessageProps) {
     return (
