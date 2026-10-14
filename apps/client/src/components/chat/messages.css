@@ -1,0 +1,240 @@
+/* Shared message sizing */
+.message,
+.system-message {
+    --pfpsize: 60px;
+}
+
+/* Message configuration, avatars, bubbles, and action menu */
+.message {
+    --border-color: #3a3a38;
+    --tag-fill-color: #aaa;
+    --tag-border-color: #4b4b4b;
+    --border-width: 1px;
+
+    --corner-cut: 10px;      /* size of the chamfered corners */
+    --small-corner-cut: 3px; /* size of the cuts on the remaining corners */
+
+    --tag-height: 19px;      /* height of the nametag's flat part */
+    --tag-gap: 3px;          /* space between nametag and bubble */
+
+    --message-margin: 10px;
+    --message-inner-padding-lr: 10px;
+    --message-inner-padding-tb: 15px;
+    --message-min-width: 150px;
+
+    margin-bottom: var(--message-margin);
+    position: relative;
+    width: fit-content;
+    display: grid;
+    max-width: calc(100% - var(--pfpsize));
+
+    .pfp,
+    .bubble {
+        grid-row: 1;
+    }
+
+    .pfp {
+        padding: 0 3px;
+
+        img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: contain;
+            -webkit-user-drag: none;
+            user-select: none;
+        }
+    }
+
+    .bubble {
+        min-width: var(--message-min-width);
+        padding: var(--message-inner-padding-tb) var(--message-inner-padding-lr);
+
+        position: relative;
+        background: var(--border-color);
+        clip-path: var(--bubble-clip-path);
+
+        /* Places content above the background pseudo-element */
+        isolation: isolate;
+
+        overflow-wrap: anywhere;
+
+        box-sizing: border-box;
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset: var(--border-width);
+            z-index: -1;
+            background: var(--fill-color);
+            clip-path: var(--bubble-inner-clip-path);
+        }
+
+        .timestamp span {
+            position: absolute;
+            top: 2px;
+            font-size: 10px;
+            color: #707070;
+            visibility: hidden;
+        }
+    }
+
+    .message-menu {
+        position: absolute;
+        padding: 2px;
+        font-size: 12px;
+        top: 0;
+
+        visibility: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        a {
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+
+            &:hover {
+                color: gray;
+            }
+
+            &.selected::before {
+                position: absolute;
+                top: calc(50% - 2px);
+                transform: translateY(-50%);
+                pointer-events: none;
+            }
+        }
+    }
+}
+
+.message-row {
+    display: flow-root;
+
+    &:hover {
+        .timestamp span {
+            visibility: visible;
+        }
+    }
+
+    &:hover,
+    &:focus-within,
+    &.message-row--action {
+        .message-menu {
+            visibility: visible;
+        }
+    }
+}
+
+/* Incoming: larger cuts at top-left and bottom-right (avatar on the left) */
+.message-incoming {
+    --fill-color: #e3e3e0;
+    grid-template-columns: var(--pfpsize) 1fr;
+    margin-top: calc(var(--tag-height) + var(--tag-gap) + var(--message-margin));
+
+    .pfp {
+        grid-column: 1;
+    }
+
+    .message-menu {
+        text-align: right;
+        right: 0;
+        transform: translateX(100%);
+
+        a.selected::before {
+            content: '◄';
+            left: calc(100% + 4px);
+        }
+    }
+}
+
+/* Outgoing: larger cuts at top-right and bottom-left (avatar on the right) */
+.message-outgoing {
+    --fill-color: #f8f8f7;
+    grid-template-columns: 1fr var(--pfpsize);
+    margin-left: auto;
+
+    .pfp {
+        grid-column: 2;
+    }
+
+    .bubble {
+        justify-self: self-end;
+    }
+
+    .message-menu {
+        text-align: left;
+        transform: translateX(-100%);
+
+        a.selected::before {
+            content: '►';
+            right: calc(100% + 4px);
+        }
+    }
+}
+
+/* Nametag: bordered shape floating above the bubble */
+.message-tag {
+    position: absolute;
+    left: var(--pfpsize);
+    top: calc(-1 * (var(--tag-gap) + var(--tag-height)));
+    isolation: isolate;
+    height: calc(var(--tag-height) + var(--corner-cut));
+    padding: 0 calc(var(--tag-height)) 0 0.6em;
+    line-height: var(--tag-height);
+    font-size: 0.8em;
+    white-space: nowrap;
+    background: var(--tag-border-color);
+    
+    clip-path: var(--tag-clip-path);
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: var(--tag-fill-color);
+        clip-path: var(--tag-inner-clip-path);
+    }
+}
+
+/* Moderation notes and deleted messages */
+.message-moderation-note {
+    color: red;
+}
+
+.deleted-message {
+    font-size: 10px;
+    color: rgb(219, 92, 92);
+    margin-bottom: 10px;
+    padding: 5px;
+    font-style: italic;
+
+    &.outgoing {
+        text-align: right;
+    }
+}
+
+/* System messages */
+.system-message {
+    margin: 15px auto;
+    max-width: calc(100% - var(--pfpsize));
+    box-sizing: border-box;
+    color: #5b5b5b;
+    text-align: center;
+    overflow-wrap: anywhere;
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+
+    span {
+        flex-grow: 1;
+        height: 1px;
+        background-color: #5b5b5b;
+    }
+
+    p {
+        margin: 0 5px;
+    }
+}

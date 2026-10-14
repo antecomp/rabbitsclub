@@ -21,6 +21,10 @@ const ToggleContainer = styled('div')`
         color: black;
     }
 
+    button:hover {
+        text-decoration: underline;
+    }
+
     button:hover,
     button:focus {
         color: #333;

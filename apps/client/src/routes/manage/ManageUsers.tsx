@@ -11,7 +11,7 @@ import type { LucideIcon } from 'lucide-solid';
 import { createResource, createSignal, For, Show } from 'solid-js';
 import { styled } from 'solid-styled-components';
 import { type UserPermissions } from '~/schemas/moderation.schema';
-import { useNavigate } from '@solidjs/router';
+import { useLocation, useNavigate } from '@solidjs/router';
 import partition from '@/util/partition';
 import createFlatToggle from '@/components/toggles/FlatToggle';
 
@@ -99,6 +99,7 @@ type ManageUser = Exclude<Awaited<ReturnType<typeof api.moderation.users.get>>['
 
 function UserSelectionRow(user: ManageUser) {
     const navigate = useNavigate();
+    const location = useLocation();
 
     return (
         <UserSelectionRowContainer
@@ -107,7 +108,9 @@ function UserSelectionRow(user: ManageUser) {
                 user.is_banned && 'banned',
                 user.is_admin && 'admin'
             ].filter(Boolean).join(' ')}
-            onClick={() => navigate(`/manage/user/${user.id}`)}
+            onClick={() => navigate(`/manage/user/${user.id}`, {
+                state: { origin: location.pathname + location.search }
+            })}
         >
             <UserSelectionRowId>{user.id}</UserSelectionRowId>
             <UserSelectionRowUsername>{user.username}</UserSelectionRowUsername>
