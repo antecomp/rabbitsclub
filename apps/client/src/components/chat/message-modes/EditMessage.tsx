@@ -58,7 +58,7 @@ const EditMessage: MessageActionComponent = props => {
                     disabled={saving()}
                     class="message-mode-input"
                 />
-                <div class="message-confirmation-menu message-confirmation-menu--centered">
+                <div class="message-confirmation-menu">
                     <Show when={formTooltip()}>
                         <span class="message-edit-counter">
                             {formTooltip()}

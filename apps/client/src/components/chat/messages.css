@@ -7,7 +7,6 @@
 /* Message configuration, avatars, bubbles, and action menu */
 .message {
     --border-color: #3a3a38;
-    --fill-color: #e3e3e0;
     --tag-fill-color: #aaa;
     --tag-border-color: #4b4b4b;
     --border-width: 1px;
@@ -23,11 +22,12 @@
     --inner-corner-cut: calc(var(--corner-cut) - var(--border-width) * 0.586);
     --inner-small-corner-cut: calc(var(--small-corner-cut) - var(--border-width) * 0.586);
 
-    --messagemargin: 10px;
+    --message-margin: 10px;
     --message-inner-padding-lr: 10px;
     --message-inner-padding-tb: 15px;
+    --message-min-width: 150px;
 
-    margin-bottom: var(--messagemargin);
+    margin-bottom: var(--message-margin);
     position: relative;
     width: fit-content;
     display: grid;
@@ -52,7 +52,7 @@
     }
 
     .bubble {
-        min-width: 150px;
+        min-width: var(--message-min-width);
         padding: var(--message-inner-padding-tb) var(--message-inner-padding-lr);
 
         position: relative;
@@ -133,8 +133,9 @@
 
 /* Incoming: larger cuts at top-left and bottom-right (avatar on the left) */
 .message-incoming {
+    --fill-color: #e3e3e0;
     grid-template-columns: var(--pfpsize) 1fr;
-    margin-top: calc(var(--tag-height) + var(--tag-gap) + var(--messagemargin));
+    margin-top: calc(var(--tag-height) + var(--tag-gap) + var(--message-margin));
 
     .pfp {
         grid-column: 1;

@@ -50,7 +50,7 @@ const ModerateMessage: MessageActionComponent = props => {
                     maxlength={MAX_MESSAGE_LENGTH} 
                     class="message-mode-input"
                 />
-                <div class="message-confirmation-menu message-confirmation-menu--centered">
+                <div class="message-confirmation-menu">
                     <Link href={`/manage/user/${props.sender_id}`} state={{ origin: location.pathname + location.search }} class="message-manage-link">[MANAGE USER ↗]</Link>
                     <span class="message-action-spacer" />
                     <button type="button" onClick={props.closeSelf}>[ CANCEL ]</button>

@@ -17,7 +17,7 @@ const DeleteMessage: MessageActionComponent = props => {
                 {props.content}
             </span>
             <br/>
-            <div class="message-confirmation-menu message-confirmation-menu--delete">
+            <div class="message-confirmation-menu">
                 <i class="message-delete-warning">This action cannot be undone.</i>
                 <span class="message-action-spacer" />
                 <button onClick={props.closeSelf}>[ CANCEL ]</button>

@@ -4,7 +4,7 @@
 
     .bubble {
         &.edit-msg {
-            --stripe-color: #6a6a6a;
+            --header-bg-color: #6a6a6a;
             --header-label-color: #7c7c7c;
 
             .message-mode-input {
@@ -17,14 +17,14 @@
         }
 
         &.delete-msg {
-            --stripe-color: #f2490f;
-            background: var(--stripe-color);
+            --header-bg-color: #f2490f;
+            background: var(--header-bg-color);
         }
 
         &.mod-msg {
-            --stripe-color: var(--moderation-color);
-            --header-label-color: var(--stripe-color);
-            background: var(--stripe-color);
+            --header-bg-color: var(--moderation-color);
+            --header-label-color: var(--header-bg-color);
+            background: var(--header-bg-color);
 
             .message-mode-input {
                 border-bottom: solid 1px black;
@@ -61,9 +61,9 @@
 /* Mode headers */
 .message-mode-header {
     --stripe-width: 5px;
-    --stripe-height: 12px;
-    height: var(--stripe-height);
-    background: var(--stripe-color);
+    --header-height: 12px;
+    height: var(--header-height);
+    background: var(--header-bg-color);
     inset: 0;
     width: 100%;
     position: absolute;
@@ -72,7 +72,7 @@
     align-items: center;
 
     span {
-        background: var(--header-label-color, var(--stripe-color));
+        background: var(--header-label-color, var(--header-bg-color));
         height: 100%;
         min-width: 45px;
         padding: 1px 20px 1px 12px;
@@ -80,14 +80,14 @@
         clip-path: polygon(
             0 0,
             100% 0,
-            calc(100% - var(--stripe-height)) 100%,
+            calc(100% - var(--header-height)) 100%,
             0% 100%
         );
     }
 
     &.message-mode-header--striped {
         background: repeating-linear-gradient(135deg,
-            var(--stripe-color) 0 var(--stripe-width),
+            var(--header-bg-color) 0 var(--stripe-width),
             transparent var(--stripe-width) calc(var(--stripe-width) * 2));
     }
 }
@@ -102,15 +102,6 @@
 .message-confirmation-menu {
     display: flex;
     transform: translateY(10px);
-
-    &.message-confirmation-menu--centered {
-        align-items: center;
-    }
-
-    &.message-confirmation-menu--delete {
-        width: 100%;
-        text-align: right;
-    }
 }
 
 .message-action-spacer {
