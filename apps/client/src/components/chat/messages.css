@@ -17,11 +17,6 @@
     --tag-height: 19px;      /* height of the nametag's flat part */
     --tag-gap: 3px;          /* space between nametag and bubble */
 
-    /* Derived values keep diagonal borders as thick as straight borders. */
-    --sqrt2: 1.4142;
-    --inner-corner-cut: calc(var(--corner-cut) - var(--border-width) * 0.586);
-    --inner-small-corner-cut: calc(var(--small-corner-cut) - var(--border-width) * 0.586);
-
     --message-margin: 10px;
     --message-inner-padding-lr: 10px;
     --message-inner-padding-tb: 15px;
@@ -57,6 +52,7 @@
 
         position: relative;
         background: var(--border-color);
+        clip-path: var(--bubble-clip-path);
 
         /* Places content above the background pseudo-element */
         isolation: isolate;
@@ -71,6 +67,7 @@
             inset: var(--border-width);
             z-index: -1;
             background: var(--fill-color);
+            clip-path: var(--bubble-inner-clip-path);
         }
 
         .timestamp span {
@@ -140,32 +137,6 @@
         grid-column: 1;
     }
 
-    .bubble {
-        clip-path: polygon(
-            var(--corner-cut) 0,
-            calc(100% - var(--small-corner-cut)) 0,
-            100% var(--small-corner-cut),
-            100% calc(100% - var(--corner-cut)),
-            calc(100% - var(--corner-cut)) 100%,
-            var(--small-corner-cut) 100%,
-            0 calc(100% - var(--small-corner-cut)),
-            0 var(--corner-cut)
-        );
-
-        &::before {
-            clip-path: polygon(
-                var(--inner-corner-cut) 0,
-                calc(100% - var(--inner-small-corner-cut)) 0,
-                100% var(--inner-small-corner-cut),
-                100% calc(100% - var(--inner-corner-cut)),
-                calc(100% - var(--inner-corner-cut)) 100%,
-                var(--inner-small-corner-cut) 100%,
-                0 calc(100% - var(--inner-small-corner-cut)),
-                0 var(--inner-corner-cut)
-            );
-        }
-    }
-
     .message-menu {
         text-align: right;
         right: 0;
@@ -190,29 +161,6 @@
 
     .bubble {
         justify-self: self-end;
-        clip-path: polygon(
-            var(--small-corner-cut) 0,
-            calc(100% - var(--corner-cut)) 0,
-            100% var(--corner-cut),
-            100% calc(100% - var(--small-corner-cut)),
-            calc(100% - var(--small-corner-cut)) 100%,
-            var(--corner-cut) 100%,
-            0 calc(100% - var(--corner-cut)),
-            0 var(--small-corner-cut)
-        );
-
-        &::before {
-            clip-path: polygon(
-                var(--inner-small-corner-cut) 0,
-                calc(100% - var(--inner-corner-cut)) 0,
-                100% var(--inner-corner-cut),
-                100% calc(100% - var(--inner-small-corner-cut)),
-                calc(100% - var(--inner-small-corner-cut)) 100%,
-                var(--inner-corner-cut) 100%,
-                0 calc(100% - var(--inner-corner-cut)),
-                0 var(--inner-small-corner-cut)
-            );
-        }
     }
 
     .message-menu {
@@ -239,12 +187,7 @@
     white-space: nowrap;
     background: var(--tag-border-color);
     
-    clip-path: polygon(
-        0 0,
-        calc(100% - var(--tag-height)) 0,
-        100% var(--tag-height),
-        var(--corner-cut) var(--tag-height),
-        0 calc(var(--tag-height) + var(--corner-cut)));
+    clip-path: var(--tag-clip-path);
 
     &::before {
         content: '';
@@ -252,12 +195,7 @@
         inset: 0;
         z-index: -1;
         background: var(--tag-fill-color);
-        clip-path: polygon(
-            var(--border-width) var(--border-width),
-            calc(100% - var(--tag-height) - var(--border-width) * var(--sqrt2) + var(--border-width)) var(--border-width),
-            calc(100% - var(--border-width) * var(--sqrt2) - var(--border-width)) calc(var(--tag-height) - var(--border-width)),
-            calc(var(--corner-cut) - var(--border-width) * (var(--sqrt2) - 1)) calc(var(--tag-height) - var(--border-width)),
-            var(--border-width) calc(var(--corner-cut) + var(--tag-height) - var(--border-width) * var(--sqrt2) - var(--border-width)));
+        clip-path: var(--tag-inner-clip-path);
     }
 }
 

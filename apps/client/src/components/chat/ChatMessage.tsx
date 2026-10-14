@@ -5,10 +5,11 @@ import { loadAvatarForUser } from '@/avatar/avatarCache';
 
 import { type UserChatMessage } from '@/types/message.type';
 import { format } from 'date-fns';
-import { createSignal, For, onMount, Show } from 'solid-js';
+import { createMemo, createSignal, For, onMount, Show } from 'solid-js';
 import { ACTIONS, MessageAction } from './message-modes/MessageModes';
 import { Dynamic } from 'solid-js/web';
 import DeletedMessage from './DeletedMessage';
+import { messageGeometryClass } from './messageGeometry';
 
 export type MessageProps = UserChatMessage & { isOwn: boolean };
 
@@ -35,12 +36,15 @@ export default function ChatMessage(props: MessageProps) {
 
     const [mode, setMode] = createSignal<MessageAction | null>(null);
 
-    const activeAction = () => {
+    const activeMode = createMemo(() => {
         const key = mode();
-        if (key === null) return undefined;
+        if (key === null) return null;
 
-        const action = ACTIONS[key];
-        return action.condition(props) ? action : undefined;
+        return ACTIONS[key].condition(props) ? key : null;
+    });
+    const activeAction = () => {
+        const key = activeMode();
+        return key === null ? undefined : ACTIONS[key];
     };
 
     const [avatarSrc, setAvatarSrc] = createSignal(pfp_placeholder);
@@ -56,13 +60,13 @@ export default function ChatMessage(props: MessageProps) {
             <div
                 class="message-row"
                 classList={{
-                    'message-row--action': mode() !== null,
-                    'message-row--moderating': mode() === 'mod'
+                    'message-row--action': activeMode() !== null,
+                    'message-row--moderating': activeMode() === 'mod'
                 }}
             >
                 <div
+                    class={`message ${messageGeometryClass}`}
                     classList={{
-                        'message': true,
                         'message-incoming': !props.isOwn,
                         'message-outgoing': props.isOwn
                     }}
@@ -97,7 +101,7 @@ export default function ChatMessage(props: MessageProps) {
                         }>
                             {([key, act]) =>
                                 <a
-                                    classList={{ 'selected': mode() === key }}
+                                    classList={{ 'selected': activeMode() === key }}
                                     onClick={() => setMode(
                                         prev => prev === key ? null : key
                                     )}
