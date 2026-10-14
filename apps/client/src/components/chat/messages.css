@@ -121,10 +121,9 @@
         }
     }
 
-    /* TODO: Consider also just having the 
-       menu visible always when action active */
     &:hover,
-    &:focus-within {
+    &:focus-within,
+    &.message-row--action {
         .message-menu {
             visibility: visible;
         }
