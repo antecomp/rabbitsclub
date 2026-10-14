@@ -19,6 +19,7 @@ import LoggedOut from './routes/LoggedOut';
 import ManageUsers from './routes/manage/ManageUsers';
 import ManageUser from './routes/manage/ManageUser';
 import Sandbox from './routes/Sandbox';
+import Error404Page from './routes/404';
 
 function AppRoot(props: RouteSectionProps) {
     return (
@@ -65,6 +66,7 @@ render(
                 )} />
                 <Route path="/logged-out" component={LoggedOut}/>
                 <Route path="/sandbox" component={Sandbox} />
+                <Route path="*404" component={Error404Page} />
             </Router>
         </PreferencesProvider>
     ),
