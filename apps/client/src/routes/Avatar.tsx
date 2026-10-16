@@ -88,7 +88,7 @@ export default function Avatar() {
     const [menu, setMenu] = createSignal<AvatarMenu>('root');
     const [avatar, setAvatar] = createStore<AvatarData>(createDefaultAvatar());
     const [message, setMessage] = createSignal('');
-    let loadedUsername: string | undefined;
+    let loadedUserId: number | undefined;
 
     const eyeThumbnail = (variant: EyeVariant, side: 0 | 1) => {
         const src = eyes[variant].src;
@@ -114,8 +114,8 @@ export default function Avatar() {
     const save = async () => {
         const { error } = await api.profile.avatar.put({ ...avatar });
         if(error) return;
-        const username = user()?.username;
-        if (username) invalidateCachedProfile(username);
+        const userId = user()?.id;
+        if (userId) invalidateCachedProfile(userId);
         setMessage('Avatar saved successfully.');
         setTimeout(() => message() && setMessage(''), 5000);
     };
@@ -123,18 +123,18 @@ export default function Avatar() {
     createEffect(() => {
         if (user.loading) return;
 
-        const username = user()?.username;
-        if (!username) {
-            loadedUsername = undefined;
+        const userId = user()?.id;
+        if (!userId) {
+            loadedUserId = undefined;
             return;
         }
 
-        if (loadedUsername === username) return;
-        loadedUsername = username;
+        if (loadedUserId === userId) return;
+        loadedUserId = userId;
 
         void (async () => {
-            const profile = (await api.profile({ username }).get()).data;
-            if (loadedUsername !== username || !profile) return;
+            const profile = (await api.profile({ id: userId }).get()).data;
+            if (loadedUserId !== userId || !profile) return;
 
             const avatarData = toAvatarData(profile);
             if (!avatarData) return;

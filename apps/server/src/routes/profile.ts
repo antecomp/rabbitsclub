@@ -7,14 +7,20 @@ import { ErrorSchema } from '../schemas/generic.schema';
 
 export const profileRoutes = new Elysia({ prefix: '/profile' })
     .use(authMiddleware)
-    .get('/:username', ({ params: { username }, status }) => {
-        const avatar = actions.profiles.getProfile(username);
+    .get('/:id', ({ params: { id }, status }) => {
+        const userId = Number(id);
+        if (!Number.isSafeInteger(userId) || userId <= 0) {
+            return status(400, { message: 'Invalid user ID' });
+        }
+
+        const avatar = actions.profiles.getProfile(userId);
         if(!avatar) return status(404, { message: 'Profile not found' });
         return avatar;
     }, {
         useAuth: true,
         response: {
             200: t.Nullable(AvatarDataSchema),
+            400: ErrorSchema,
             404: ErrorSchema
         }
     })

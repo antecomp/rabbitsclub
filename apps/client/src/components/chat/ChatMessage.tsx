@@ -49,7 +49,7 @@ export default function ChatMessage(props: MessageProps) {
 
     const [avatarSrc, setAvatarSrc] = createSignal(pfp_placeholder);
     onMount(async () => {
-        const url = await loadAvatarForUser(props.username);
+        const url = await loadAvatarForUser(props.sender_id);
         setAvatarSrc(url);
     });
 

@@ -40,8 +40,7 @@ export default function ManageUser() {
                 .then(({ data }) => data ?? null);
             if (!main) return null;
 
-            // todo: replace this with a get by id when we change the support there
-            const avatar = await api.profile({ username: main.username })
+            const avatar = await api.profile({ id: main.id })
                 .get()
                 .then(({ data }) => toAvatarData(data) ?? createDefaultAvatar());
 
