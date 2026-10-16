@@ -86,6 +86,31 @@ Root workspace commands:
 | `bun run build` | Build every workspace. |
 | `bun run build:server` | Typecheck and build the server. |
 | `bun run build:client` | Typecheck and build the client. |
+| `bun run lint` | Lint all TypeScript and TSX files. |
+| `bun run lint:staged` | Lint staged TypeScript and TSX files. |
+| `bun run lint:fix` | Lint and automatically fix supported issues. |
+
+### Pre-commit hook
+
+Enable the repository's Git hooks once after cloning, from the repository root:
+
+```bash
+git config --local core.hooksPath .githooks
+```
+
+The pre-commit hook runs `bun run lint:staged` and blocks the commit if lint fails. Bun must be available on your `PATH`, and dependencies must be installed. Only added, copied, modified, or renamed `.ts` and `.tsx` files in the staging area are checked; deleted files are skipped. If no matching files are staged, the check succeeds without running ESLint.
+
+The staged file list selects which files to lint, but ESLint reads their current working-tree contents. For partially staged files, this includes unstaged edits in those same files. Use `bun run lint` to check the entire project.
+
+The hook is tracked with executable permissions. If those permissions are lost, restore them with:
+
+```bash
+chmod +x .githooks/pre-commit
+```
+
+Local hooks can be bypassed with `git commit --no-verify`. To enforce lint before merging, also run it in CI and require that check to pass.
+
+### Workspace commands
 
 Client commands from `apps/client`:
 
