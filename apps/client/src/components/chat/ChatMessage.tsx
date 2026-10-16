@@ -5,7 +5,7 @@ import { loadAvatarForUser } from '@/avatar/avatarCache';
 
 import { type UserChatMessage } from '@/types/message.type';
 import { format } from 'date-fns';
-import { createMemo, createSignal, For, onMount, Show } from 'solid-js';
+import { createMemo, createResource, createSignal, For, Show } from 'solid-js';
 import { ACTIONS, MessageAction } from './message-modes/MessageModes';
 import { Dynamic } from 'solid-js/web';
 import DeletedMessage from './DeletedMessage';
@@ -47,11 +47,11 @@ export default function ChatMessage(props: MessageProps) {
         return key === null ? undefined : ACTIONS[key];
     };
 
-    const [avatarSrc, setAvatarSrc] = createSignal(pfp_placeholder);
-    onMount(async () => {
-        const url = await loadAvatarForUser(props.sender_id);
-        setAvatarSrc(url);
-    });
+    const [avatarSrc] = createResource(
+        () => props.sender_id,
+        loadAvatarForUser,
+        { initialValue: pfp_placeholder }
+    );
 
     const deletedState = () => props.is_deleted && props.deleted_kind;
 
