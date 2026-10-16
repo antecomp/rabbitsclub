@@ -61,7 +61,7 @@ export const eyes = {
     clench:   { src: [ClenchLeft, ClenchRight], defaultOffset: DEFAULT_EYE_OFFSET },
     crescent: { src: Crescent, 	                defaultOffset: DEFAULT_EYE_OFFSET },
     pox:      { src: [PoxLeft, PoxRight],       defaultOffset: DEFAULT_EYE_OFFSET },
-    spider:   { src: [SpiderLeft, SpiderRight], defaultOffset: {x: 85, y: 75} }
+    spider:   { src: [SpiderLeft, SpiderRight], defaultOffset: { x: 85, y: 75 } }
 } satisfies Record<string, { src: string | [string, string]; defaultOffset: { x: number; y: number } }>;
 
 export const accessories = {

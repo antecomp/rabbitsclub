@@ -1,7 +1,7 @@
-import Footer from "@/components/Footer";
-import Link from "@/components/Link";
-import { AuthForm, Container, Divider, Subtitle, Title } from "@/styled/shared.styles";
-import { styled } from "solid-styled-components";
+import Footer from '@/components/Footer';
+import Link from '@/components/Link';
+import { AuthForm, Container, Divider, Subtitle, Title } from '@/styled/shared.styles';
+import { styled } from 'solid-styled-components';
 import sus from '../assets/misc/sus.png';
 
 
@@ -11,7 +11,7 @@ const Grid = styled('div')`
     align-items: center;
     gap: 10px;
     min-height: 220px;
-`
+`;
 
 export default function Error404Page() {
     return (
@@ -30,5 +30,5 @@ export default function Error404Page() {
             </Grid>
             <Footer />
         </Container>
-    )
+    );
 }
