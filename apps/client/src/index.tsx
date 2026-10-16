@@ -9,7 +9,6 @@ import Landing from './routes/Landing';
 import './style/index.css';
 import About from './routes/About';
 import Settings from './routes/Settings';
-import { PreferencesProvider } from './context/Preferences';
 import Avatar from '@/routes/Avatar';
 import ManageIndex from './routes/manage/ManageIndex';
 import ManageInvites from './routes/manage/ManageInvites';
@@ -32,43 +31,41 @@ function AppRoot(props: RouteSectionProps) {
 
 render(
     () => (
-        <PreferencesProvider>
-            <Router root={AppRoot}>
-                <Route path="/" component={() => (
-                    <Landing />
-                )} />
-                <Route path="/login" component={() => (
-                    <GuestRoute><Login /></GuestRoute>
-                )} />
-                <Route path="/register" component={() => (
-                    <GuestRoute><Register /></GuestRoute>
-                )} />
-                <Route path="/invite/:code" component={() => (
-                    <GuestRoute><Invite /></GuestRoute>
-                )} />
-                <Route path="/chat" component={() => (
-                    <ProtectedRoute><Chat /></ProtectedRoute>
-                )} />
-                <Route path="/settings" component={() => (
-                    <ProtectedRoute><Settings /></ProtectedRoute>
-                )} />
-                <Route path="/manage" component={props => (
-                    <Manage>{props.children}</Manage>
-                )}>
-                    <Route path="/" component={ManageIndex} />
-                    <Route path="/invites" component={ManageInvites} />
-                    <Route path="/users" component={ManageUsers} />
-                    <Route path="/user/:id" component={ManageUser} />
-                </Route>
-                <Route path="/about" component={About} />
-                <Route path="/avatar" component={() => (
-                    <Avatar />
-                )} />
-                <Route path="/logged-out" component={LoggedOut}/>
-                <Route path="/sandbox" component={Sandbox} />
-                <Route path="*404" component={Error404Page} />
-            </Router>
-        </PreferencesProvider>
+        <Router root={AppRoot}>
+            <Route path="/" component={() => (
+                <Landing />
+            )} />
+            <Route path="/login" component={() => (
+                <GuestRoute><Login /></GuestRoute>
+            )} />
+            <Route path="/register" component={() => (
+                <GuestRoute><Register /></GuestRoute>
+            )} />
+            <Route path="/invite/:code" component={() => (
+                <GuestRoute><Invite /></GuestRoute>
+            )} />
+            <Route path="/chat" component={() => (
+                <ProtectedRoute><Chat /></ProtectedRoute>
+            )} />
+            <Route path="/settings" component={() => (
+                <ProtectedRoute><Settings /></ProtectedRoute>
+            )} />
+            <Route path="/manage" component={props => (
+                <Manage>{props.children}</Manage>
+            )}>
+                <Route path="/" component={ManageIndex} />
+                <Route path="/invites" component={ManageInvites} />
+                <Route path="/users" component={ManageUsers} />
+                <Route path="/user/:id" component={ManageUser} />
+            </Route>
+            <Route path="/about" component={About} />
+            <Route path="/avatar" component={() => (
+                <Avatar />
+            )} />
+            <Route path="/logged-out" component={LoggedOut}/>
+            <Route path="/sandbox" component={Sandbox} />
+            <Route path="*404" component={Error404Page} />
+        </Router>
     ),
     document.getElementById('root')!
 );
