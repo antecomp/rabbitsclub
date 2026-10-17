@@ -1,7 +1,6 @@
 import { t } from 'elysia';
 import { model } from '../db/model';
 import { actions } from '~/db/actions';
-import { MESSAGE_RATE_LIMIT } from '~/config';
 
 /**
  * Runtime schema for a persisted chat message backed by the messages table.
@@ -77,7 +76,7 @@ export const WSErrorSignalSchema = t.Object({
     details: t.Union([
         t.Object({
             code: t.Literal('rate_limited'),
-            retry_after: t.Literal(MESSAGE_RATE_LIMIT.DURATION)
+            retry_after_ms: t.Number({ minimum: 1 })
         }),
         t.Object({
             code: t.Literal('message_too_large')
