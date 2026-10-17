@@ -12,7 +12,7 @@ export const DbMessageSchema = t.Object(model.select.messages);
 export type DbMessage = typeof DbMessageSchema['static'];
 
 /** Client-to-server schema for a newly sent message body. */
-export const SentMessageSchema = t.Object({ content: t.String({ maxLength: MAX_MESSAGE_LENGTH }) });
+export const SentMessageSchema = t.Object({ content: t.String() });
 
 /** Message form as sent to the client */
 export const ClientMessageSchema = t.Object({
