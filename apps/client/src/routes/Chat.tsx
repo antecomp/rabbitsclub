@@ -1,4 +1,4 @@
-import { For, Show, Switch } from 'solid-js';
+import { For, Show } from 'solid-js';
 import { MAX_MESSAGE_LENGTH } from '#config';
 import { user } from '../api/user';
 import SystemMessage from '../components/chat/SystemMessage';
@@ -8,6 +8,7 @@ import Aside from '../components/chat/Aside';
 import { ChatBody, ChatContainer, FormTooltip, LoadMoreButton, Messages, SendButton, SendForm, SendInput } from './Chat.styles';
 import useChatSocket from '@/hooks/useChatSocket';
 import ChatMessage from '@/components/chat/ChatMessage';
+import ErrorMessage from '@/components/chat/ErrorMessage';
 
 export default function Chat() {
     let messagesEl: HTMLDivElement | undefined;
@@ -54,7 +55,7 @@ export default function Chat() {
                                 case 'system':
                                     return <SystemMessage message={msg} />;
                                 case 'error':
-                                    return <p>{msg.type}</p>;
+                                    return <ErrorMessage>{msg.details.code}</ErrorMessage>;
                             }
                         }}
                     </For>
