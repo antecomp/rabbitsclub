@@ -5,6 +5,7 @@ import { authMiddleware } from '../middleware/auth.middleware';
 import { CHAT_WS_NAME } from '../config';
 import { registerChatSocket, unregisterChatSocket } from '../util/chatSessions';
 import { MAX_MESSAGE_LENGTH } from '#config';
+import { chokeMessage } from '../util/messageChoke';
 
 const onlineUsers = new Map<number, { username: string, count: number }>();
 const getOnlineUsers = () => Array.from(onlineUsers.values()).map(u => u.username);
@@ -37,10 +38,17 @@ export const chatRoutes = new Elysia()
             ws.send({ type: 'online', users: getOnlineUsers() });
         },
         message(ws, message) {
-            // silently fail for now.
-            if (message.content.length > MAX_MESSAGE_LENGTH) return;
+            if (message.content.length > MAX_MESSAGE_LENGTH) {
+                ws.send({ type: 'error', details: { code: 'message_too_large' } });
+                return;
+            };
             const msgContent = message.content.trim();
             if (!msgContent) return;
+            const retryAfterMs = chokeMessage(ws.data.user.id);
+            if (retryAfterMs > 0) {
+                ws.send({ type: 'error', details: { code: 'rate_limited', retry_after_ms: retryAfterMs } });
+                return;
+            }
             const saved = actions.messages.insertMessage(ws.data.user.id, msgContent);
             if (!saved) {
                 console.error('Unable to post message to DB', message);

@@ -4,7 +4,7 @@ import { api } from './backend';
 const USER_STORAGE_KEY = 'rabbitsclub.user';
 
 export const [user, { refetch: refetchUser, mutate: mutateUser }] = createResource(async () => {
-    const { data } = await api.auth.me.get();
+    const { data } = await api.users.me.get();
     const result = data || null;
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(result));
     return result;

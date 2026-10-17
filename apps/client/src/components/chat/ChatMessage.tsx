@@ -28,6 +28,9 @@ function MessageContent(props: MessageProps) {
                 <br />
             </Show>
             {props.content}
+            <Show when={props.is_edited}>
+                <div class="message-edited">(edited)</div>
+            </Show>
         </div>
     );
 }

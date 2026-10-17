@@ -1,6 +1,5 @@
 import { t } from 'elysia';
 import { model } from '../db/model';
-import { MAX_MESSAGE_LENGTH } from '#config';
 import { actions } from '~/db/actions';
 
 /**
@@ -11,7 +10,7 @@ export const DbMessageSchema = t.Object(model.select.messages);
 export type DbMessage = typeof DbMessageSchema['static'];
 
 /** Client-to-server schema for a newly sent message body. */
-export const SentMessageSchema = t.Object({ content: t.String({ maxLength: MAX_MESSAGE_LENGTH }) });
+export const SentMessageSchema = t.Object({ content: t.String() });
 
 /** Message form as sent to the client */
 export const ClientMessageSchema = t.Object({
@@ -24,7 +23,7 @@ export const ClientMessageSchema = t.Object({
     deleted_reason: t.Union([t.String(), t.Null()]),
     created_at: t.String(),
     moderation_note: t.Union([t.String(), t.Null()]),
-    edited: t.Boolean(),
+    is_edited: t.Boolean(),
     deleted_kind: t.Nullable(t.Enum({ user: 'user', moderator: 'moderator' }))
 });
 export type ClientMessage = typeof ClientMessageSchema['static'];
@@ -46,7 +45,7 @@ export function toClientMessage(message: DbMessage): ClientMessage {
         deleted_reason: is_deleted ? message.deleted_reason : null,
         created_at: message.created_at,
         moderation_note: message.moderation_note,
-        edited: !!message.edited_at,
+        is_edited: !!message.edited_at,
         deleted_kind: message.deleted_kind
     };
 }
@@ -72,6 +71,19 @@ export const WSBroadcastOnlineSchema = t.Object({
     users: t.Array(t.String())
 });
 
+export const WSErrorSignalSchema = t.Object({
+    type: t.Literal('error'),
+    details: t.Union([
+        t.Object({
+            code: t.Literal('rate_limited'),
+            retry_after_ms: t.Number({ minimum: 1 })
+        }),
+        t.Object({
+            code: t.Literal('message_too_large')
+        })
+    ])
+});
+
 /**
  * Union schema for all supported WebSocket message payloads.
  * Extracted type: WSMessageType
@@ -79,6 +91,7 @@ export const WSBroadcastOnlineSchema = t.Object({
 export const WSMessageSchema = t.Union([
     WSBroadcastMessageSchema,
     WSBroadcastOnlineSchema,
-    ClientMessageSchema
+    ClientMessageSchema,
+    WSErrorSignalSchema
 ]);
 export type WSMessageType = typeof WSMessageSchema['static'];

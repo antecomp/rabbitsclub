@@ -8,6 +8,7 @@ import Aside from '../components/chat/Aside';
 import { ChatBody, ChatContainer, FormTooltip, LoadMoreButton, Messages, SendButton, SendForm, SendInput } from './Chat.styles';
 import useChatSocket from '@/hooks/useChatSocket';
 import ChatMessage from '@/components/chat/ChatMessage';
+import ErrorMessage from '@/components/chat/ErrorMessage';
 
 export default function Chat() {
     let messagesEl: HTMLDivElement | undefined;
@@ -47,16 +48,16 @@ export default function Chat() {
                         <LoadMoreButton onClick={loadMore}>[ LOAD MORE ]</LoadMoreButton>
                     </Show>
                     <For each={messages()}>
-                        {msg => (
-                            msg.type === 'system'
-                                ? <SystemMessage message={msg} />
-                                : (
-                                    <ChatMessage
-                                        {...msg}
-                                        isOwn={msg.username === user()?.username}
-                                    />
-                                )
-                        )}
+                        {msg => {
+                            switch (msg.type) {
+                                case 'user':
+                                    return <ChatMessage {...msg} isOwn={msg.username === user()?.username} />;
+                                case 'system':
+                                    return <SystemMessage message={msg} />;
+                                case 'error':
+                                    return <ErrorMessage>{msg.details.code}</ErrorMessage>;
+                            }
+                        }}
                     </For>
                 </Messages>
                 <Aside

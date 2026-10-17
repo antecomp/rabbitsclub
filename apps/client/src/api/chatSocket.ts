@@ -80,7 +80,7 @@ export function createAuthAwareChatSocket(options: {
 
         try {
             // 401 triggers global onAuthFailure automatically
-            await api.auth.me.get();
+            await api.users.me.get();
         } catch {
             if (disposed || manuallyClosed) return;
         }

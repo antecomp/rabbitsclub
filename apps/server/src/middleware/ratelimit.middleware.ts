@@ -6,5 +6,6 @@ export const DEFAULT_RATE_LIMIT = rateLimit({
     duration: 1000 * 60,
     errorResponse: JSON.stringify(
         { message: 'Too many requests' } satisfies ErrorMessage
-    )
+    ),
+    scoping: 'scoped'
 });
