@@ -1,6 +1,6 @@
 import { MAX_MESSAGE_LENGTH, MESSAGE_PAGE_SIZE } from '#config';
 import { api } from '@/api/backend';
-import { ChatMessage, UserChatMessage } from '@/types/message.type';
+import { DisplayedMessage, UserChatMessage } from '@/types/message.type';
 import { playSoundOnce } from '@/util/playSound';
 import { createEffect, createSignal, on, onCleanup, onMount } from 'solid-js';
 
@@ -18,7 +18,7 @@ export default function useChatSocket(config: {
     sendInputEl: () => HTMLInputElement | undefined;
 }) {
     const [inputText, setInputText] = createSignal('');
-    const [messages, setMessages] = createSignal<ChatMessage[]>([]);
+    const [messages, setMessages] = createSignal<DisplayedMessage[]>([]);
     const [whoisOnline, setWhoIsOnline] = createSignal<string[]>([]);
     const [hasMoreMessages, setHasMoreMessages] = createSignal(true);
     const [autoScrollMessages, setAutoScrollMessages] = createSignal(true);
@@ -51,7 +51,10 @@ export default function useChatSocket(config: {
             const historyIds = new Set(data.map(msg => msg.id));
             setMessages(prev => [
                 ...data,
-                ...prev.filter(msg => msg.type === 'system' || !historyIds.has(msg.id))
+                ...prev.filter(
+                    msg => msg.type === 'system' 
+                    || (msg.type === 'user' && !historyIds.has(msg.id))
+                )
             ]);
             setHasMoreMessages(data.length === MESSAGE_PAGE_SIZE);
         }
@@ -106,8 +109,8 @@ export default function useChatSocket(config: {
                 case 'online':
                     setWhoIsOnline(data.users);
                     break;
-                // TODO: Surface this to the user.
                 case 'error':
+                    setMessages(prev => [...prev, data]);
                     console.error('Chat error', data.details);
                     break;
             }

@@ -1,4 +1,4 @@
-import { For, Show } from 'solid-js';
+import { For, Show, Switch } from 'solid-js';
 import { MAX_MESSAGE_LENGTH } from '#config';
 import { user } from '../api/user';
 import SystemMessage from '../components/chat/SystemMessage';
@@ -47,16 +47,16 @@ export default function Chat() {
                         <LoadMoreButton onClick={loadMore}>[ LOAD MORE ]</LoadMoreButton>
                     </Show>
                     <For each={messages()}>
-                        {msg => (
-                            msg.type === 'system'
-                                ? <SystemMessage message={msg} />
-                                : (
-                                    <ChatMessage
-                                        {...msg}
-                                        isOwn={msg.username === user()?.username}
-                                    />
-                                )
-                        )}
+                        {msg => {
+                            switch (msg.type) {
+                                case 'user':
+                                    return <ChatMessage {...msg} isOwn={msg.username === user()?.username} />;
+                                case 'system':
+                                    return <SystemMessage message={msg} />;
+                                case 'error':
+                                    return <p>{msg.type}</p>;
+                            }
+                        }}
                     </For>
                 </Messages>
                 <Aside
