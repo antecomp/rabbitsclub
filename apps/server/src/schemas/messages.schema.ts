@@ -1,6 +1,5 @@
 import { t } from 'elysia';
 import { model } from '../db/model';
-import { MAX_MESSAGE_LENGTH } from '#config';
 import { actions } from '~/db/actions';
 import { MESSAGE_RATE_LIMIT } from '~/config';
 
