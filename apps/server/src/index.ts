@@ -2,6 +2,7 @@ import { Elysia, t } from 'elysia';
 import { cors } from '@elysiajs/cors';
 import { chatRoutes } from './routes/chat';
 import { authRoutes } from './routes/auth';
+import { userRoutes } from './routes/users';
 import { adminRoutes } from './routes/admin';
 import { actions } from './db/actions';
 import { profileRoutes } from './routes/profile';
@@ -14,6 +15,7 @@ const app = new Elysia()
     .use(openapi())
     .use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }))
     .use(authRoutes)
+    .use(userRoutes)
     .use(chatRoutes)
     .use(messageRoutes)
     .use(adminRoutes)

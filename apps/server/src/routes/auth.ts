@@ -2,7 +2,7 @@ import { Elysia, t } from 'elysia';
 import { jwt } from '@elysiajs/jwt';
 import { actions } from '~/db/actions';
 import { ErrorSchema } from '../schemas/generic.schema';
-import { AuthCookieSchema, AuthErrorSchema, CurrentUserSchema, InviteLookupResponseSchema, JWTSchema, LoginBodySchema, LoginResponseSchema, RegisterBodySchema } from '../schemas/auth.schema';
+import { AuthCookieSchema, AuthErrorSchema, InviteLookupResponseSchema, JWTSchema, LoginBodySchema, LoginResponseSchema, RegisterBodySchema } from '../schemas/auth.schema';
 import { authError, clearAuthCookie, isAuthFailure, isOriginAllowed, issueAuthCookie, revokeAllSessions, validateAuthToken } from '../util/auth';
 import { disconnectChatSocketsForUser } from '../util/chatSessions';
 import { DEFAULT_RATE_LIMIT } from '~/middleware/ratelimit.middleware';
@@ -120,24 +120,6 @@ export const authRoutes = new Elysia({ prefix: '/auth' })
             200: LoginResponseSchema,
             401: AuthErrorSchema,
             403: AuthErrorSchema
-        },
-        cookie: AuthCookieSchema
-    })
-    .get('/me', async ({ jwt, cookie: { auth }, status }) => {
-        if (!auth?.value) return null;
-
-        const result = await validateAuthToken(jwt, auth.value);
-        if (isAuthFailure(result)) {
-            clearAuthCookie(auth);
-            return status(401, authError(result.reason));
-        }
-
-        const { user } = result;
-        return { id: user.id, username: user.username, is_admin: user.is_admin };
-    }, {
-        response: {
-            200: t.Union([CurrentUserSchema, t.Null()]),
-            401: AuthErrorSchema
         },
         cookie: AuthCookieSchema
     });
