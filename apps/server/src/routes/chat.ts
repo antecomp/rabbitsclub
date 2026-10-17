@@ -37,8 +37,10 @@ export const chatRoutes = new Elysia()
             ws.send({ type: 'online', users: getOnlineUsers() });
         },
         message(ws, message) {
-            // silently fail for now.
-            if (message.content.length > MAX_MESSAGE_LENGTH) return;
+            if (message.content.length > MAX_MESSAGE_LENGTH) {
+                ws.send({ type: 'error', details: { code: 'message_too_large' } });
+                return;
+            };
             const msgContent = message.content.trim();
             if (!msgContent) return;
             const saved = actions.messages.insertMessage(ws.data.user.id, msgContent);

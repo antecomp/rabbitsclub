@@ -106,6 +106,10 @@ export default function useChatSocket(config: {
                 case 'online':
                     setWhoIsOnline(data.users);
                     break;
+                // TODO: Surface this to the user.
+                case 'error':
+                    console.error('Chat error', JSON.stringify(data.details));
+                    break;
             }
         }
     });

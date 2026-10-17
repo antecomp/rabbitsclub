@@ -2,6 +2,7 @@ import { t } from 'elysia';
 import { model } from '../db/model';
 import { MAX_MESSAGE_LENGTH } from '#config';
 import { actions } from '~/db/actions';
+import { MESSAGE_RATE_LIMIT } from '~/config';
 
 /**
  * Runtime schema for a persisted chat message backed by the messages table.
@@ -72,6 +73,19 @@ export const WSBroadcastOnlineSchema = t.Object({
     users: t.Array(t.String())
 });
 
+export const WSErrorSignalSchema = t.Object({
+    type: t.Literal('error'),
+    details: t.Union([
+        t.Object({
+            code: t.Literal('rate_limited'),
+            retry_after: t.Literal(MESSAGE_RATE_LIMIT.DURATION)
+        }),
+        t.Object({
+            code: t.Literal('message_too_large')
+        })
+    ])
+});
+
 /**
  * Union schema for all supported WebSocket message payloads.
  * Extracted type: WSMessageType
@@ -79,6 +93,7 @@ export const WSBroadcastOnlineSchema = t.Object({
 export const WSMessageSchema = t.Union([
     WSBroadcastMessageSchema,
     WSBroadcastOnlineSchema,
-    ClientMessageSchema
+    ClientMessageSchema,
+    WSErrorSignalSchema
 ]);
 export type WSMessageType = typeof WSMessageSchema['static'];
