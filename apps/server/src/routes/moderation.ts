@@ -4,7 +4,7 @@ import { broadcastChatMessage, disconnectChatSocketsForUser } from '~/util/chatS
 import { toClientMessage } from '~/schemas/messages.schema';
 import { MAX_MESSAGE_LENGTH } from '#config';
 import { ErrorSchema, RequestResultSchema } from '~/schemas/generic.schema';
-import { actions } from '~/db/actions';
+import { moderation, users, messages } from '~/db/actions';
 import { ModerationUserSchema, UserPermissionsSchema, type ModerationUser, type UserPermissions } from '~/schemas/moderation.schema';
 import { type ModerationUserRow } from '~/db/actions/moderation.actions';
 import { mapObject } from '~/util/mapObject';
@@ -32,7 +32,7 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
     .use(authMiddleware)
     .get('/permissions', ({ user }) => {
         const dbPermissions =
-            actions.moderation.getUserPermissions(user.id);
+            moderation.getUserPermissions(user.id);
 
         const permissions =
             dbPermissions ?? createUserPermissions();
@@ -47,7 +47,7 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
             200: UserPermissionsSchema
         }
     })
-    .get('/users', () => actions.moderation.listModerationUsers()
+    .get('/users', () => moderation.listModerationUsers()
         .map(toModerationUser), {
         usePermission: 'can_ban_users',
         response: {
@@ -58,7 +58,7 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         const targetId = Number(params.id);
         if (!targetId) return status(400, { message: 'Invalid target user' });
 
-        const target = actions.moderation.getModerationUser(targetId);
+        const target = moderation.getModerationUser(targetId);
         if (!target) return status(404, { message: 'User not found' });
 
         return toModerationUser(target);
@@ -74,7 +74,7 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         const targetId = Number(params.id);
         if (!targetId) return status(400, { message: 'Invalid target user' });
 
-        const target = actions.users.getUserById(targetId);
+        const target = users.getUserById(targetId);
         if (!target) return status(404, { message: 'User not found' });
         if (target.is_banned) return status(409, { message: 'User is already banned' });
 
@@ -83,11 +83,11 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
 
         // these users cannot be banned, unless by an admin
         if (!user.is_admin) {
-            const targetPermissions = actions.moderation.getUserPermissions(target.id);
+            const targetPermissions = moderation.getUserPermissions(target.id);
             if (targetPermissions?.can_ban_users) return status(422, { message: 'cannot ban another moderator with ban permissions' });
         }
 
-        const banned = actions.moderation.banUser(targetId, user.id, body?.reason);
+        const banned = moderation.banUser(targetId, user.id, body?.reason);
         if (!banned) return status(500, { message: 'Unable to ban user' });
 
         disconnectChatSocketsForUser(targetId, 4003, 'account_banned');
@@ -110,11 +110,11 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         const targetId = Number(params.id);
         if (!targetId) return status(400, { message: 'Invalid target user' });
 
-        const target = actions.users.getUserById(targetId);
+        const target = users.getUserById(targetId);
         if (!target) return status(404, { message: 'User not found' });
         if (!target.is_banned) return status(409, { message: 'User is not banned' });
 
-        const restored = actions.moderation.unbanUser(targetId, user.id, body?.reason);
+        const restored = moderation.unbanUser(targetId, user.id, body?.reason);
         if (!restored) return status(500, { message: 'Unable to unban user' });
 
         return { success: true };
@@ -132,7 +132,7 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         }
     })
     .delete('/messages/:id', ({ params, user, body, status }) => {
-        const deleted = actions.messages.deleteMessage(Number(params.id), user.id, 'moderator', body?.reason);
+        const deleted = messages.deleteMessage(Number(params.id), user.id, 'moderator', body?.reason);
         if (!deleted) return status(404, { message: 'Message not found' });
 
         broadcastChatMessage(toClientMessage(deleted));
@@ -148,7 +148,7 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
     .patch('/messages/:id', ({ params, user, body, status }) => {
         const targetId = Number(params.id);
         if (!targetId) return status(400, { message: 'invalid target message' });
-        const updated = actions.messages.setModerationNote(targetId, user.id, body.note ?? null);
+        const updated = messages.setModerationNote(targetId, user.id, body.note ?? null);
         if (!updated) return status(404, { message: 'Message not found' });
 
         broadcastChatMessage(toClientMessage(updated));

@@ -1,6 +1,6 @@
 import type { Cookie } from 'elysia';
 import { JWT_TOKEN_LIFESPAN } from '../config';
-import { actions } from '~/db/actions';
+import { auth, users } from '~/db/actions';
 import type { AuthErrorCode, AuthJwtPayload, AuthorizationErrorCode } from '../schemas/auth.schema';
 import type { User } from '../schemas/users.schema';
 
@@ -91,7 +91,7 @@ export function clearAuthCookie(authCookie: AuthCookie) {
 }
 
 export function revokeAllSessions(userId: number) {
-    return actions.auth.bumpTokenVersion(userId);
+    return auth.bumpTokenVersion(userId);
 }
 
 export async function validateAuthToken(jwt: JwtService, token: string): Promise<AuthSuccess | AuthFailure> {
@@ -101,7 +101,7 @@ export async function validateAuthToken(jwt: JwtService, token: string): Promise
     const now = Math.floor(Date.now() / 1000);
     if (payload.exp <= now) return { reason: 'session_expired' };
 
-    const user = actions.users.getUserById(payload.id);
+    const user = users.getUserById(payload.id);
     if (!user) return { reason: 'session_revoked' };
 
     if (user.is_banned) return { reason: 'account_banned' };

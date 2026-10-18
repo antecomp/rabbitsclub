@@ -1,5 +1,5 @@
 import { Elysia } from 'elysia';
-import { actions } from '~/db/actions';
+import { messages } from '~/db/actions';
 import { SentMessageSchema, SystemEvents, toClientMessage, WSMessageSchema } from '../schemas/messages.schema';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { CHAT_WS_NAME } from '../config';
@@ -49,7 +49,7 @@ export const chatRoutes = new Elysia()
                 ws.send({ type: 'error', details: { code: 'rate_limited', retry_after_ms: retryAfterMs } });
                 return;
             }
-            const saved = actions.messages.insertMessage(ws.data.user.id, msgContent);
+            const saved = messages.insertMessage(ws.data.user.id, msgContent);
             if (!saved) {
                 console.error('Unable to post message to DB', message);
                 return;

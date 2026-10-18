@@ -1,6 +1,6 @@
 import { t } from 'elysia';
 import { model } from '../db/model';
-import { actions } from '~/db/actions';
+import { users } from '~/db/actions';
 
 /**
  * Runtime schema for a persisted chat message backed by the messages table.
@@ -32,7 +32,7 @@ export type ClientMessage = typeof ClientMessageSchema['static'];
 export function toClientMessage(message: DbMessage): ClientMessage {
     const is_deleted = message.deleted_at !== null;
 
-    const sender = actions.users.getUserById(message.user_id);
+    const sender = users.getUserById(message.user_id);
     const username = sender?.username ?? 'ERR';
 
     return {

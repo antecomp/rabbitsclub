@@ -1,7 +1,7 @@
 import Elysia from 'elysia';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { UpdateUserPermissionsSchema } from '~/schemas/moderation.schema';
-import { actions } from '~/db/actions';
+import { users, moderation } from '~/db/actions';
 import { ErrorSchema } from '~/schemas/generic.schema';
 import { mapObject } from '~/util/mapObject';
 import { createUserPermissions } from './moderation';
@@ -14,13 +14,13 @@ export const adminRoutes = new Elysia({ prefix: '/admin' })
         if (!targetid)
             return status(400, { message: 'Invalid user id' });
 
-        const targetUser = actions.users.getUserById(targetid);
+        const targetUser = users.getUserById(targetid);
 
         if (!targetUser)
             return status(404, { message: 'User not found' });
 
         const dbPermissions =
-            actions.moderation.getUserPermissions(targetid);
+            moderation.getUserPermissions(targetid);
 
         const permissions = dbPermissions ?? createUserPermissions();
 
@@ -42,10 +42,10 @@ export const adminRoutes = new Elysia({ prefix: '/admin' })
         if (!targetid)
             return status(400, { message: 'Invalid user id' });
 
-        if (!actions.users.getUserById(targetid))
+        if (!users.getUserById(targetid))
             return status(404, { message: 'User not found' });
 
-        const updated = actions.moderation.upsertUserPermissions(targetid, permissions);
+        const updated = moderation.upsertUserPermissions(targetid, permissions);
         if (!updated) return status(500, { message: 'Unable to update permissions' });
 
         return updated;

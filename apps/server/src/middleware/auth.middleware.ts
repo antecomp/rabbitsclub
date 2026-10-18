@@ -2,11 +2,11 @@ import Elysia, { type Context } from 'elysia';
 import { jwt } from '@elysiajs/jwt';
 import { AuthCookieSchema, JWTSchema } from '../schemas/auth.schema';
 import { authError, authorizationError, clearAuthCookie, isAuthFailure, isOriginAllowed, validateAuthToken } from '../util/auth';
-import { actions } from '~/db/actions';
+import { moderation } from '~/db/actions';
 import type { User } from '../schemas/users.schema';
 
 // TODO: make this less cancerous
-type UserPermission = Exclude<keyof NonNullable<ReturnType<typeof actions.moderation.getUserPermissions>>, 'user_id'>;
+type UserPermission = Exclude<keyof NonNullable<ReturnType<typeof moderation.getUserPermissions>>, 'user_id'>;
 
 export const authMiddleware = new Elysia({ name: 'auth-middleware' })
     .use(jwt({
@@ -47,7 +47,7 @@ export const authMiddleware = new Elysia({ name: 'auth-middleware' })
             const { status } = context;
 
             if(user.is_admin) return; // admins bypass
-            const perms = actions.moderation.getUserPermissions(user.id);
+            const perms = moderation.getUserPermissions(user.id);
             if(!perms?.[permission]) return status(403, authorizationError('forbidden'));
         }
     } as const));

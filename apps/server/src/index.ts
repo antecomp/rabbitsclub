@@ -4,7 +4,7 @@ import { chatRoutes } from './routes/chat';
 import { authRoutes } from './routes/auth';
 import { userRoutes } from './routes/users';
 import { adminRoutes } from './routes/admin';
-import { actions } from './db/actions';
+import { users } from './db/actions';
 import { profileRoutes } from './routes/profile';
 import { moderationRoutes } from './routes/moderation';
 import { messageRoutes } from './routes/messages';
@@ -27,7 +27,7 @@ const app = new Elysia()
             status: t.String()
         })
     })
-    .get('/usercount', () => actions.users.getUserCount())
+    .get('/usercount', () => users.getUserCount())
     .listen(process.env.PORT ?? 3000);
 
 export type App = typeof app;
