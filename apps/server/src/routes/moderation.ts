@@ -9,6 +9,11 @@ import { ModerationUserSchema, UserPermissionsSchema, type ModerationUser, type 
 import { type ModerationUserRow } from '~/db/actions/moderation.actions';
 import { mapObject } from '~/util/mapObject';
 import { Value } from '@sinclair/typebox/value';
+import { getLogger } from '@logtape/logtape';
+
+// Inherits the sink and level configured for the parent ['rabbitclub'] category.
+// HTTP request context supplies requestId automatically.
+const logger = getLogger(['rabbitclub', 'moderation']);
 
 // To create fallback permissions object when db row is empty
 // NOTE, ONE WARNING: this constructor defaults to `false` (irregardless of db default)
@@ -90,7 +95,13 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         const banned = moderation.banUser(targetId, user.id, body?.reason);
         if (!banned) return status(500, { message: 'Unable to ban user' });
 
-        disconnectChatSocketsForUser(targetId, 4003, 'account_banned');
+        const disconnectedSockets = disconnectChatSocketsForUser(targetId, 4003, 'account_banned');
+        logger.info('User {targetUserId} banned by {actorUserId}; disconnected {disconnectedSockets} sockets', {
+            action: 'user_banned',
+            actorUserId: user.id,
+            targetUserId: targetId,
+            disconnectedSockets
+        });
         return { success: true };
     }, {
         usePermission: 'can_ban_users',
@@ -117,6 +128,12 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         const restored = moderation.unbanUser(targetId, user.id, body?.reason);
         if (!restored) return status(500, { message: 'Unable to unban user' });
 
+        logger.info('User {targetUserId} unbanned by {actorUserId}', {
+            action: 'user_unbanned',
+            actorUserId: user.id,
+            targetUserId: targetId
+        });
+
         return { success: true };
     }, {
         usePermission: 'can_ban_users',
@@ -135,6 +152,13 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         const deleted = messages.deleteMessage(Number(params.id), user.id, 'moderator', body?.reason);
         if (!deleted) return status(404, { message: 'Message not found' });
 
+        logger.info('Message {messageId} deleted by moderator {actorUserId}', {
+            action: 'message_deleted',
+            actorUserId: user.id,
+            messageId: deleted.id,
+            targetUserId: deleted.user_id
+        });
+
         broadcastChatMessage(toClientMessage(deleted));
         return { success: true };
     }, {
@@ -150,6 +174,14 @@ export const moderationRoutes = new Elysia({ prefix: '/moderation' })
         if (!targetId) return status(400, { message: 'invalid target message' });
         const updated = messages.setModerationNote(targetId, user.id, body.note ?? null);
         if (!updated) return status(404, { message: 'Message not found' });
+
+        logger.info('Moderation note for message {messageId} updated by {actorUserId}', {
+            action: 'moderation_note_updated',
+            actorUserId: user.id,
+            messageId: updated.id,
+            targetUserId: updated.user_id,
+            noteCleared: body.note == null
+        });
 
         broadcastChatMessage(toClientMessage(updated));
         return { success: true };

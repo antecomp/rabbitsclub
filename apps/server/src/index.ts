@@ -17,7 +17,8 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 await configure({
     sinks: { console: getConsoleSink() },
     loggers: [
-        { category: ['elysia'], sinks: ['console'], lowestLevel: 'info' }
+        { category: ['elysia'], sinks: ['console'], lowestLevel: 'info' },
+        { category: ['rabbitclub'], sinks: ['console'], lowestLevel: 'info' }
     ],
     contextLocalStorage: new AsyncLocalStorage()
 });
