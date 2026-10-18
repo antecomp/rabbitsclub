@@ -10,8 +10,24 @@ import { moderationRoutes } from './routes/moderation';
 import { messageRoutes } from './routes/messages';
 import { inviteRoutes } from './routes/invites';
 import openapi from '@elysia/openapi';
+import { configure, getConsoleSink } from '@logtape/logtape';
+import { elysiaLogger } from '@logtape/elysia';
+import { AsyncLocalStorage } from 'node:async_hooks';
+
+await configure({
+    sinks: { console: getConsoleSink() },
+    loggers: [
+        { category: ['elysia'], sinks: ['console'], lowestLevel: 'info' }
+    ],
+    contextLocalStorage: new AsyncLocalStorage()
+});
 
 const app = new Elysia()
+    .use(elysiaLogger({
+        skip: ctx => ctx.path === '/health',
+        category: 'elysia',
+        context: true
+    }))
     .use(openapi())
     .use(cors({ origin: process.env.CLIENT_ORIGIN, credentials: true }))
     .use(authRoutes)

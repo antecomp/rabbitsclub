@@ -34,6 +34,8 @@
         "@elysia/openapi": "^1.4.15",
         "@elysiajs/cors": "1.4.2",
         "@elysiajs/jwt": "1.4.2",
+        "@logtape/elysia": "^2.4.2",
+        "@logtape/logtape": "^2.4.2",
         "@sinclair/typebox": "0.34.49",
         "drizzle-orm": "^0.45.2",
         "drizzle-typebox": "^0.3.3",
@@ -195,6 +197,10 @@
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.5", "", {}, "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="],
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
+
+    "@logtape/elysia": ["@logtape/elysia@2.4.2", "", { "peerDependencies": { "@logtape/logtape": "^2.4.2", "elysia": "^1.4.0 || ^2.0.0-beta.12" } }, "sha512-Ed6B/uD3FZXeWOw2PGAzgxd1fuDywxhox9S9thnv3tHmITRsfoGfxL5v7Pod8gisHYNmLjzPoDCFbfccRFKJeA=="],
+
+    "@logtape/logtape": ["@logtape/logtape@2.4.2", "", {}, "sha512-YJyC1gEMgWmTqJTRtKkjgasEbi8/0gP7Dj8n6bL46gQIAhpTY8uXJ+1QYMOgF5asotlGMvy3G7ejXUe45Yd1MQ=="],
 
     "@oxc-project/types": ["@oxc-project/types@0.143.0", "", {}, "sha512-u6JZdLBTLotrNC9Vd6vPssINdzcCzleKAH6EJKImQb7GtYvX5keN2dxkoK44stCc4tffE6QQRtZTXVSzsLUlWA=="],
 
